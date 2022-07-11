@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.4
+    restart: always
+    environment:
+      - POSTGRES_USER=paketomatuser
+      - POSTGRES_PASSWORD=s3creT
+      - POSTGRES_DB=paketomat
+    ports:
+      - '35432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local

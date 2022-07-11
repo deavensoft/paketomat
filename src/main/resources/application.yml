@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:postgresql://localhost:35432/paketomat
+    username: paketomatuser
+    password: s3creT
+    driverClassName: org.postgresql.Driver
