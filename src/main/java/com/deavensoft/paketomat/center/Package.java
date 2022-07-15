@@ -1,5 +1,7 @@
-package com.deavensoft.paketomat.center.model;
+package com.deavensoft.paketomat.center;
 
+import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.center.model.User;
 import lombok.*;
 
 

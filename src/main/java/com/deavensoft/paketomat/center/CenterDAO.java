@@ -1,13 +1,11 @@
-package com.deavensoft.paketomat.center.dao;
+package com.deavensoft.paketomat.center;
 
-import com.deavensoft.paketomat.center.model.Center;
-import com.deavensoft.paketomat.center.model.Package;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository("center")
+@Repository
 public class CenterDAO implements iCenter{
     ArrayList<Package> packages = new ArrayList<>();
 

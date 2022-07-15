@@ -1,6 +1,6 @@
-package com.deavensoft.paketomat.center.api;
+package com.deavensoft.paketomat.center;
 
-import com.deavensoft.paketomat.center.service.CenterService;
+import com.deavensoft.paketomat.center.CenterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 

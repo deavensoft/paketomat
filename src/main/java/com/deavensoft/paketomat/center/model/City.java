@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center;
+package com.deavensoft.paketomat.center.model;
 
 import lombok.*;
 

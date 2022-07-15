@@ -1,6 +1,4 @@
-package com.deavensoft.paketomat.center.dao;
-
-import com.deavensoft.paketomat.center.model.Package;
+package com.deavensoft.paketomat.center;
 
 import java.util.List;
 
