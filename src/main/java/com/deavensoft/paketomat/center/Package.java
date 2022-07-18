@@ -2,27 +2,32 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.stereotype.Component;
 
-
-
-import javax.persistence.*;
-
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.util.UUID;
 
-@AllArgsConstructor
+
+@Component
 @NoArgsConstructor
-@Getter
+@Data
 @Setter
-@Entity
-@Table(name="Package")
+@Getter
 public class Package {
-    @Id
-    @Column(name="id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private UUID id;
-    @Column(name="status")
+
+    private  UUID id;
     private Status status;
+    public Package(@JsonProperty("id") UUID id,@JsonProperty("Status") Status status){
+        this.id = id;
+        this.status = status;
+    }
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     @JoinColumn(name = "sender", nullable = false)
