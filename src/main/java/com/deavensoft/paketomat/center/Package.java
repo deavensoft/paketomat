@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.UUID;
 
 
@@ -20,20 +18,25 @@ import java.util.UUID;
 @Data
 @Setter
 @Getter
+@Table(name = "package")
 public class Package {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name= "id")
     private  UUID id;
+    @Column(name = "status")
     private Status status;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    private User sender;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "receiver_id", referencedColumnName = "id")
+    private User reciever;
+
     public Package(@JsonProperty("id") UUID id,@JsonProperty("Status") Status status){
         this.id = id;
         this.status = status;
     }
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender", nullable = false)
-    private User sender;
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    @JoinColumn(name = "reciever", nullable = false)
-    private User reciever;
 }

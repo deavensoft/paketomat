@@ -2,10 +2,7 @@ package com.deavensoft.paketomat.center.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -16,8 +13,10 @@ import java.util.UUID;
 @Setter
 
 @Entity
+@Table(name = "city")
 public class City {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private UUID id;
     @Column(name = "name")
