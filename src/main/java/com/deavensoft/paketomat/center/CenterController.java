@@ -10,35 +10,35 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/packages")
 public class CenterController {
-    private CenterService centerService;
+    private CenterServiceImpl centerServiceImpl;
     @Autowired
-    public CenterController(CenterService centerService)
+    public CenterController(CenterServiceImpl centerServiceImpl)
     {
-        this.centerService=centerService;
+        this.centerServiceImpl = centerServiceImpl;
     }
 
     @GetMapping
     public List<Package> getAllPackages()
     {
-        return centerService.getAllPackages();
+        return centerServiceImpl.getAllPackages();
     }
 
     @PostMapping
     public int savePackage(@RequestBody Package newPackage)
     {
-        centerService.save(newPackage);
+        centerServiceImpl.save(newPackage);
         return 1;
     }
     @GetMapping(path = "{id}")
     public Optional<Package> getPackageById(@PathVariable(name = "id") Long id)
     {
-        return centerService.findPackageById(id);
+        return centerServiceImpl.findPackageById(id);
     }
 
     @DeleteMapping(path = "{id}")
     public int deletePackageById(@PathVariable(name = "id")Long id)
     {
-        centerService.deletePackageById(id);
+        centerServiceImpl.deletePackageById(id);
         return 1;
     }
 

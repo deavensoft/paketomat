@@ -9,29 +9,29 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/couriers")
 public class CourierController {
-    private CourierService courierService;
+    private CourierServiceImpl courierServiceImpl;
     @Autowired
-    public CourierController(CourierService courierService){
-        this.courierService = courierService;
+    public CourierController(CourierServiceImpl courierServiceImpl){
+        this.courierServiceImpl = courierServiceImpl;
     }
     @GetMapping
     public List<CourierModel> getAllCouriers(){
-        return courierService.findAllCouriers();
+        return courierServiceImpl.findAllCouriers();
     }
     @PostMapping
     public int saveCourier(@RequestBody CourierModel newCourier){
-        courierService.saveCourier(newCourier);
+        courierServiceImpl.saveCourier(newCourier);
         return 1;
     }
 
     @GetMapping(path = "{id}")
     public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id){
-        return Optional.ofNullable(courierService.getCourierById(id).orElse(null));
+        return Optional.ofNullable(courierServiceImpl.getCourierById(id).orElse(null));
     }
 
     @DeleteMapping(path = "{id}")
     public int deleteCourierById(@PathVariable(name = "id") Long id){
-        courierService.deleteCourierById(id);
+        courierServiceImpl.deleteCourierById(id);
         return 1;
     }
 }

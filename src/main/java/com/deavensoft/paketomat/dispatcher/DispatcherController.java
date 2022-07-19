@@ -10,28 +10,28 @@ import java.util.Optional;
 @RequestMapping("api/dispatchers")
 public class DispatcherController {
 
-    private DispatcherService dispatcherService;
+    private DispatcherServiceImpl dispatcherServiceImpl;
     @Autowired
-    public DispatcherController(DispatcherService dispatcherService){
-        this.dispatcherService = dispatcherService;
+    public DispatcherController(DispatcherServiceImpl dispatcherServiceImpl){
+        this.dispatcherServiceImpl = dispatcherServiceImpl;
     }
     @GetMapping
     public List<DispatcherModel> findAllDispatchers(){
-        return dispatcherService.findAllDispatchers();
+        return dispatcherServiceImpl.findAllDispatchers();
     }
     @PostMapping
     public int saveDispatcher(@RequestBody DispatcherModel dispatcher){
-        dispatcherService.saveDispatcher(dispatcher);
+        dispatcherServiceImpl.saveDispatcher(dispatcher);
         return 1;
     }
     @GetMapping(path = "{id}")
     public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id){
-        return dispatcherService.findDispatcherById(id);
+        return dispatcherServiceImpl.findDispatcherById(id);
     }
 
     @DeleteMapping(path = "{id}")
     public int deleteDispatcherById(@PathVariable(name = "id") Long id){
-        dispatcherService.deleteDispatcherById(id);
+        dispatcherServiceImpl.deleteDispatcherById(id);
         return 1;
     }
 }

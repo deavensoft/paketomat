@@ -24,9 +24,9 @@ public class City {
     @Column(name = "population")
     private int population;
     @Column(name = "x")
-    private double x;
+    private double latitude;
     @Column(name = "y")
-    private double y;
+    private double longitude;
     @Transient
     private ArrayList<Paketomat> paketomats;
 
