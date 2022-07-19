@@ -1,7 +1,6 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Status;
-import com.deavensoft.paketomat.center.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -29,11 +28,11 @@ public class Package {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sender_id", referencedColumnName = "id")
-    private User sender;
+    private Long sender;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "receiver_id", referencedColumnName = "id")
-    private User reciever;
+    private Long reciever;
 
     public Package(@JsonProperty("id") UUID id,@JsonProperty("Status") Status status){
         this.id = id;
