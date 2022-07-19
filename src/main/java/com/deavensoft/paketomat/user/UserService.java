@@ -1,6 +1,5 @@
-package com.deavensoft.paketomat.center;
+package com.deavensoft.paketomat.user;
 
-import com.deavensoft.paketomat.center.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -10,23 +9,23 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private iUser user;
+    private User user;
     @Autowired
-    public UserService(@Qualifier("user") iUser user){
+    public UserService(@Qualifier("user") User user){
         this.user = user;
     }
-    public List<User> getAllUsers(){
+    public List<com.deavensoft.paketomat.center.model.User> getAllUsers(){
 
         return user.findAll();
     }
-    public void save(User u){
+    public void save(com.deavensoft.paketomat.center.model.User u){
         user.save(u);
     }
-    public int deleteUser(User u){
+    public int deleteUser(com.deavensoft.paketomat.center.model.User u){
         user.delete(u);
         return 1;
     }
-    public Optional<User> findUserById(Long id){
+    public Optional<com.deavensoft.paketomat.center.model.User> findUserById(Long id){
         return user.findById(id);
     }
 

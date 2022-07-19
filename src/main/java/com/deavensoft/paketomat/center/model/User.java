@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -22,12 +24,16 @@ public class User {
     @Column(name = "name")
     private String name;
     @Column(name = "address")
+
     private String address;
-    public User(@JsonProperty("id") Long id, @JsonProperty("email") String email, @JsonProperty("name") String name,@JsonProperty("address") String address){
+
+    public User(@JsonProperty("id") Long id, @JsonProperty("email") String email, @JsonProperty("name") String name,
+                @JsonProperty("address") String address){
         this.id = id;
         this.email = email;
         this.name = name;
         this.address = address;
+
     }
 
 }

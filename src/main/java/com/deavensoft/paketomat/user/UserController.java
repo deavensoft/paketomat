@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center;
+package com.deavensoft.paketomat.user;
 
 import com.deavensoft.paketomat.center.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
