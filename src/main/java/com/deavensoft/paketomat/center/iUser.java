@@ -9,5 +9,4 @@ import java.util.UUID;
 @Repository("user")
 public interface iUser extends JpaRepository<User, Long> {
 
-
 }
