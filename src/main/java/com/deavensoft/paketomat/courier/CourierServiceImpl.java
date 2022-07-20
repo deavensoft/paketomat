@@ -9,26 +9,26 @@ import java.util.Optional;
 
 @Service
 public class CourierServiceImpl implements CourierService {
-    private Courier courier;
+    private CourierRepository courierRepository;
     @Autowired
-    public CourierServiceImpl(@Qualifier("courier") Courier courier){
-        this.courier = courier;
+    public CourierServiceImpl(@Qualifier("courier") CourierRepository courierRepository){
+        this.courierRepository = courierRepository;
     }
 
     public List<CourierModel> findAllCouriers(){
-        return courier.findAll();
+        return courierRepository.findAll();
     }
 
     public void saveCourier(CourierModel newCourier){
-        courier.save(newCourier);
+        courierRepository.save(newCourier);
     }
 
 
     public Optional<CourierModel> getCourierById(Long id){
-        return courier.findById(id);
+        return courierRepository.findById(id);
     }
 
     public void deleteCourierById(Long id){
-        courier.deleteById(id);
+        courierRepository.deleteById(id);
     }
 }

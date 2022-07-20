@@ -9,21 +9,21 @@ import java.util.Optional;
 
 @Service
 public class DispatcherServiceImpl implements DispatcherService {
-    private Dispatcher dispatcher;
+    private DispatcherRepository dispatcherRepository;
     @Autowired
-    public DispatcherServiceImpl(@Qualifier("dispatcher") Dispatcher dispatcher){
-        this.dispatcher = dispatcher;
+    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository){
+        this.dispatcherRepository = dispatcherRepository;
     }
     public List<DispatcherModel> findAllDispatchers(){
-        return dispatcher.findAll();
+        return dispatcherRepository.findAll();
     }
     public void saveDispatcher(DispatcherModel newDispatcher){
-        dispatcher.save(newDispatcher);
+        dispatcherRepository.save(newDispatcher);
     }
     public Optional<DispatcherModel> findDispatcherById(Long id){
-       return  dispatcher.findById(id);
+       return  dispatcherRepository.findById(id);
     }
     public void deleteDispatcherById(Long id){
-        dispatcher.deleteById(id);
+        dispatcherRepository.deleteById(id);
     }
 }

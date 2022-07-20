@@ -10,12 +10,12 @@ import java.util.Optional;
 
 @Service
 public class CenterServiceImpl implements CenterService{
-    private Center center;
+    private CenterRepository centerrepository;
     private com.deavensoft.paketomat.center.model.Center distributiveCenter;
     @Autowired
-    public CenterServiceImpl(@Qualifier ("center") Center center)
+    public CenterServiceImpl(@Qualifier ("center") CenterRepository centerrepository)
     {
-        this.center=center;
+        this.centerrepository = centerrepository;
         this.distributiveCenter = new com.deavensoft.paketomat.center.model.Center();
         initialise();
     }
@@ -24,21 +24,21 @@ public class CenterServiceImpl implements CenterService{
     }
     public List<Package> getAllPackages()
     {
-      return  center.findAll();
+      return  centerrepository.findAll();
     }
 
     public void save(Package packagee)
     {
-        center.save(packagee);
+        centerrepository.save(packagee);
     }
 
     public Optional<Package> findPackageById(Long id)
     {
-        return center.findById(id);
+        return centerrepository.findById(id);
     }
     public void deletePackageById(Long id)
     {
-        center.deleteById(id);
+        centerrepository.deleteById(id);
     }
 
 

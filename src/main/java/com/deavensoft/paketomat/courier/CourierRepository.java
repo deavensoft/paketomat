@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository("courier")
-public interface Courier extends JpaRepository<CourierModel, Long> {
+public interface CourierRepository extends JpaRepository<CourierModel, Long> {
 }
