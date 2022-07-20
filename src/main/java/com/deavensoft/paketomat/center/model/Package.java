@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center;
+package com.deavensoft.paketomat.center.model;
 
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
@@ -13,30 +13,30 @@ import javax.persistence.*;
 import java.util.UUID;
 
 
-@Component
+@Entity
 @NoArgsConstructor
-@Data
 @Setter
 @Getter
-@Table(name = "package")
+@Table(name = "package", schema="public")
 public class Package {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name= "id")
-    private  UUID id;
+    private  Long id;
     @Column(name = "status")
     private Status status;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sender_id", referencedColumnName = "id")
-    private User sender;
+    @Column(name="reciever")
+    private Long sender;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "receiver_id", referencedColumnName = "id")
-    private User reciever;
+    @Column(name="sender")
+    private Long reciever;
 
-    public Package(@JsonProperty("id") UUID id,@JsonProperty("Status") Status status){
+    public Package(@JsonProperty("id") Long id,@JsonProperty("Status") Status status,@JsonProperty("reciever") Long reciever,
+                   @JsonProperty("sender")Long sender){
         this.id = id;
         this.status = status;
+        this.reciever=reciever;
+        this.sender=sender;
     }
 }
