@@ -20,8 +20,8 @@ public class SwaggerConfig {
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("My API Title")
-                .description("Awesome description")
+                .title("Paketomat APIs")
+                .description("API Controllers for different APIs in application")
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .termsOfServiceUrl("")
