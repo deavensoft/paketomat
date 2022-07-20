@@ -24,12 +24,12 @@ public class DispatcherController {
         dispatcherServiceImpl.saveDispatcher(dispatcher);
         return 1;
     }
-    @GetMapping(path = "{/id}")
+    @GetMapping(path = "/{id}")
     public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id){
         return dispatcherServiceImpl.findDispatcherById(id);
     }
 
-    @DeleteMapping(path = "{/id}")
+    @DeleteMapping(path = "/{id}")
     public int deleteDispatcherById(@PathVariable(name = "id") Long id){
         dispatcherServiceImpl.deleteDispatcherById(id);
         return 1;

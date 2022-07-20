@@ -29,13 +29,13 @@ public class CenterController {
         centerServiceImpl.save(newPackage);
         return 1;
     }
-    @GetMapping(path = "{/id}")
+    @GetMapping(path = "/{id}")
     public Optional<Package> getPackageById(@PathVariable(name = "id") Long id)
     {
         return centerServiceImpl.findPackageById(id);
     }
 
-    @DeleteMapping(path = "{/id}")
+    @DeleteMapping(path = "/{id}")
     public int deletePackageById(@PathVariable(name = "id")Long id)
     {
         centerServiceImpl.deletePackageById(id);

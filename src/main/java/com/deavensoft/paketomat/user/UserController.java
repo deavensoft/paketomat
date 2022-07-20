@@ -23,11 +23,11 @@ public class UserController {
     public void save(@RequestBody User u){
         userServiceImpl.save(u);
     }
-    @GetMapping(path="{/id}")
+    @GetMapping(path="/{id}")
     public Optional<User> findUserById(@PathVariable(name = "id") long id){
        return userServiceImpl.findUserById(id);
     }
-    @DeleteMapping(path = "{/id}")
+    @DeleteMapping(path = "/{id}")
     public int deleteUser(@PathVariable(name = "id") Long id){
         Optional<User> u = findUserById(id);
         if (u.isEmpty())

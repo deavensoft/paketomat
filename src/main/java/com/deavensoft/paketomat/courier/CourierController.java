@@ -24,12 +24,12 @@ public class CourierController {
         return 1;
     }
 
-    @GetMapping(path = "{/id}")
+    @GetMapping(path = "/{id}")
     public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id){
         return Optional.ofNullable(courierServiceImpl.getCourierById(id).orElse(null));
     }
 
-    @DeleteMapping(path = "{/id}")
+    @DeleteMapping(path = "/{id}")
     public int deleteCourierById(@PathVariable(name = "id") Long id){
         courierServiceImpl.deleteCourierById(id);
         return 1;
