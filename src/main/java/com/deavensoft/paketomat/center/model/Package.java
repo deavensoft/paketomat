@@ -1,22 +1,15 @@
 package com.deavensoft.paketomat.center.model;
 
-import com.deavensoft.paketomat.center.model.Status;
-import com.deavensoft.paketomat.center.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 
 @Entity
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
 @Table(name = "package", schema="public")
 public class Package {
     @Id

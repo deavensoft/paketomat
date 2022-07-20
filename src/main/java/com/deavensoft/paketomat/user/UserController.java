@@ -20,23 +20,24 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Get users", description = "Get all users")
     @ApiResponse(responseCode = "200", description = "All users are returned")
-    @ApiResponse(responseCode = "404", description = "Users not found")
-    @ApiResponse(responseCode = "500", description = "Server fault")
     public List<User> getAllUsers(){
         return userServiceImpl.getAllUsers();
     }
     @PostMapping
     @Operation(summary = "Add new user", description = "Add new user to the database")
+    @ApiResponse(responseCode = "200", description = "New user added")
     public void save(@RequestBody User u){
         userServiceImpl.save(u);
     }
     @GetMapping(path="/{id}")
     @Operation(summary = "Get user", description = "Get user with specified id")
+    @ApiResponse(responseCode = "200", description = "User with specified id returned")
     public Optional<User> findUserById(@PathVariable(name = "id") long id){
        return userServiceImpl.findUserById(id);
     }
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete user", description = "Delete user with specified id")
+    @ApiResponse(responseCode = "200", description = "User with specified id deleted")
     public int deleteUser(@PathVariable(name = "id") Long id){
         Optional<User> u = findUserById(id);
         if (u.isEmpty())

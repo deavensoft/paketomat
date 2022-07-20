@@ -7,13 +7,9 @@ import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
-@Getter
-@Setter
+@NoArgsConstructor
 public class Center {
     private ArrayList<Package> packages;
     private ArrayList<City> cities;
 
-    public Center (){
-
-    }
 }

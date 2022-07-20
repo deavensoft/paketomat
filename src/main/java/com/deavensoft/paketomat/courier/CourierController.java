@@ -19,13 +19,12 @@ public class CourierController {
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
-    @ApiResponse(responseCode = "404", description = "Couriers not found")
-    @ApiResponse(responseCode = "500", description = "Server fault")
     public List<CourierModel> getAllCouriers(){
         return courierServiceImpl.findAllCouriers();
     }
     @PostMapping
     @Operation(summary = "Add new courier")
+    @ApiResponse(responseCode = "200", description = "New courier added")
     public int saveCourier(@RequestBody CourierModel newCourier){
         courierServiceImpl.saveCourier(newCourier);
         return 1;
@@ -33,12 +32,14 @@ public class CourierController {
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get courier", description = "Get courier with specified id")
+    @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
     public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id){
         return Optional.ofNullable(courierServiceImpl.getCourierById(id).orElse(null));
     }
 
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete courier", description = "Delete courier with specified id")
+    @ApiResponse(responseCode = "200", description = "Courier with specified id deleted")
     public int deleteCourierById(@PathVariable(name = "id") Long id){
         courierServiceImpl.deleteCourierById(id);
         return 1;

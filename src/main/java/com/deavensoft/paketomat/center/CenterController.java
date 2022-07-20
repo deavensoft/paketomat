@@ -22,8 +22,6 @@ public class CenterController {
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
-    @ApiResponse(responseCode = "404", description = "Packages not found")
-    @ApiResponse(responseCode = "500", description = "Server fault")
     public List<Package> getAllPackages()
     {
         return centerServiceImpl.getAllPackages();
@@ -31,6 +29,7 @@ public class CenterController {
 
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
+    @ApiResponse(responseCode = "200", description = "New package added")
     public int savePackage(@RequestBody Package newPackage)
     {
         centerServiceImpl.save(newPackage);
@@ -38,6 +37,7 @@ public class CenterController {
     }
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
+    @ApiResponse(responseCode = "200", description = "Package with specified id returned")
     public Optional<Package> getPackageById(@PathVariable(name = "id") Long id)
     {
         return centerServiceImpl.findPackageById(id);
@@ -45,6 +45,7 @@ public class CenterController {
 
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete package", description = "Delete package with specified id")
+    @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
     public int deletePackageById(@PathVariable(name = "id")Long id)
     {
         centerServiceImpl.deletePackageById(id);
