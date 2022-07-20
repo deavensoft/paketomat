@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center;
+package com.deavensoft.paketomat.center.model;
 
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
