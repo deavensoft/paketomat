@@ -2,16 +2,14 @@ package com.deavensoft.paketomat.dispatcher;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 import javax.persistence.*;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "dispatcher", schema = "public")
 public class DispatcherModel {

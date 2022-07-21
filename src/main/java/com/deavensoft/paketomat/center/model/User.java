@@ -4,14 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "user", schema = "public")
 public class User {

@@ -9,8 +9,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 
 @Entity
 @Table(name = "city")

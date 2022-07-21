@@ -9,3 +9,6 @@ spring:
     username: paketomatuser
     password: s3creT
     driverClassName: org.postgresql.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
