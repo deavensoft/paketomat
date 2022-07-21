@@ -8,8 +8,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Paketomat {
 
     private UUID id;
