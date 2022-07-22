@@ -2,8 +2,7 @@ package com.deavensoft.paketomat.dispatcher;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +12,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/dispatchers")
+@Slf4j
 public class DispatcherController {
 
-    Logger logger = LoggerFactory.getLogger(DispatcherController.class);
     private DispatcherServiceImpl dispatcherServiceImpl;
     @Autowired
     public DispatcherController(DispatcherServiceImpl dispatcherServiceImpl){
@@ -25,14 +24,14 @@ public class DispatcherController {
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
     @ApiResponse(responseCode = "200", description = "All dispatchers are returned")
     public List<DispatcherModel> findAllDispatchers(){
-        logger.info("All dispatchersare returned");
+        log.info("All dispatchersare returned");
         return dispatcherServiceImpl.findAllDispatchers();
     }
     @PostMapping
     @Operation(summary = "Add new dispatcher")
     @ApiResponse(responseCode = "200", description = "New dispatcher added")
     public int saveDispatcher(@RequestBody DispatcherModel dispatcher){
-        logger.info("New dispatcher is added");
+        log.info("New dispatcher is added");
         dispatcherServiceImpl.saveDispatcher(dispatcher);
         return 1;
     }
@@ -43,10 +42,10 @@ public class DispatcherController {
         Optional<DispatcherModel> d = dispatcherServiceImpl.findDispatcherById(id);
         if(d.isEmpty()){
             String mess = "There is no dispatcher with id " + id;
-            logger.info(mess);
+            log.info(mess);
         } else{
             String mess = "Dispatcher with id " + id + " is returned";
-            logger.info(mess);
+            log.info(mess);
         }
         return d;
     }
@@ -58,10 +57,10 @@ public class DispatcherController {
         try {
             dispatcherServiceImpl.deleteDispatcherById(id);
             String mess = "Dispatcher with id " + id + " is deleted";
-            logger.info(mess);
+            log.info(mess);
         } catch (NoSuchElementException e){
             String mess = "There is no dispatcher with id " + id;
-            logger.error(mess);
+            log.error(mess);
         }
         return 1;
     }

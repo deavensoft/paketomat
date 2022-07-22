@@ -3,8 +3,7 @@ package com.deavensoft.paketomat.user;
 import com.deavensoft.paketomat.center.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +13,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/users")
+@Slf4j
 public class UserController {
 
-    Logger logger = LoggerFactory.getLogger(UserController.class);
     private UserServiceImpl userServiceImpl;
     @Autowired
     public UserController(UserServiceImpl userServiceImpl){
@@ -27,7 +26,7 @@ public class UserController {
     @Operation(summary = "Get users", description = "Get all users")
     @ApiResponse(responseCode = "200", description = "All users are returned")
     public List<User> getAllUsers(){
-        logger.info("All users are returned");
+        log.info("All users are returned");
         return userServiceImpl.getAllUsers();
     }
 
@@ -36,7 +35,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "New user added")
     public void save(@RequestBody User u){
         userServiceImpl.save(u);
-        logger.info("New user added to the database");
+        log.info("New user added to the database");
     }
 
     @GetMapping(path="/{id}")
@@ -46,10 +45,10 @@ public class UserController {
         Optional<User> u = userServiceImpl.findUserById(id);
         if(u.isEmpty()){
             String mess = "There is no user with id " + id;
-            logger.info(mess);
+            log.info(mess);
         } else{
             String mess = "User with id " + id + " is returned";
-            logger.info(mess);
+            log.info(mess);
         }
        return u;
     }
@@ -61,11 +60,11 @@ public class UserController {
         Optional<User> u = findUserById(id);
         try {
             String mess = "User with id " + id + " is deleted";
-            logger.info(mess);
+            log.info(mess);
             userServiceImpl.deleteUser(u.get());
         } catch (NoSuchElementException e){
             String mess = "There is no user with id " + id;
-            logger.error(mess);
+            log.error(mess);
         }
         return 1;
     }

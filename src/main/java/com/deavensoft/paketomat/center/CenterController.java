@@ -3,8 +3,7 @@ package com.deavensoft.paketomat.center;
 import com.deavensoft.paketomat.center.model.Package;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +13,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/packages")
+@Slf4j
 public class CenterController {
 
-    Logger logger = LoggerFactory.getLogger(CenterController.class);
     private CenterServiceImpl centerServiceImpl;
     @Autowired
     public CenterController(CenterServiceImpl centerServiceImpl)
@@ -29,7 +28,7 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "All packages are returned")
     public List<Package> getAllPackages()
     {
-        logger.info("All packages are returned");
+        log.info("All packages are returned");
         return centerServiceImpl.getAllPackages();
     }
 
@@ -39,7 +38,7 @@ public class CenterController {
     public int savePackage(@RequestBody Package newPackage)
     {
         centerServiceImpl.save(newPackage);
-        logger.info("New package added to the database");
+        log.info("New package added to the database");
         return 1;
     }
     @GetMapping(path = "/{id}")
@@ -50,10 +49,10 @@ public class CenterController {
         Optional<Package> p = centerServiceImpl.findPackageById(id);
         if(p.isEmpty()){
             String mess = "There is no user with id " + id;
-            logger.info(mess);
+            log.info(mess);
         } else{
             String mess = "package with id " + id + " is returned";
-            logger.info(mess);
+            log.info(mess);
         }
         return p;
     }
@@ -66,10 +65,10 @@ public class CenterController {
         try {
             centerServiceImpl.deletePackageById(id);
             String mess = "Package with id " + id + " is deleted";
-            logger.info(mess);
+            log.info(mess);
         } catch (NoSuchElementException e){
             String mess = "There is no user with id " + id;
-            logger.error(mess);
+            log.error(mess);
         }
         return 1;
     }
