@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 public class CenterController {
 
-    private CenterServiceImpl centerServiceImpl;
+    private final CenterServiceImpl centerServiceImpl;
     @Autowired
     public CenterController(CenterServiceImpl centerServiceImpl)
     {
@@ -51,7 +51,7 @@ public class CenterController {
             String mess = "There is no user with id " + id;
             log.info(mess);
         } else{
-            String mess = "package with id " + id + " is returned";
+            String mess = "Package with id " + id + " is returned";
             log.info(mess);
         }
         return p;

@@ -61,7 +61,7 @@
         <appender-ref ref="Console" />
     </root>
 
-    <!-- LOG "com.myplantdiary.*" at TRACE level -->
+    <!-- LOG "com.deavensoft.paketomat.*" at TRACE level -->
     <logger name="com.deavensoft.paketomat" level="trace" additivity="false">
         <appender-ref ref="SevereRollingFile" />
         <appender-ref ref="RollingFile" />
