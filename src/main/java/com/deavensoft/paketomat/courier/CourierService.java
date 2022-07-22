@@ -1,5 +1,7 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.email.EmailService;
+
 import java.util.List;
 import java.util.Optional;
 

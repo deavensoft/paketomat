@@ -1,10 +1,12 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.email.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -31,4 +33,5 @@ public class CourierServiceImpl implements CourierService {
     public void deleteCourierById(Long id){
         courierRepository.deleteById(id);
     }
+
 }
