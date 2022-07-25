@@ -32,11 +32,8 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     public String sendSimpleMail(EmailDetails details) {
-        // Try block to check for exceptions
+
         try {
-
-            // Creating a simple mail message
-
 
             // Setting up necessary details
             mailMessage.setFrom(sender);
@@ -46,12 +43,10 @@ public class EmailServiceImpl implements EmailService{
 
 
 
-            // Sending the mail
             javaMailSender.send(mailMessage);
             return "Mail Sent Successfully...";
         }
 
-        // Catch block to handle the exceptions
         catch (Exception e) {
             e.printStackTrace();
             return "Error while Sending Mail";
@@ -86,15 +81,12 @@ public class EmailServiceImpl implements EmailService{
             mimeMessageHelper.addAttachment(
                     "Thymeleaf.html", file);
 
-            // Sending the mail
             javaMailSender.send(mimeMessage);
             return "Mail sent Successfully";
         }
 
-        // Catch block to handle MessagingException
         catch (MessagingException e) {
 
-            // Display message when exception occurred
             return "Error while sending mail!!!";
         }
     }

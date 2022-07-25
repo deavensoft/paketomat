@@ -17,7 +17,6 @@ public class EmailController {
     private EmailService emailService;
     
 
-    // Sending a simple Email
     @PostMapping("/sendMail")
     @Operation(summary = "sending basic mail")
     @ApiResponse(responseCode = "200", description = "Mail has been sent.")
@@ -30,7 +29,6 @@ public class EmailController {
         return status;
     }
 
-    // Sending email with attachment
     @PostMapping("/sendMailWithAttachment")
     @Operation(summary = "Sending basic mail with attachment.")
     @ApiResponse(responseCode = "200", description = "Mail with attachment has been sent.")
