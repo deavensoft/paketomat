@@ -31,4 +31,5 @@ public class CourierServiceImpl implements CourierService {
     public void deleteCourierById(Long id){
         courierRepository.deleteById(id);
     }
+
 }
