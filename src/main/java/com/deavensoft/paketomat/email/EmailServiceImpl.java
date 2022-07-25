@@ -23,6 +23,9 @@ public class EmailServiceImpl implements EmailService{
     private JavaMailSender javaMailSender;
 
     @Autowired
+    private SimpleMailMessage mailMessage;
+
+    @Autowired
     Configuration fmConfiguration;
     @Value("${spring.mail.username}")
     private String sender;
@@ -33,8 +36,7 @@ public class EmailServiceImpl implements EmailService{
         try {
 
             // Creating a simple mail message
-            SimpleMailMessage mailMessage
-                    = new SimpleMailMessage();
+
 
             // Setting up necessary details
             mailMessage.setFrom(sender);
@@ -109,13 +111,18 @@ public class EmailServiceImpl implements EmailService{
             details.setMsgBody(geContentFromTemplate(modelData));
             mimeMessageHelper.setText(details.getMsgBody(), true);
 
-            if(!details.getAttachment().isEmpty()){
-                FileSystemResource file
-                        = new FileSystemResource(
-                        new File(details.getAttachment()));
+            try {
 
-                mimeMessageHelper.addAttachment(
-                        details.getAttachment(), file);
+                if (!details.getAttachment().isEmpty()) {
+                    FileSystemResource file
+                            = new FileSystemResource(
+                            new File(details.getAttachment()));
+
+                    mimeMessageHelper.addAttachment(
+                            details.getAttachment(), file);
+                }
+            } catch (NullPointerException e){
+                System.out.println("Attachment is null");
             }
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException e) {
