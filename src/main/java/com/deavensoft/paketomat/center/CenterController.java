@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Status;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,14 @@ public class CenterController {
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
-    public List<Package> getAllPackages()
-    {
-        return centerServiceImpl.getAllPackages();
-    }
+    public List<Package> getAllPackages() {return centerServiceImpl.getAllPackages();}
 
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
     public int savePackage(@RequestBody Package newPackage)
     {
+        newPackage.setStatus(Status.NEW);
         centerServiceImpl.save(newPackage);
         return 1;
     }
