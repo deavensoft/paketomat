@@ -1,0 +1,4 @@
+2022-07-21 16:39:32,060 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-5] No user with id: 3
+2022-07-21 16:40:33,403 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] No user with id: 3
+2022-07-21 16:44:05,316 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] No user with id: 3
+2022-07-21 16:47:52,630 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with specified id
