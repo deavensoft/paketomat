@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 
 import java.util.List;
 import java.util.Optional;

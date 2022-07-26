@@ -1,9 +1,11 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,14 +56,13 @@ public class CourierController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete courier", description = "Delete courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id deleted")
-    public int deleteCourierById(@PathVariable(name = "id") Long id){
+    public int deleteCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         try {
             courierServiceImpl.deleteCourierById(id);
             String mess = "Courier with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no courier with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchCourierException(id);
         }
         return 1;
     }

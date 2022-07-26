@@ -1,9 +1,11 @@
 package com.deavensoft.paketomat.dispatcher;
 
+import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,14 +55,13 @@ public class DispatcherController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete dispatcher", description = "Delete dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher with specified id deleted")
-    public int deleteDispatcherById(@PathVariable(name = "id") Long id){
+    public int deleteDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         try {
             dispatcherServiceImpl.deleteDispatcherById(id);
             String mess = "Dispatcher with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no dispatcher with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchDispatcherException(id);
         }
         return 1;
     }
