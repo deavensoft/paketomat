@@ -4,21 +4,22 @@ import com.deavensoft.paketomat.center.model.Package;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import com.deavensoft.paketomat.center.model.Center;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CenterServiceImpl implements CenterService {
-    private CenterRepository centerrepository;
-    private com.deavensoft.paketomat.center.model.Center distributiveCenter;
+    private CenterRepository centerRepository;
+    private Center distributiveCenter;
 
 
 
     @Autowired
-    public CenterServiceImpl(@Qualifier("center") CenterRepository centerrepository) {
-        this.centerrepository = centerrepository;
-        this.distributiveCenter = new com.deavensoft.paketomat.center.model.Center();
+    public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
+        this.centerRepository = centerRepository;
+        this.distributiveCenter = new Center();
         initialise();
     }
 
@@ -27,19 +28,19 @@ public class CenterServiceImpl implements CenterService {
     }
 
     public List<Package> getAllPackages() {
-        return centerrepository.findAll();
+        return centerRepository.findAll();
     }
 
-    public void save(Package packagee) {
-        centerrepository.save(packagee);
+    public void save(Package p) {
+        centerRepository.save(p);
     }
 
     public Optional<Package> findPackageById(Long id) {
-        return centerrepository.findById(id);
+        return centerRepository.findById(id);
     }
 
     public void deletePackageById(Long id) {
-        centerrepository.deleteById(id);
+        centerRepository.deleteById(id);
     }
 
 
