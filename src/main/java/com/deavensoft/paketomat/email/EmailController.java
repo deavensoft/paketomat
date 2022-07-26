@@ -42,7 +42,7 @@ public class EmailController {
     }
     @PostMapping("/sendMailWithTemplate")
     @Operation(summary = "Sending mail with template.")
-    @ApiResponse(responseCode = "200", description = "Mail with template has benn sent.")
+    @ApiResponse(responseCode = "200", description = "Mail with template has been sent.")
     public int sendMailWithTemplate(
             @RequestBody EmailDetails details)
     {
