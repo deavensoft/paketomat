@@ -1,12 +1,10 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.center.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,14 +38,9 @@ public class CenterServiceImpl implements CenterService {
         return centerrepository.findById(id);
     }
 
-    public List<Package> findAllPackageByStatus(Status status){
-        return findAllPackageByStatus(status);
-    }
-
     public void deletePackageById(Long id) {
         centerrepository.deleteById(id);
     }
-
 
 
 
