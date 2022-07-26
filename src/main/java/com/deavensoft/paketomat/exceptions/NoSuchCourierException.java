@@ -1,9 +1,9 @@
 package com.deavensoft.paketomat.exceptions;
 
-public class NoSuchCourierException extends Exception{
-    private static final String MESS = "There is no courier with id ";
+import org.springframework.http.HttpStatus;
 
-    public NoSuchCourierException(Long id){
-        super(MESS + id);
+public class NoSuchCourierException extends PaketomatException{
+    public NoSuchCourierException(String mess, HttpStatus s, int code){
+        super(mess, s, code);
     }
 }

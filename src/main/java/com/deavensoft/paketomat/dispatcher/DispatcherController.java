@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,11 +41,10 @@ public class DispatcherController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher wwith specified id returned")
-    public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id){
+    public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         Optional<DispatcherModel> d = dispatcherServiceImpl.findDispatcherById(id);
         if(d.isEmpty()){
-            String mess = "There is no dispatcher with id " + id;
-            log.info(mess);
+            throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.NOT_FOUND, 404);
         } else{
             String mess = "Dispatcher with id " + id + " is returned";
             log.info(mess);
@@ -61,7 +61,7 @@ public class DispatcherController {
             String mess = "Dispatcher with id " + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e){
-            throw new NoSuchDispatcherException(id);
+            throw new NoSuchDispatcherException("Dispatcher with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

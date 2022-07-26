@@ -1,10 +1,9 @@
 package com.deavensoft.paketomat.exceptions;
 
-public class NoSuchDispatcherException extends Exception{
+import org.springframework.http.HttpStatus;
 
-    private static final String MESS = "There is no dispatcher with id ";
-
-    public NoSuchDispatcherException(Long id){
-        super(MESS + id);
+public class NoSuchDispatcherException extends PaketomatException{
+    public NoSuchDispatcherException(String mess, HttpStatus s, int code){
+        super(mess, s, code);
     }
 }

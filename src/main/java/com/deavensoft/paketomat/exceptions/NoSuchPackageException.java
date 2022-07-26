@@ -1,10 +1,9 @@
 package com.deavensoft.paketomat.exceptions;
 
-public class NoSuchPackageException extends Exception {
+import org.springframework.http.HttpStatus;
 
-    private static final String MESS = "There is no package with id ";
-
-    public NoSuchPackageException(Long id){
-        super(MESS + id);
+public class NoSuchPackageException extends PaketomatException {
+    public NoSuchPackageException(String mess, HttpStatus s, int code){
+        super(mess, s, code);
     }
 }

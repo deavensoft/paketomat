@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,12 +46,10 @@ public class CenterController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
-    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id)
-    {
+    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerServiceImpl.findPackageById(id);
         if(p.isEmpty()){
-            String mess = "There is no user with id " + id;
-            log.info(mess);
+            throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.NOT_FOUND, 404);
         } else{
             String mess = "Package with id " + id + " is returned";
             log.info(mess);
@@ -67,10 +66,9 @@ public class CenterController {
             String mess = "Package with id " + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e){
-            throw new NoSuchPackageException(id);
+            throw new NoSuchPackageException("Package with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }
-
 
 }

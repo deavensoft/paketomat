@@ -1,10 +1,9 @@
 package com.deavensoft.paketomat.exceptions;
 
-public class NoSuchUserException extends Exception{
+import org.springframework.http.HttpStatus;
 
-    private static final String MESS = "There is no user with id ";
-
-    public NoSuchUserException(Long id){
-        super(MESS + id);
+public class NoSuchUserException extends PaketomatException{
+    public NoSuchUserException(String mess, HttpStatus s, int code){
+        super(mess, s, code);
     }
 }

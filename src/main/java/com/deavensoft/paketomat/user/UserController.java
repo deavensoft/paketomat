@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,11 +45,10 @@ public class UserController {
     @GetMapping(path="/{id}")
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
-    public Optional<User> findUserById(@PathVariable(name = "id") long id){
+    public Optional<User> findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
         Optional<User> u = userServiceImpl.findUserById(id);
         if(u.isEmpty()){
-            String mess = "There is no user with id " + id;
-            log.info(mess);
+            throw new NoSuchUserException("There is no user with id " + id, HttpStatus.NOT_FOUND, 404);
         } else{
             String mess = "User with id " + id + " is returned";
             log.info(mess);
@@ -66,7 +66,7 @@ public class UserController {
             log.info(mess);
             userServiceImpl.deleteUser(u.get());
         } catch (NoSuchElementException e){
-            throw new NoSuchUserException(id);
+            throw new NoSuchUserException("User with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }
