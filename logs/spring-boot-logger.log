@@ -1,13 +1,71 @@
-2022-07-25 13:24:43,029 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 10592 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
-2022-07-25 13:24:43,031 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
-2022-07-25 13:24:43,032 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
-2022-07-25 13:24:46,925 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.401 seconds (JVM running for 4.952)
-2022-07-25 13:25:25,876 INFO com.deavensoft.paketomat.center.CenterController [http-nio-8080-exec-9] All packages are returned
-2022-07-25 14:30:59,358 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 13155 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
-2022-07-25 14:30:59,359 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
-2022-07-25 14:30:59,360 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
-2022-07-25 14:31:02,613 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 3.721 seconds (JVM running for 4.181)
-2022-07-25 14:34:41,727 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 13480 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
-2022-07-25 14:34:41,729 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
-2022-07-25 14:34:41,730 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
-2022-07-25 14:34:45,702 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.452 seconds (JVM running for 4.901)
+2022-07-26 09:07:32,813 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 4460 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:07:32,815 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:07:32,816 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:07:37,352 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 5.051 seconds (JVM running for 5.567)
+2022-07-26 09:08:39,105 INFO com.deavensoft.paketomat.center.CenterController [http-nio-8080-exec-3] New package added to the database
+2022-07-26 09:08:50,985 INFO com.deavensoft.paketomat.center.CenterController [http-nio-8080-exec-4] All packages are returned
+2022-07-26 09:12:09,467 INFO com.deavensoft.paketomat.center.CenterController [http-nio-8080-exec-8] New package added to the database
+2022-07-26 09:12:14,961 INFO com.deavensoft.paketomat.center.CenterController [http-nio-8080-exec-9] All packages are returned
+2022-07-26 09:15:28,243 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 4841 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:15:28,244 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:15:28,246 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:15:32,209 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.465 seconds (JVM running for 4.944)
+2022-07-26 09:16:25,157 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 5030 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:16:25,159 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:16:25,160 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:16:29,318 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.678 seconds (JVM running for 5.185)
+2022-07-26 09:17:12,841 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 5202 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:17:12,842 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:17:12,843 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:17:16,903 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.515 seconds (JVM running for 4.974)
+2022-07-26 09:23:16,863 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 5507 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:23:16,864 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:23:16,865 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:23:20,993 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.583 seconds (JVM running for 5.049)
+2022-07-26 09:28:38,622 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 5781 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:28:38,623 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:28:38,625 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:28:42,571 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.396 seconds (JVM running for 4.904)
+2022-07-26 09:30:28,451 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 6004 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:30:28,452 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:30:28,453 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:30:32,594 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.617 seconds (JVM running for 5.071)
+2022-07-26 09:30:35,787 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no package with id 3
+2022-07-26 09:37:17,437 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with id 1
+2022-07-26 09:37:17,438 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] User with id 1 is deleted
+2022-07-26 09:37:17,438 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with id 1
+2022-07-26 09:37:24,701 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-5] All users are returned
+2022-07-26 09:37:29,303 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-3] There is no user with id 1
+2022-07-26 09:37:29,303 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-3] User with id 1 is deleted
+2022-07-26 09:37:29,303 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-3] There is no user with id 1
+2022-07-26 09:38:09,818 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 6485 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:38:09,820 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:38:09,821 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:38:13,785 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.42 seconds (JVM running for 4.845)
+2022-07-26 09:38:22,547 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:38:22,548 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] User with id 1 is deleted
+2022-07-26 09:39:05,736 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with id 1
+2022-07-26 09:39:05,737 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] User with id 1 is deleted
+2022-07-26 09:39:16,921 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 6678 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:39:16,923 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:39:16,924 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:39:20,922 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.46 seconds (JVM running for 4.934)
+2022-07-26 09:39:34,879 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:39:34,881 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] User with id 1 is deleted
+2022-07-26 09:40:15,447 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 6846 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:40:15,449 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:40:15,449 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:40:19,577 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.594 seconds (JVM running for 5.034)
+2022-07-26 09:40:24,461 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:40:24,464 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] User with id 1 is deleted
+2022-07-26 09:40:24,468 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no package with id 1
+2022-07-26 09:40:56,726 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting PaketomatApplication using Java 17.0.3.1 on korisnik-Inspiron-5402-3 with PID 7022 (/home/korisnik/IdeaProjects/paketomat/target/classes started by korisnik in /home/korisnik/IdeaProjects/paketomat)
+2022-07-26 09:40:56,727 DEBUG org.springframework.boot.StartupInfoLogger [restartedMain] Running with Spring Boot v2.7.1, Spring v5.3.21
+2022-07-26 09:40:56,728 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to 1 default profile: "default"
+2022-07-26 09:41:00,916 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started PaketomatApplication in 4.658 seconds (JVM running for 5.076)
+2022-07-26 09:41:07,396 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:41:07,398 INFO com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-1] User with id 1 is deleted
+2022-07-26 09:41:07,401 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:41:19,383 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-2] There is no package with id 3
+2022-07-26 09:41:25,512 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-3] There is no dispatcher with id 1
+2022-07-26 09:41:34,663 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-4] There is no courier with id 3

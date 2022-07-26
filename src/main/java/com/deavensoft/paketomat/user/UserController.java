@@ -1,10 +1,13 @@
 package com.deavensoft.paketomat.user;
 
 import com.deavensoft.paketomat.center.model.User;
+import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,15 +59,14 @@ public class UserController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete user", description = "Delete user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id deleted")
-    public int deleteUser(@PathVariable(name = "id") Long id){
+    public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
         Optional<User> u = findUserById(id);
         try {
             String mess = "User with id " + id + " is deleted";
             log.info(mess);
             userServiceImpl.deleteUser(u.get());
         } catch (NoSuchElementException e){
-            String mess = "There is no user with id " + id;
-            log.error(mess);
+            throw new NoSuchUserException(id);
         }
         return 1;
     }

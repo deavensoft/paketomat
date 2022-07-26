@@ -1,14 +1,15 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -60,15 +61,13 @@ public class CenterController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete package", description = "Delete package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
-    public int deletePackageById(@PathVariable(name = "id")Long id)
-    {
+    public int deletePackageById(@PathVariable(name = "id")Long id) throws NoSuchPackageException {
         try {
             centerServiceImpl.deletePackageById(id);
             String mess = "Package with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no user with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchPackageException(id);
         }
         return 1;
     }

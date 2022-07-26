@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -36,5 +37,12 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.mypackage.api"))
                 .build()
                 .apiInfo(apiInfo());
+    }
+    @Bean
+    public SimpleMailMessage templateSimpleMessage() {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setText(
+                "This is the test email template for your email:\n%s\n");
+        return message;
     }
 }

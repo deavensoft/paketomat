@@ -1,4 +1,8 @@
-2022-07-21 16:39:32,060 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-5] No user with id: 3
-2022-07-21 16:40:33,403 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] No user with id: 3
-2022-07-21 16:44:05,316 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] No user with id: 3
-2022-07-21 16:47:52,630 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with specified id
+2022-07-26 09:30:35,787 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no package with id 3
+2022-07-26 09:37:17,438 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-2] There is no user with id 1
+2022-07-26 09:37:29,303 ERROR com.deavensoft.paketomat.user.UserController [http-nio-8080-exec-3] There is no user with id 1
+2022-07-26 09:40:24,468 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no package with id 1
+2022-07-26 09:41:07,401 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-1] There is no user with id 1
+2022-07-26 09:41:19,383 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-2] There is no package with id 3
+2022-07-26 09:41:25,512 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-3] There is no dispatcher with id 1
+2022-07-26 09:41:34,663 ERROR com.deavensoft.paketomat.exceptions.CustomExceptionHandler [http-nio-8080-exec-4] There is no courier with id 3
