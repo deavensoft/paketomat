@@ -19,8 +19,6 @@ public class CenterServiceImpl implements CenterService {
     @Autowired
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;
-        this.distributiveCenter = new Center();
-        initialise();
     }
 
     public void initialise() {
