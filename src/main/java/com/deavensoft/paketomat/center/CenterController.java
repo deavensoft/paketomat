@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.*;
 
 @RestController
@@ -43,20 +44,27 @@ public class CenterController {
         centerServiceImpl.save(newPackage);
         log.info("New package added to the database");
 
-        User user = userServiceImpl.findUserById(newPackage.getReciever()).get();
-        if (user == null) {
-            return -1;
-        }
+        Optional<User> user = userServiceImpl.findUserById(newPackage.getReciever());
+        if(user.isEmpty()){
+            String messages = "User not found";
+            log.info(messages);
+        } else{
+            String messages = "User exist";
+            log.info(messages);
 
-        EmailDetails emailDetails = new EmailDetails();
-        Map<String, Object> model = new HashMap<>();
-        emailDetails.setMsgBody("Package arrived at the distribution center");
-        emailDetails.setRecipient(user.getEmail());
-        emailDetails.setSubject("test");
-        model.put("msgBody", emailDetails.getMsgBody());
-        emailServiceImpl.sendMailWithTemplate(emailDetails, model);
-        return 1;
+            EmailDetails emailDetails = new EmailDetails();
+            Map<String, Object> model = new HashMap<>();
+            emailDetails.setMsgBody("Package arrived at the distribution center");
+            emailDetails.setRecipient(user.get().getEmail());
+            emailDetails.setSubject("test");
+            model.put("msgBody", emailDetails.getMsgBody());
+            emailServiceImpl.sendMailWithTemplate(emailDetails, model);
+            return 1;
+        }
+        return -1;
+
     }
+
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
