@@ -10,6 +10,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 
 @RestController
+@Slf4j
 @RequestMapping("api/cities")
 public class CityController {
     private final CityServiceImpl cityServiceImpl;
@@ -57,9 +59,11 @@ public class CityController {
     public int deleteCity(@PathVariable(name = "id") Long id) {
         Optional<City> c = findCityById(id);
         if (c.isEmpty())
-            System.out.println("there is no city with id:" + id);
-        cityServiceImpl.deleteCity(c.get());
-        System.out.println("City deleted");
+           log.info("there is no city with id:" + id);
+        if(!c.isEmpty()) {
+            cityServiceImpl.deleteCity(c.get());
+            log.info("City deleted");
+        }
         return 1;
     }
 
