@@ -8,8 +8,8 @@ import com.deavensoft.paketomat.email.EmailServiceImpl;
 import com.deavensoft.paketomat.user.UserServiceImpl;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -17,19 +17,13 @@ import java.util.*;
 @RestController
 @RequestMapping("api/packages")
 @Slf4j
+@RequiredArgsConstructor
 public class CenterController {
 
     private final CenterServiceImpl centerServiceImpl;
     private final EmailServiceImpl emailServiceImpl;
     private final UserServiceImpl userServiceImpl;
-    @Autowired
-    public CenterController(CenterServiceImpl centerServiceImpl, EmailServiceImpl emailServiceImpl, UserServiceImpl userServiceImpl)
-    {
-        this.centerServiceImpl = centerServiceImpl;
-        this.emailServiceImpl = emailServiceImpl;
-        this.userServiceImpl = userServiceImpl;
 
-    }
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
