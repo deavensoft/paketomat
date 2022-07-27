@@ -10,27 +10,36 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-
+@RequiredArgsConstructor
 @RestController
 @Slf4j
 @RequestMapping("api/cities")
-public class CityController {
-    private final CityServiceImpl cityServiceImpl;
-    private final CitiesMapper mapper;
 
+public class CityController {
     @Autowired
-    public CityController(CityServiceImpl cityServiceImpl, CitiesMapper mapper) {
-        this.cityServiceImpl = cityServiceImpl;
-        this.mapper = mapper;
-    }
+    private final CityService cityServiceImpl;
+    @Value("${spring.url}")
+    private   String url;
+    @Value("${spring.header.host.name}")
+    private String hostName;
+    @Value("${spring.header.host.value}")
+    private String hostValue;
+    @Value("${spring.header.key.name}")
+    private String keyName;
+    @Value("${spring.header.key.value}")
+    private String keyValue;
+    private final CitiesMapper mapper;
 
     @GetMapping
     @Operation(summary = "Get cities", description = "Get all cities")
@@ -59,7 +68,7 @@ public class CityController {
     public int deleteCity(@PathVariable(name = "id") Long id) {
         Optional<City> c = findCityById(id);
         if (c.isEmpty())
-           log.info("there is no city with id:" + id);
+           log.info("There is no city with id:" + id);
         if(!c.isEmpty()) {
             cityServiceImpl.deleteCity(c.get());
             log.info("City deleted");
@@ -71,15 +80,7 @@ public class CityController {
     public String checkCities() throws IOException {
         OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder()
-                .url("https://countries-cities.p.rapidapi.com/location/country/RS/city/list?page=3&per_page=100&population=1501")
-                .get()
-                .addHeader("X-RapidAPI-Key", "c427cbdd50msh072fe84a375af9cp1f2596jsn0f5919dacf12")
-                .addHeader("X-RapidAPI-Host", "countries-cities.p.rapidapi.com")
-                .build();
-
-        Response response = client.newCall(request).execute();
-
+        Response response = client.newCall(doRequest(url)).execute();
 
         CitiesDto citiesDto = new ObjectMapper().readValue(response.body().string(), CitiesDto.class);
         List<CityDto> cities = citiesDto.getCities();
@@ -96,17 +97,10 @@ public class CityController {
 
             for (int i = 2; i <= totalNum; i++) {
                 String ii = Integer.toString(i);
-                String url = "https://countries-cities.p.rapidapi.com/location/country/RS/city/list?page={1}&per_page=100&population=1501";
+                String urlPagination = url;
                 String newUri = url.replace("{1}", ii);
 
-                Request requestPaginate = new Request.Builder()
-                        .url(newUri)
-                        .get()
-                        .addHeader("X-RapidAPI-Key", "c427cbdd50msh072fe84a375af9cp1f2596jsn0f5919dacf12")
-                        .addHeader("X-RapidAPI-Host", "countries-cities.p.rapidapi.com")
-                        .build();
-
-                Response responsePaginate = client.newCall(requestPaginate).execute();
+                Response responsePaginate = client.newCall(doRequest(newUri)).execute();
 
                 CitiesDto citiesDtoo = new ObjectMapper().readValue(responsePaginate.body().string(), CitiesDto.class);
                 List<CityDto> citiess = citiesDtoo.getCities();
@@ -122,5 +116,14 @@ public class CityController {
             return "Data is consistent with database";
         }
         return response.body().string();
+    }
+    private Request doRequest(String url){
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader(keyName, keyValue)
+                .addHeader(hostName, hostValue)
+                .build();
+        return request;
     }
 }
