@@ -1,9 +1,12 @@
 package com.deavensoft.paketomat.dispatcher;
 
+import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,11 +41,10 @@ public class DispatcherController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher wwith specified id returned")
-    public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id){
+    public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         Optional<DispatcherModel> d = dispatcherServiceImpl.findDispatcherById(id);
         if(d.isEmpty()){
-            String mess = "There is no dispatcher with id " + id;
-            log.info(mess);
+            throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Dispatcher with id " + id + " is returned";
             log.info(mess);
@@ -53,14 +55,13 @@ public class DispatcherController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete dispatcher", description = "Delete dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher with specified id deleted")
-    public int deleteDispatcherById(@PathVariable(name = "id") Long id){
+    public int deleteDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         try {
             dispatcherServiceImpl.deleteDispatcherById(id);
             String mess = "Dispatcher with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no dispatcher with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchDispatcherException("Dispatcher with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

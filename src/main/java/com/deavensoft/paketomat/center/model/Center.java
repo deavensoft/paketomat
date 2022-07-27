@@ -11,5 +11,4 @@ import java.util.ArrayList;
 public class Center {
     private ArrayList<Package> packages;
     private ArrayList<City> cities;
-
 }
