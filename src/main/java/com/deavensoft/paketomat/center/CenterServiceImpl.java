@@ -20,7 +20,7 @@ public class CenterServiceImpl implements CenterService {
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;
     }
-    public void initialise(){
+
 
     public List<Package> getAllPackages() {
         return centerRepository.findAll();
@@ -34,6 +34,6 @@ public class CenterServiceImpl implements CenterService {
         return centerRepository.findById(id);
     }
     public void deletePackageById(Long id) {
-        centerrepository.deleteById(id);
+        centerRepository.deleteById(id);
     }
 }
