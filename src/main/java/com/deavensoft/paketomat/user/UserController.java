@@ -1,10 +1,14 @@
 package com.deavensoft.paketomat.user;
 
 import com.deavensoft.paketomat.center.model.User;
+import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,11 +45,10 @@ public class UserController {
     @GetMapping(path="/{id}")
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
-    public Optional<User> findUserById(@PathVariable(name = "id") long id){
+    public Optional<User> findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
         Optional<User> u = userServiceImpl.findUserById(id);
         if(u.isEmpty()){
-            String mess = "There is no user with id " + id;
-            log.info(mess);
+            throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "User with id " + id + " is returned";
             log.info(mess);
@@ -56,15 +59,14 @@ public class UserController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete user", description = "Delete user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id deleted")
-    public int deleteUser(@PathVariable(name = "id") Long id){
+    public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
         Optional<User> u = findUserById(id);
         try {
             String mess = "User with id " + id + " is deleted";
             log.info(mess);
             userServiceImpl.deleteUser(u.get());
         } catch (NoSuchElementException e){
-            String mess = "There is no user with id " + id;
-            log.error(mess);
+            throw new NoSuchUserException("User with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

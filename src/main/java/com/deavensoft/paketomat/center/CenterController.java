@@ -6,14 +6,20 @@ import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailServiceImpl;
 import com.deavensoft.paketomat.user.UserServiceImpl;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/packages")
@@ -68,12 +74,10 @@ public class CenterController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
-    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id)
-    {
+    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerServiceImpl.findPackageById(id);
         if(p.isEmpty()){
-            String mess = "There is no user with id " + id;
-            log.info(mess);
+            throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Package with id " + id + " is returned";
             log.info(mess);
@@ -84,15 +88,13 @@ public class CenterController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete package", description = "Delete package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
-    public int deletePackageById(@PathVariable(name = "id")Long id)
-    {
+    public int deletePackageById(@PathVariable(name = "id")Long id) throws NoSuchPackageException {
         try {
             centerServiceImpl.deletePackageById(id);
             String mess = "Package with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no user with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchPackageException("Package with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }
