@@ -1,29 +1,36 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.center.model.User;
+import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.email.EmailServiceImpl;
+import com.deavensoft.paketomat.user.UserServiceImpl;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.*;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("api/packages")
 @Slf4j
+@RequiredArgsConstructor
 public class CenterController {
 
     private final CenterServiceImpl centerServiceImpl;
-    @Autowired
-    public CenterController(CenterServiceImpl centerServiceImpl)
-    {
-        this.centerServiceImpl = centerServiceImpl;
-    }
+    private final EmailServiceImpl emailServiceImpl;
+    private final UserServiceImpl userServiceImpl;
+
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
@@ -39,10 +46,31 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "New package added")
     public int savePackage(@RequestBody Package newPackage)
     {
+        newPackage.setStatus(Status.NEW);
         centerServiceImpl.save(newPackage);
         log.info("New package added to the database");
-        return 1;
+
+        Optional<User> user = userServiceImpl.findUserById(newPackage.getReciever());
+        if(user.isEmpty()){
+            String messages = "User not found";
+            log.info(messages);
+        } else{
+            String messages = "User exist";
+            log.info(messages);
+
+            EmailDetails emailDetails = new EmailDetails();
+            Map<String, Object> model = new HashMap<>();
+            emailDetails.setMsgBody("Package arrived at the distribution center");
+            emailDetails.setRecipient(user.get().getEmail());
+            emailDetails.setSubject("test");
+            model.put("msgBody", emailDetails.getMsgBody());
+            emailServiceImpl.sendMailWithTemplate(emailDetails, model);
+            return 1;
+        }
+        return -1;
+
     }
+
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
@@ -70,5 +98,6 @@ public class CenterController {
         }
         return 1;
     }
+
 
 }
