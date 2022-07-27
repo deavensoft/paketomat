@@ -44,7 +44,7 @@ public class DispatcherController {
     public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         Optional<DispatcherModel> d = dispatcherServiceImpl.findDispatcherById(id);
         if(d.isEmpty()){
-            throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.NOT_FOUND, 404);
+            throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Dispatcher with id " + id + " is returned";
             log.info(mess);

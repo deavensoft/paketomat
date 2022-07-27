@@ -49,7 +49,7 @@ public class CenterController {
     public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerServiceImpl.findPackageById(id);
         if(p.isEmpty()){
-            throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.NOT_FOUND, 404);
+            throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Package with id " + id + " is returned";
             log.info(mess);

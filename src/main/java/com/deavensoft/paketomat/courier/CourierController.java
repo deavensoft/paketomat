@@ -45,7 +45,7 @@ public class CourierController {
     public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<CourierModel> c = courierServiceImpl.getCourierById(id);
         if(c.isEmpty()){
-            throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.NOT_FOUND, 404);
+            throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Courier with id " + id + " is returned";
             log.info(mess);

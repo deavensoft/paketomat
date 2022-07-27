@@ -14,7 +14,8 @@ public class CustomExceptionHandler {
     public ResponseEntity<Object> handleException(PaketomatException e){
         ErrorAttributes error;
         error = new ErrorAttributes(e.getCode(), e.getStatus(), e.getMessage());
-        log.error(e.getMessage());
+        if(e.getCode() == 200) log.info(e.getMessage());
+        else log.error(e.getMessage());
         return new ResponseEntity<>(error, error.getStatus());
     }
 }

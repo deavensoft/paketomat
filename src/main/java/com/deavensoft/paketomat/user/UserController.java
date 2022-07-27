@@ -48,7 +48,7 @@ public class UserController {
     public Optional<User> findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
         Optional<User> u = userServiceImpl.findUserById(id);
         if(u.isEmpty()){
-            throw new NoSuchUserException("There is no user with id " + id, HttpStatus.NOT_FOUND, 404);
+            throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "User with id " + id + " is returned";
             log.info(mess);
