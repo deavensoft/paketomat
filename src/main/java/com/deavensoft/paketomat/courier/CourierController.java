@@ -1,9 +1,12 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,11 +42,10 @@ public class CourierController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get courier", description = "Get courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
-    public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id){
+    public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<CourierModel> c = courierServiceImpl.getCourierById(id);
         if(c.isEmpty()){
-            String mess = "There is no courier with id " + id;
-            log.info(mess);
+            throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{
             String mess = "Courier with id " + id + " is returned";
             log.info(mess);
@@ -54,14 +56,13 @@ public class CourierController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete courier", description = "Delete courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id deleted")
-    public int deleteCourierById(@PathVariable(name = "id") Long id){
+    public int deleteCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         try {
             courierServiceImpl.deleteCourierById(id);
             String mess = "Courier with id " + id + " is deleted";
             log.info(mess);
-        } catch (NoSuchElementException e){
-            String mess = "There is no courier with id " + id;
-            log.error(mess);
+        } catch (EmptyResultDataAccessException e){
+            throw new NoSuchCourierException("Courier with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

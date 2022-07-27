@@ -1,8 +1,10 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import com.deavensoft.paketomat.center.model.Center;
 
@@ -18,6 +20,7 @@ public class CenterServiceImpl implements CenterService {
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;
     }
+    public void initialise(){
 
     public List<Package> getAllPackages() {
         return centerRepository.findAll();
@@ -30,11 +33,7 @@ public class CenterServiceImpl implements CenterService {
     public Optional<Package> findPackageById(Long id) {
         return centerRepository.findById(id);
     }
-
     public void deletePackageById(Long id) {
-        centerRepository.deleteById(id);
+        centerrepository.deleteById(id);
     }
-
-
-
 }
