@@ -13,14 +13,12 @@ import java.util.Optional;
 
 @Service
 public class CenterServiceImpl implements CenterService {
-    private CenterRepository centerRepository;
-
+    private final CenterRepository centerRepository;
 
     @Autowired
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;
     }
-    public void initialise(){
 
     public List<Package> getAllPackages() {
         return centerRepository.findAll();
@@ -34,6 +32,6 @@ public class CenterServiceImpl implements CenterService {
         return centerRepository.findById(id);
     }
     public void deletePackageById(Long id) {
-        centerrepository.deleteById(id);
+        centerRepository.deleteById(id);
     }
 }
