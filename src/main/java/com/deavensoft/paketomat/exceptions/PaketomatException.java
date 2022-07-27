@@ -1,17 +1,15 @@
 package com.deavensoft.paketomat.exceptions;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-@Data
+@Setter
+@Getter
+@RequiredArgsConstructor
 public class PaketomatException extends Exception{
-    private HttpStatus status;
-    private int code;
-
-    PaketomatException(String mess, HttpStatus s, int code){
-        super(mess);
-        this.status = s;
-        this.code = code;
-    }
-
+    private final String message;
+    private final HttpStatus status;
+    private final int code;
 }
