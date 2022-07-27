@@ -4,41 +4,35 @@ import com.deavensoft.paketomat.center.model.Package;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import com.deavensoft.paketomat.center.model.Center;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CenterServiceImpl implements CenterService{
-    private CenterRepository centerrepository;
-    private com.deavensoft.paketomat.center.model.Center distributiveCenter;
+public class CenterServiceImpl implements CenterService {
+    private CenterRepository centerRepository;
+
+
     @Autowired
-    public CenterServiceImpl(@Qualifier ("center") CenterRepository centerrepository)
-    {
-        this.centerrepository = centerrepository;
-        this.distributiveCenter = new com.deavensoft.paketomat.center.model.Center();
-        initialise();
-    }
-    public void initialise(){
-
-    }
-    public List<Package> getAllPackages()
-    {
-      return  centerrepository.findAll();
+    public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
+        this.centerRepository = centerRepository;
     }
 
-    public void save(Package packagee)
-    {
-        centerrepository.save(packagee);
+    public List<Package> getAllPackages() {
+        return centerRepository.findAll();
     }
 
-    public Optional<Package> findPackageById(Long id)
-    {
-        return centerrepository.findById(id);
+    public void save(Package p) {
+        centerRepository.save(p);
     }
-    public void deletePackageById(Long id)
-    {
-        centerrepository.deleteById(id);
+
+    public Optional<Package> findPackageById(Long id) {
+        return centerRepository.findById(id);
+    }
+
+    public void deletePackageById(Long id) {
+        centerRepository.deleteById(id);
     }
 
 
