@@ -19,10 +19,6 @@ public class CenterServiceImpl implements CenterService {
         this.centerRepository = centerRepository;
     }
 
-    public void initialise() {
-
-    }
-
     public List<Package> getAllPackages() {
         return centerRepository.findAll();
     }
