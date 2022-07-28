@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class CityServiceImpl implements CityService {
-    private CityRepository cityRepository;
+    private final CityRepository cityRepository;
     @Autowired
     public CityServiceImpl(@Qualifier("city") CityRepository cityRepository){
         this.cityRepository = cityRepository;

@@ -6,7 +6,7 @@ import com.deavensoft.paketomat.city.dto.CityDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = CityMapper.class)
+@Mapper(componentModel = "spring")
 public interface CitiesMapper {
 
 

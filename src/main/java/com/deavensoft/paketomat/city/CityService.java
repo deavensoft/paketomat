@@ -13,6 +13,4 @@ public interface CityService {
      int deleteCity(City c);
      Optional<City> findCityById(Long id);
 
-
-
 }

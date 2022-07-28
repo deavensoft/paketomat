@@ -3,7 +3,7 @@ package com.deavensoft.paketomat.city;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.city.dto.CitiesDto;
 import com.deavensoft.paketomat.city.dto.CityDto;
-import com.deavensoft.paketomat.mapper.CitiesMapper;
+import com.deavensoft.paketomat.mapper.CityMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,17 +28,17 @@ import java.util.Optional;
 public class CityController {
     @Autowired
     private final CityService cityServiceImpl;
-    @Value("${spring.url}")
-    private   String url;
-    @Value("${spring.header.host.name}")
+    @Value("${spring.external.api.city.url}")
+    private String url;
+    @Value("${spring.external.api.city.header.host.name}")
     private String hostName;
-    @Value("${spring.header.host.value}")
+    @Value("${spring.external.api.city.header.host.value}")
     private String hostValue;
-    @Value("${spring.header.key.name}")
+    @Value("${spring.external.api.city.header.key.name}")
     private String keyName;
-    @Value("${spring.header.key.value}")
+    @Value("${spring.external.api.city.header.key.value}")
     private String keyValue;
-    private final CitiesMapper mapper;
+    private final CityMapper mapper;
 
     @GetMapping
     @Operation(summary = "Get cities", description = "Get all cities")
@@ -78,31 +77,24 @@ public class CityController {
 
     @GetMapping(path = "/check")
     public String checkCities() throws IOException {
-        OkHttpClient client = new OkHttpClient();
 
-        Response response = client.newCall(doRequest(url)).execute();
-
-        CitiesDto citiesDto = new ObjectMapper().readValue(response.body().string(), CitiesDto.class);
+        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url).body().string(), CitiesDto.class);
         List<CityDto> cities = citiesDto.getCities();
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
         Integer numFromTable = getAllCities().size();
-        client.cancel(response);
-        if (numFromTable < numCities) {
+        if (numFromTable <= numCities) {
 
             for (CityDto city : cities) {
 
                 save(mapper.cityDtoToCity(city));
-            }
+           }
 
             for (int i = 2; i <= totalNum; i++) {
                 String ii = Integer.toString(i);
-                String urlPagination = url;
                 String newUri = url.replace("{1}", ii);
 
-                Response responsePaginate = client.newCall(doRequest(newUri)).execute();
-
-                CitiesDto citiesDtoo = new ObjectMapper().readValue(responsePaginate.body().string(), CitiesDto.class);
+                CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri).body().string(), CitiesDto.class);
                 List<CityDto> citiess = citiesDtoo.getCities();
 
                 for (CityDto city : citiess) {
@@ -115,15 +107,20 @@ public class CityController {
         } else {
             return "Data is consistent with database";
         }
-        return response.body().string();
+        return doRequest(url).body().string();
     }
-    private Request doRequest(String url){
+    private Response doRequest(String url) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .addHeader(keyName, keyValue)
                 .addHeader(hostName, hostValue)
                 .build();
-        return request;
+
+        Response response;
+
+        return response=client.newCall(request).execute();
     }
 }
