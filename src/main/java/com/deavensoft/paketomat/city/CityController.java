@@ -83,7 +83,7 @@ public class CityController {
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
         Integer numFromTable = getAllCities().size();
-        if (numFromTable <= numCities) {
+        if (numFromTable < numCities) {
 
             for (CityDto city : cities) {
 
@@ -119,8 +119,8 @@ public class CityController {
                 .addHeader(hostName, hostValue)
                 .build();
 
-        Response response;
 
-        return response=client.newCall(request).execute();
+
+        return client.newCall(request).execute();
     }
 }
