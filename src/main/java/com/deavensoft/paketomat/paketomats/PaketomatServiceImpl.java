@@ -27,5 +27,10 @@ public class PaketomatServiceImpl implements PaketomatService{
          paketomatRepository.save(paketomat);
     }
 
+    @Override
+    public void deleteAll() {
+        paketomatRepository.deleteAll();
+    }
+
 
 }

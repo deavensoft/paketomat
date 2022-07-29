@@ -1,12 +1,9 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import com.deavensoft.paketomat.center.model.Center;
 
 import java.util.List;
 import java.util.Optional;

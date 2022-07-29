@@ -5,9 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,9 +20,9 @@ public class Paketomat {
     @Column(name = "city")
     private Long city;
     @Transient
-    private final int size = 5;
+    private  static final int SIZE = 5;
     @Transient
-    private ArrayList<Package> packages= new ArrayList<>(size);
+    private ArrayList<Package> packages= new ArrayList<>(SIZE);
     public Paketomat(@JsonProperty("id") Long id, @JsonProperty("city") Long city){
         this.id = id;
         this.city = city;
