@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "city")
+@Table(name = "city", schema = "public")
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
