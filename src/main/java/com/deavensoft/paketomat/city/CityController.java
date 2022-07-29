@@ -83,7 +83,6 @@ public class CityController {
     public String checkCities() throws IOException {
 
         CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url).body().string(), CitiesDto.class);
-        List<CityDto> cities = citiesDto.getCities();
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
         Integer numFromTable = getAllCities().size();
