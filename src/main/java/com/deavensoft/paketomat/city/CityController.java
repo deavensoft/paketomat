@@ -38,6 +38,10 @@ public class CityController {
     private String keyName;
     @Value("${spring.external.api.city.header.key.value}")
     private String keyValue;
+
+    @Value("${spring.external.api.city.startPage}")
+    private Integer startPage;
+
     private final CityMapper mapper;
 
     @GetMapping
@@ -85,12 +89,7 @@ public class CityController {
         Integer numFromTable = getAllCities().size();
         if (numFromTable < numCities) {
 
-            for (CityDto city : cities) {
-
-                save(mapper.cityDtoToCity(city));
-           }
-
-            for (int i = 2; i <= totalNum; i++) {
+            for (int i = startPage; i <= totalNum; i++) {
                 String ii = Integer.toString(i);
                 String newUri = url.replace("{1}", ii);
 
@@ -118,8 +117,6 @@ public class CityController {
                 .addHeader(keyName, keyValue)
                 .addHeader(hostName, hostValue)
                 .build();
-
-
 
         return client.newCall(request).execute();
     }
