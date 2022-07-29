@@ -16,7 +16,7 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private UUID id;
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "population")
