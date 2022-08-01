@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.center;
 
+
 import com.deavensoft.paketomat.center.model.Package;
 
 import java.util.List;
@@ -10,11 +11,12 @@ public interface CenterService {
 
     public List<Package> getAllPackages();
 
-    public void save(Package packagee);
+    public void save(Package p);
 
     public Optional<Package> findPackageById(Long id);
 
     public void deletePackageById(Long id);
+
 
 
 }

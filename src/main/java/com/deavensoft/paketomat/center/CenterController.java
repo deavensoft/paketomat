@@ -5,13 +5,13 @@ import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailServiceImpl;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import com.deavensoft.paketomat.user.UserServiceImpl;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +30,9 @@ public class CenterController {
     private final CenterServiceImpl centerServiceImpl;
     private final EmailServiceImpl emailServiceImpl;
     private final UserServiceImpl userServiceImpl;
+
+    private PackageMapper packageMapper;
+
 
 
     @GetMapping
