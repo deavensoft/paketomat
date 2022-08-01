@@ -10,5 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 class PaketomatRepositoryApplicationTests {
 	@Test
 	void contextLoads() {
+
 	}
 }

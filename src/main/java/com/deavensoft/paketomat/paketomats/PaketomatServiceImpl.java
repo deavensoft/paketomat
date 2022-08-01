@@ -22,7 +22,7 @@ public class PaketomatServiceImpl implements PaketomatService{
     }
 
     @Override
-    public void savePaketomats(Paketomat paketomat) {
+    public void savePaketomat(Paketomat paketomat) {
          paketomatRepository.save(paketomat);
     }
 

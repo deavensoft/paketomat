@@ -1,9 +1,9 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
-import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.user.UserService;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +31,6 @@ public class CenterController {
     private final EmailService emailService;
     private final UserService userService;
 
-    private final DispatcherService dispatcherService;
-
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
@@ -47,12 +44,13 @@ public class CenterController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody Package newPackage) throws IOException {
+    public int savePackage(@RequestBody Package newPackage)
+    {
         newPackage.setStatus(Status.NEW);
         centerService.save(newPackage);
         log.info("New package added to the database");
 
-        Optional<User> user = userService.findUserById(newPackage.getReciever());
+        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){
             String messages = "User not found";
             log.info(messages);
@@ -67,10 +65,10 @@ public class CenterController {
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
             emailService.sendMailWithTemplate(emailDetails, model);
-            dispatcherService.delieverPackage(newPackage);
             return 1;
         }
         return -1;
+
     }
 
     @GetMapping(path = "/{id}")
@@ -100,6 +98,10 @@ public class CenterController {
         }
         return 1;
     }
-
+    @DeleteMapping
+    public int deleteAllPackages(){
+        centerService.deleteAll();
+        return 1;
+    }
 
 }

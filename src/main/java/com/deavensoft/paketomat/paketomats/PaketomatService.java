@@ -9,7 +9,7 @@ public interface PaketomatService {
 
     List<Paketomat> getAllPaketomats();
 
-    void savePaketomats(Paketomat paketomat);
+    void savePaketomat(Paketomat paketomat);
     void deleteAll();
 
 }

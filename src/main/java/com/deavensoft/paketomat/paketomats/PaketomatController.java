@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 @AllArgsConstructor
 @RestController
@@ -31,23 +32,19 @@ public class PaketomatController {
     @PostMapping
     public int savePaketomat(@RequestBody Paketomat paketomat){
         log.info("New paketomat added.");
-        paketomatService.savePaketomats(paketomat);
+        paketomatService.savePaketomat(paketomat);
         return 1;
     }
     @PostMapping("/saveAll")
     @Operation(summary = "Add new paketomats")
     @ApiResponse(responseCode = "200", description = "New paketomats added")
-    public int saveAllPaketomats(){
+    public int createAllPaketomatsInCountry(){
         int numberOfPaketomats;
         for(City c: cityService.getAllCities()){
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
-                    Paketomat p = new Paketomat(1L,c.getId());
-                    savePaketomat(p);
-                    c.getPaketomats().add(p);
-
-
+                    savePaketomat(new Paketomat(1L,c,new ArrayList<>()));
                 }
             }
         }

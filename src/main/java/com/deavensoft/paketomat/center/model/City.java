@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "city", schema = "public")
+@Table(name = "city")
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,7 +26,7 @@ public class City {
     @Column(name = "y")
     private double longitude;
     @Transient
-    private ArrayList<Paketomat> paketomats = new ArrayList<>();
+    private ArrayList<Paketomat> paketomats;
 
 
 }
