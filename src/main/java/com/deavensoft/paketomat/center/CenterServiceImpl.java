@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class CenterServiceImpl implements CenterService {
-    private CenterRepository centerRepository;
+    private final CenterRepository centerRepository;
 
 
     @Autowired
@@ -32,5 +32,10 @@ public class CenterServiceImpl implements CenterService {
     }
     public void deletePackageById(Long id) {
         centerRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        centerRepository.deleteAll();
     }
 }

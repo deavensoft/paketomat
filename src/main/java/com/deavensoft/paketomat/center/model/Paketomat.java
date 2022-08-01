@@ -1,30 +1,29 @@
 package com.deavensoft.paketomat.center.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "paketomats", schema = "public")
+@Table(name = "paketomat")
 public class Paketomat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    @Column(name = "city")
-    private Long city;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="city", nullable=false)
+    private City city;
+
     @Transient
-    private  static final int SIZE = 5;
-    @Transient
-    private ArrayList<Package> packages= new ArrayList<>(SIZE);
-    public Paketomat(@JsonProperty("id") Long id, @JsonProperty("city") Long city){
-        this.id = id;
-        this.city = city;
-    }
+    private List<Package> packages;
+
 }

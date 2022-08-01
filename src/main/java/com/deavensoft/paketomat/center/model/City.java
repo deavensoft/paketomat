@@ -1,11 +1,8 @@
 package com.deavensoft.paketomat.center.model;
 
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.ArrayList;
-
-
+import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +23,6 @@ public class City {
     @Column(name = "y")
     private double longitude;
     @Transient
-    private ArrayList<Paketomat> paketomats;
-
+    private List<Paketomat> paketomats;
 
 }

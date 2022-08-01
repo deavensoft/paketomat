@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.paketomats;
 
-import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +22,7 @@ public class PaketomatServiceImpl implements PaketomatService{
     }
 
     @Override
-    public void savePaketomats(Paketomat paketomat) {
+    public void savePaketomat(Paketomat paketomat) {
          paketomatRepository.save(paketomat);
     }
 

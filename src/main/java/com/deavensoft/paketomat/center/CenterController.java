@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -49,7 +50,7 @@ public class CenterController {
         centerService.save(newPackage);
         log.info("New package added to the database");
 
-        Optional<User> user = userService.findUserById(newPackage.getReciever());
+        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){
             String messages = "User not found";
             log.info(messages);
@@ -97,6 +98,10 @@ public class CenterController {
         }
         return 1;
     }
-
+    @DeleteMapping
+    public int deleteAllPackages(){
+        centerService.deleteAll();
+        return 1;
+    }
 
 }
