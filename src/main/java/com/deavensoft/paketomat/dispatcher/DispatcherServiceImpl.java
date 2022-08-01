@@ -1,15 +1,13 @@
 package com.deavensoft.paketomat.dispatcher;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class DispatcherServiceImpl implements DispatcherService {
-    private DispatcherRepository dispatcherRepository;
+    private final DispatcherRepository dispatcherRepository;
     @Autowired
     public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository){
         this.dispatcherRepository = dispatcherRepository;

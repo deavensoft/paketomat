@@ -1,12 +1,8 @@
 package com.deavensoft.paketomat.center.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,18 +14,10 @@ public class Package {
     private  Long id;
     @Column(name = "status")
     private Status status;
-
-    @Column(name="reciever")
-    private Long sender;
-
-    @Column(name="sender")
-    private Long reciever;
-
-    public Package(@JsonProperty("id") Long id,@JsonProperty("Status") Status status,@JsonProperty("reciever") Long reciever,
-                   @JsonProperty("sender")Long sender){
-        this.id = id;
-        this.status = status;
-        this.reciever=reciever;
-        this.sender=sender;
-    }
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private User user;
+    @ManyToOne
+    @JoinColumn(name="paketomat_id")
+    private Paketomat paketomat;
 }

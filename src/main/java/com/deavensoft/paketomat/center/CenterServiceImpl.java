@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.center;
 
-import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +12,7 @@ import java.util.Optional;
 public class CenterServiceImpl implements CenterService {
     private final CenterRepository centerRepository;
 
+
     @Autowired
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;
@@ -24,7 +24,6 @@ public class CenterServiceImpl implements CenterService {
     }
 
     public void save(Package p) {
-
         centerRepository.save(p);
     }
 
@@ -35,4 +34,8 @@ public class CenterServiceImpl implements CenterService {
         centerRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteAll() {
+        centerRepository.deleteAll();
+    }
 }

@@ -1,12 +1,12 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
-import com.deavensoft.paketomat.email.EmailServiceImpl;
-import com.deavensoft.paketomat.mapper.PackageMapper;
-import com.deavensoft.paketomat.user.UserServiceImpl;
+import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.user.UserService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,12 +27,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CenterController {
 
-    private final CenterServiceImpl centerServiceImpl;
-    private final EmailServiceImpl emailServiceImpl;
-    private final UserServiceImpl userServiceImpl;
-
-    private PackageMapper packageMapper;
-
+    private final CenterService centerService;
+    private final EmailService emailService;
+    private final UserService userService;
 
 
     @GetMapping
@@ -41,7 +38,7 @@ public class CenterController {
     public List<Package> getAllPackages()
     {
         log.info("All packages are returned");
-        return centerServiceImpl.getAllPackages();
+        return centerService.getAllPackages();
     }
 
     @PostMapping
@@ -50,10 +47,10 @@ public class CenterController {
     public int savePackage(@RequestBody Package newPackage)
     {
         newPackage.setStatus(Status.NEW);
-        centerServiceImpl.save(newPackage);
+        centerService.save(newPackage);
         log.info("New package added to the database");
 
-        Optional<User> user = userServiceImpl.findUserById(newPackage.getReciever());
+        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){
             String messages = "User not found";
             log.info(messages);
@@ -67,7 +64,7 @@ public class CenterController {
             emailDetails.setRecipient(user.get().getEmail());
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
-            emailServiceImpl.sendMailWithTemplate(emailDetails, model);
+            emailService.sendMailWithTemplate(emailDetails, model);
             return 1;
         }
         return -1;
@@ -78,7 +75,7 @@ public class CenterController {
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
     public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
-        Optional<Package> p = centerServiceImpl.findPackageById(id);
+        Optional<Package> p = centerService.findPackageById(id);
         if(p.isEmpty()){
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         } else{
@@ -93,7 +90,7 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
     public int deletePackageById(@PathVariable(name = "id")Long id) throws NoSuchPackageException {
         try {
-            centerServiceImpl.deletePackageById(id);
+            centerService.deletePackageById(id);
             String mess = "Package with id " + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e){
@@ -101,6 +98,10 @@ public class CenterController {
         }
         return 1;
     }
-
+    @DeleteMapping
+    public int deleteAllPackages(){
+        centerService.deleteAll();
+        return 1;
+    }
 
 }
