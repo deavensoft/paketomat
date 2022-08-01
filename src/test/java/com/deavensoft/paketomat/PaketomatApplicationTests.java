@@ -12,6 +12,7 @@ class PaketomatApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

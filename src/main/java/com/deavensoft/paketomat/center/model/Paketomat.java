@@ -1,17 +1,29 @@
 package com.deavensoft.paketomat.center.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.List;
 
-@Data
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "paketomat")
 public class Paketomat {
-
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="city", nullable=false)
     private City city;
-    private int size;
-    private ArrayList<Package> packages;
+
+    @Transient
+    private List<Package> packages;
+
 }
