@@ -26,7 +26,7 @@ public class City {
     @Column(name = "y")
     private double longitude;
     @Transient
-    private ArrayList<Paketomat> paketomats;
+    private ArrayList<Paketomat> paketomats = new ArrayList<>();
 
 
 }

@@ -67,4 +67,8 @@ public class DispatcherController {
         }
         return 1;
     }
+    @GetMapping(path ="/distance")
+    public void bla(){
+
+    }
 }

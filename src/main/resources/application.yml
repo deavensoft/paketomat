@@ -32,3 +32,14 @@ spring:
         name: "X-RapidAPI-Host"
         value: "countries-cities.p.rapidapi.com"
 
+  external.api.distance:
+    url: "https://distanceto.p.rapidapi.com/get?route=%5B%7B%22t%22%3A%22{cityReciever}%22%7D%2C%7B%22t%22%3A%22{cityPaketomat}%22%7D%5D&car=false"
+    header:
+      key:
+        name: "X-RapidAPI-Key"
+        value: "c427cbdd50msh072fe84a375af9cp1f2596jsn0f5919dacf12"
+      host:
+        name: "X-RapidAPI-Host"
+        value: "distanceto.p.rapidapi.com"
+
+

@@ -22,9 +22,13 @@ public class Paketomat {
     @Transient
     private  static final int SIZE = 5;
     @Transient
-    private ArrayList<Package> packages= new ArrayList<>(SIZE);
+    private ArrayList<Package> packages= new ArrayList<>();
     public Paketomat(@JsonProperty("id") Long id, @JsonProperty("city") Long city){
         this.id = id;
         this.city = city;
+    }
+    public void reserveSlot(Package newPackage){
+        newPackage.setStatus(Status.TO_DISPATCH);
+        getPackages().add(newPackage);
     }
 }
