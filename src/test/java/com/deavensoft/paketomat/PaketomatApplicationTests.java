@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootTest
 @ComponentScan
 @EnableJpaRepositories(basePackages = {"com.deavensoft.paketomat"})
-class PaketomatRepositoryApplicationTests {
+class PaketomatApplicationTests {
 	@Test
 	void contextLoads() {
 

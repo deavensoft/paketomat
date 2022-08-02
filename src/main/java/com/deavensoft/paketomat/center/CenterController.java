@@ -7,6 +7,7 @@ import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.user.UserService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,7 +49,7 @@ public class CenterController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody Package newPackage) throws IOException, NoSuchUserException {
+    public int savePackage(@RequestBody Package newPackage) throws IOException, PaketomatException {
         newPackage.setStatus(Status.NEW);
         centerService.save(newPackage);
         log.info("New package added to the database");
@@ -69,6 +70,7 @@ public class CenterController {
             model.put("msgBody", emailDetails.getMsgBody());
             emailService.sendMailWithTemplate(emailDetails, model);
             dispatcherService.delieverPackage(newPackage);
+            log.info("Package is ready to be dispatched");
             return 1;
         }
         return -1;

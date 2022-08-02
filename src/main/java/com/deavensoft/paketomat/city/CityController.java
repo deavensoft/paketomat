@@ -29,18 +29,18 @@ import java.util.Optional;
 public class CityController {
     @Autowired
     private final CityService cityServiceImpl;
-    @Value("${spring.external.api.city.url}")
+    @Value("${external.api.city.url}")
     private String url;
-    @Value("${spring.external.api.city.header.host.name}")
+    @Value("${external.api.city.header.host.name}")
     private String hostName;
-    @Value("${spring.external.api.city.header.host.value}")
+    @Value("${external.api.city.header.host.value}")
     private String hostValue;
-    @Value("${spring.external.api.city.header.key.name}")
+    @Value("${external.api.city.header.key.name}")
     private String keyName;
-    @Value("${spring.external.api.city.header.key.value}")
+    @Value("${external.api.city.header.key.value}")
     private String keyValue;
 
-    @Value("${spring.external.api.city.startPage}")
+    @Value("${external.api.city.start-page}")
     private Integer startPage;
 
     private final CityMapper mapper;

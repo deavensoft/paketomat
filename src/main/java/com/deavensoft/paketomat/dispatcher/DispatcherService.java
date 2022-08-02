@@ -1,7 +1,9 @@
 package com.deavensoft.paketomat.dispatcher;
 
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.exceptions.NoSuchUserException;
+
+import com.deavensoft.paketomat.exceptions.PaketomatException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,6 @@ public interface DispatcherService{
      void deleteDispatcherById(Long id);
 
 
-    void delieverPackage(Package newPackage) throws IOException, NoSuchUserException;
+    void delieverPackage(Package newPackage) throws IOException, PaketomatException;
 
 }
