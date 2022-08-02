@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,4 +65,6 @@ public class CourierController {
         }
         return 1;
     }
+
+
 }
