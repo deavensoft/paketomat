@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.city;
 
-import com.deavensoft.paketomat.center.model.Center;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.city.dto.CitiesDto;
 import com.deavensoft.paketomat.city.dto.CityDto;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;

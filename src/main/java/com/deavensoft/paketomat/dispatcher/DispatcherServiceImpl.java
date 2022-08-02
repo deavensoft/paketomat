@@ -46,15 +46,15 @@ public class DispatcherServiceImpl implements DispatcherService {
         this.emailService = emailService;
     }
 
-    public List<DispatcherModel> findAllDispatchers() {
+    public List<Dispatcher> findAllDispatchers() {
         return dispatcherRepository.findAll();
     }
 
-    public void saveDispatcher(DispatcherModel newDispatcher) {
+    public void saveDispatcher(Dispatcher newDispatcher) {
         dispatcherRepository.save(newDispatcher);
     }
 
-    public Optional<DispatcherModel> findDispatcherById(Long id) {
+    public Optional<Dispatcher> findDispatcherById(Long id) {
         return dispatcherRepository.findById(id);
     }
 

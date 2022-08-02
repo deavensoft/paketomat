@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "courier")
-public class CourierModel {
+public class Courier {
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

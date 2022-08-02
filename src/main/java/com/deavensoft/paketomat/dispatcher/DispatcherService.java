@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface DispatcherService{
 
-     List<DispatcherModel> findAllDispatchers();
+     List<Dispatcher> findAllDispatchers();
 
-     void saveDispatcher(DispatcherModel newDispatcher);
+     void saveDispatcher(Dispatcher newDispatcher);
 
-     Optional<DispatcherModel> findDispatcherById(Long id);
+     Optional<Dispatcher> findDispatcherById(Long id);
 
      void deleteDispatcherById(Long id);
 
