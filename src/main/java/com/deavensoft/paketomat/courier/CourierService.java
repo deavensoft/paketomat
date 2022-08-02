@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface CourierService {
 
-    public List<CourierModel> findAllCouriers();
+    public List<Courier> findAllCouriers();
 
-    public void saveCourier(CourierModel newCourier);
+    public void saveCourier(Courier newCourier);
 
-    public Optional<CourierModel> getCourierById(Long id);
+    public Optional<Courier> getCourierById(Long id);
 
     public void deleteCourierById(Long id);
 }
