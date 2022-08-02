@@ -1,17 +1,19 @@
 package com.deavensoft.paketomat.center;
 
+import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import com.deavensoft.paketomat.user.UserService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +33,29 @@ public class CenterController {
     private final EmailService emailService;
     private final UserService userService;
 
+    @Autowired
+    private PackageMapper packageMapper;
+
+    private CenterRepository centerRepository;
+
+
+
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
-    public List<Package> getAllPackages()
+    public List<PackageDTO> getAllPackages()
     {
+
+        List<Package> packages = centerService.getAllPackages();
+        List<PackageDTO> packageDTOS = packageMapper.packagesToPackageDTO(packages);
+
+        packages.addAll(centerService.getAllPackages());
+        packageDTOS.addAll(packageMapper.packagesToPackageDTO(packages));
         log.info("All packages are returned");
-        return centerService.getAllPackages();
+
+        return  packageDTOS;
+
     }
 
     @PostMapping
@@ -49,6 +66,7 @@ public class CenterController {
         newPackage.setStatus(Status.NEW);
         centerService.save(newPackage);
         log.info("New package added to the database");
+
 
         Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){

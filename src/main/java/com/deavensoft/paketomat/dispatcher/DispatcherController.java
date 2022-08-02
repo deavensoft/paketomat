@@ -1,6 +1,8 @@
 package com.deavensoft.paketomat.dispatcher;
 
+import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
+import com.deavensoft.paketomat.mapper.DispatcherMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -19,12 +21,21 @@ public class DispatcherController {
 
     private DispatcherService dispatcherService;
 
+    private DispatcherMapper dispatcherMapper;
+
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
     @ApiResponse(responseCode = "200", description = "All dispatchers are returned")
-    public List<DispatcherModel> findAllDispatchers(){
+    public List<DispatcherDTO> findAllDispatchers(){
+
+        List<DispatcherModel> dispatchers = dispatcherService.findAllDispatchers();
+        List<DispatcherDTO> dispatcherDTOS = dispatcherMapper.dispatchersToDispatcherDTO(dispatchers);
+
+        dispatchers.addAll(dispatcherService.findAllDispatchers());
+        dispatcherDTOS.addAll(dispatcherMapper.dispatchersToDispatcherDTO(dispatchers));
         log.info("All dispatchersare returned");
-        return dispatcherService.findAllDispatchers();
+
+        return dispatcherDTOS;
     }
     @PostMapping
     @Operation(summary = "Add new dispatcher")

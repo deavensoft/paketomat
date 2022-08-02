@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.center.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "paketomat")
+@Table(name = "paketomat", schema = "public")
 public class Paketomat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

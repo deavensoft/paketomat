@@ -7,14 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class PaketomatDTO {
 
-    private UUID id;
+    private Long id;
     private City city;
     private int size;
     private ArrayList<Package> packages;

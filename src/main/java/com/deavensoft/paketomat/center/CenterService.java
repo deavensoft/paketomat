@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.center;
 
+import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 
 import java.util.List;

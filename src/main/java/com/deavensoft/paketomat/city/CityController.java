@@ -49,15 +49,26 @@ public class CityController {
     @GetMapping
     @Operation(summary = "Get cities", description = "Get all cities")
     @ApiResponse(responseCode = "200", description = "All cities are returned")
-    public List<City> getAllCities() {
-        return cityServiceImpl.getAllCities();
+    public List<CityDto> getAllCities() {
+
+       List<City> cities = cityServiceImpl.getAllCities();
+       List<CityDto> cityDtos = mapper.citiesToCityDto(cities);
+
+       cities.addAll(cityServiceImpl.getAllCities());
+       cityDtos.addAll(mapper.citiesToCityDto(cities));
+       log.info("All cities are returned");
+
+       return cityDtos;
+
     }
 
     @PostMapping
     @Operation(summary = "Add new city", description = "Add new city to the database")
     @ApiResponse(responseCode = "200", description = "New city added")
     public void save(@RequestBody City c) {
+
         cityServiceImpl.save(c);
+
     }
 
     @GetMapping(path = "/{id}")

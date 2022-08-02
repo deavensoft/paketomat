@@ -12,11 +12,10 @@ import java.util.List;
 public interface PackageMapper {
 
     PackageMapper INSTANCE = Mappers.getMapper(PackageMapper.class);
-
-    @Mapping(target = "id", source = "id")
+    @Mapping(target="id_dto", source= "id")
     PackageDTO packageToPackageDTO(Package p);
 
-    List<PackageDTO> packagesToPackageDTO(List<Package> p);
+    List<PackageDTO> packagesToPackageDTO(List<Package> packages);
 
     Package packageDTOToPackage(PackageDTO packageDTO);
 }

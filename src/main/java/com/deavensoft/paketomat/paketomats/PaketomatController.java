@@ -1,8 +1,10 @@
 package com.deavensoft.paketomat.paketomats;
 
+import com.deavensoft.paketomat.center.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.city.CityService;
+import com.deavensoft.paketomat.mapper.PaketomatMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -19,12 +21,22 @@ public class PaketomatController {
     private PaketomatService paketomatService;
     private CityService cityService;
 
+    private PaketomatMapper paketomatMapper;
+
     @Operation(summary = "Get paketomats", description = "Get all paketomats")
     @ApiResponse(responseCode = "200", description = "All paketomats are returned")
     @GetMapping
-    public List<Paketomat> getAllPaketomats(){
+    public List<PaketomatDTO> getAllPaketomats(){
+
+        List<Paketomat> paketomats = paketomatService.getAllPaketomats();
+        List<PaketomatDTO> paketomatDTOS = paketomatMapper.paketomatsToPaketomatDTO(paketomats);
+
+        paketomats.addAll(paketomatService.getAllPaketomats());
+        paketomatDTOS.addAll(paketomatMapper.paketomatsToPaketomatDTO(paketomats));
         log.info("All paketomats are returned.");
-        return paketomatService.getAllPaketomats();
+
+        return paketomatDTOS;
+
     }
 
     @Operation(summary = "Add new paketomat")
