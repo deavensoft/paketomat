@@ -30,16 +30,16 @@ public class CourierServiceImpl implements CourierService {
         this.citiesToDispatch = new ArrayList<>();
     }
 
-    public List<CourierModel> findAllCouriers(){
+    public List<Courier> findAllCouriers(){
         return courierRepository.findAll();
     }
 
-    public void saveCourier(CourierModel newCourier){
+    public void saveCourier(Courier newCourier){
         courierRepository.save(newCourier);
     }
 
 
-    public Optional<CourierModel> getCourierById(Long id){
+    public Optional<Courier> getCourierById(Long id){
         return courierRepository.findById(id);
     }
 

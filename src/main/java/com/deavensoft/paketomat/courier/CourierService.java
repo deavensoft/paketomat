@@ -1,19 +1,16 @@
 package com.deavensoft.paketomat.courier;
 
 
-import com.deavensoft.paketomat.center.model.Package;
-
 import java.util.List;
 import java.util.Optional;
 
 public interface CourierService {
 
-     List<CourierModel> findAllCouriers();
+    public List<Courier> findAllCouriers();
 
-     void saveCourier(CourierModel newCourier);
+    public void saveCourier(Courier newCourier);
 
-     Optional<CourierModel> getCourierById(Long id);
+    public Optional<Courier> getCourierById(Long id);
 
-     void deleteCourierById(Long id);
-
+    public void deleteCourierById(Long id);
 }

@@ -1,27 +1,162 @@
 package com.deavensoft.paketomat.dispatcher;
+
+import com.deavensoft.paketomat.center.model.*;
+import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.exceptions.NoSuchCityException;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.user.UserService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
+@AllArgsConstructor
 @Service
+@Slf4j
 public class DispatcherServiceImpl implements DispatcherService {
-    private final DispatcherRepository dispatcherRepository;
+    private DispatcherRepository dispatcherRepository;
+    @Value("${external.api.distance.url}")
+    private String url;
+    @Value("${external.api.distance.header.host.name}")
+    private String hostName;
+    @Value("${external.api.distance.header.host.value}")
+    private String hostValue;
+    @Value("${external.api.distance.header.key.name}")
+    private String keyName;
+    @Value("${external.api.distance.header.key.value}")
+    private String keyValue;
+    private UserService userService;
+    private EmailService emailService;
+
+    @Value("${paketomat.min-population}")
+    private int minPopulation;
+
+    @Value("${paketomat.size-of-paketomat}")
+    private int sizeOfPaketomat;
+
     @Autowired
-    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository){
+    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository,
+                                 UserService userService, EmailService emailService) {
         this.dispatcherRepository = dispatcherRepository;
+        this.userService = userService;
+        this.emailService = emailService;
     }
-    public List<DispatcherModel> findAllDispatchers(){
+
+    public List<Dispatcher> findAllDispatchers() {
         return dispatcherRepository.findAll();
     }
-    public void saveDispatcher(DispatcherModel newDispatcher){
+
+    public void saveDispatcher(Dispatcher newDispatcher) {
         dispatcherRepository.save(newDispatcher);
     }
-    public Optional<DispatcherModel> findDispatcherById(Long id){
-       return  dispatcherRepository.findById(id);
+
+    public Optional<Dispatcher> findDispatcherById(Long id) {
+        return dispatcherRepository.findById(id);
     }
-    public void deleteDispatcherById(Long id){
+
+    public void deleteDispatcherById(Long id) {
         dispatcherRepository.deleteById(id);
+    }
+
+    @Override
+    public void delieverPackage(Package newPackage) throws PaketomatException {
+        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
+        if(user.isPresent()){
+            String[] parts = user.get().getAddress().split(",", 2);
+            String cityUser = parts[1];
+            findNearestCity(cityUser, newPackage);
+            sendMailToCourier();
+        }else
+            throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
+    }
+
+    public void findNearestCity(String address, Package newPackage) throws PaketomatException {
+        City city = null;
+        double minDistance = 1000.0;
+        double distance;
+        List<City> cities = new ArrayList<>(Center.cities);
+        while (true) {
+            if(cities.isEmpty()){
+                throw new NoSuchCityException("There is no city available", HttpStatus.OK, 200);
+            }
+            for (City c : cities) {
+                if (c.getPopulation() > minPopulation) {
+                    distance = findDistance(c.getName(), address);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        city = c;
+                    }
+                }
+            }
+            if (city!= null && checkIfAvaiable(newPackage, city))
+                break;
+            cities.remove(city);
+            minDistance = 1000.0;
+        }
+
+    }
+
+    public double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException {
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            String newUrl = url.replace("{cityReciever}", cityReciever);
+            String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
+            Request request = new Request.Builder()
+                   .url(newURL)
+                    .get()
+                    .addHeader(keyName, keyValue)
+                    .addHeader(hostName, hostValue)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            return calculateDistance(response.body().string());
+        } catch (IOException e) {
+            throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR,500);
+        }
+    }
+
+    public double calculateDistance(String text) {
+        String part = text.substring(text.indexOf("haversine"), text.indexOf("greatCircle") - 2);
+        String[] parts = part.split(":", 2);
+        String haversine = parts[1];
+        try {
+            return Double.parseDouble(haversine);
+        } catch (NumberFormatException e){
+            throw new NumberFormatException();
+        }
+
+    }
+
+    public boolean checkIfAvaiable(Package newPackage, City city) {
+        for (Paketomat paketomat : city.getPaketomats()) {
+            if (paketomat.getPackages().size() < sizeOfPaketomat) {
+                paketomat.reserveSlot(newPackage);
+                log.info("Slot is reserved for package in paketomat in city " + city.getName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void sendMailToCourier() {
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient("courierpaketomat@gmail.com");
+        emailDetails.setMsgBody("Hello, new package should be delivered");
+        emailDetails.setSubject("Package delivering");
+        Map<String, Object> model = new HashMap<>();
+        model.put("msgBody", emailDetails.getMsgBody());
+        emailService.sendMailWithTemplate(emailDetails, model);
     }
 }

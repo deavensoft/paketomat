@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.email;
 
 import freemarker.template.Configuration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class EmailServiceImpl implements EmailService{
 
     @Autowired
@@ -114,7 +116,7 @@ public class EmailServiceImpl implements EmailService{
                             details.getAttachment(), file);
                 }
             } catch (NullPointerException e){
-                System.out.println("Attachment is null");
+                log.info("Email sent without attachment.");
             }
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException e) {

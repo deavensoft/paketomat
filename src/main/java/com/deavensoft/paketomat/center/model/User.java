@@ -21,5 +21,4 @@ public class User {
     private String address;
     @Transient
     private List<Package> packages;
-
 }
