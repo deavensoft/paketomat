@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -56,8 +54,7 @@ public class CenterController {
 
         Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){
-            String messages = "User not found";
-            log.info(messages);
+            throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
         } else{
             String messages = "User exist";
             log.info(messages);
@@ -73,8 +70,6 @@ public class CenterController {
             log.info("Package is ready to be dispatched");
             return 1;
         }
-        return -1;
-
     }
 
     @GetMapping(path = "/{id}")
