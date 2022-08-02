@@ -1,10 +1,10 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.model.City;
+import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.center.model.Paketomat;
-import com.deavensoft.paketomat.center.model.User;
-import com.deavensoft.paketomat.city.CityService;
+import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.user.UserService;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -13,13 +13,10 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -35,18 +32,18 @@ public class DispatcherServiceImpl implements DispatcherService {
     private String keyName;
     @Value("${spring.external.api.distance.header.key.value}")
     private String keyValue;
-
-
     private UserService userService;
+    private EmailService emailService;
 
-    private CityService cityService;
+    private  static final int MIN_POPULATION = 10000;
+    private  static final int SIZE_OF_PAKETOMAT = 5;
 
     @Autowired
-    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository, UserService userService,
-                                 CityService cityService) {
+    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository,
+                                 UserService userService, EmailService emailService) {
         this.dispatcherRepository = dispatcherRepository;
         this.userService = userService;
-        this.cityService = cityService;
+        this.emailService = emailService;
     }
 
     public List<DispatcherModel> findAllDispatchers() {
@@ -66,36 +63,36 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
-    public void delieverPackage(Package newPackage) throws IOException {
-        User user = userService.findUserById(newPackage.getReciever()).get();
-        String[] parts = user.getAddress().split(",", 2);
-        String cityUser = parts[1];
-        findNearestCity(cityUser, newPackage);
+    public void delieverPackage(Package newPackage) throws IOException, NoSuchUserException {
+        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
+        if(user.isPresent()){
+            String[] parts = user.get().getAddress().split(",", 2);
+            String cityUser = parts[1];
+            findNearestCity(cityUser, newPackage);
+            sendMailToCourier();
+        }else
+            throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.NOT_FOUND, 404);
     }
 
     public void findNearestCity(String address, Package newPackage) throws IOException {
         City city = null;
-        double minDistance = 1000.0, distance = 1.0;
-        List<City> cities = cityService.getAllCities();
+        double minDistance = 1000.0;
+        double distance;
+        ArrayList<City> cities = new ArrayList<>(Center.cities);
         while (true) {
-
             for (City c : cities) {
-                System.out.println("grad " + c.getName());
-                if (c.getPopulation() > 10000) {
-                    System.out.println("populacija: " + c.getPopulation());
+                if (c.getPopulation() > MIN_POPULATION) {
                     distance = findDistance(c.getName(), address);
                     if (distance < minDistance) {
-                        System.out.println("nova minimalna distanca: " + minDistance);
                         minDistance = distance;
                         city = c;
                     }
                 }
             }
-
-            if (checkIfAvaiable(newPackage, city))
+            if (city!= null && checkIfAvaiable(newPackage, city))
                 break;
             cities.remove(city);
-            System.out.println("while petlja");
+            minDistance = 1000.0;
         }
 
     }
@@ -120,20 +117,26 @@ public class DispatcherServiceImpl implements DispatcherService {
         String part = text.substring(text.indexOf("haversine"), text.indexOf("greatCircle") - 2);
         String[] parts = part.split(":", 2);
         String haversine = parts[1];
-        return Double.valueOf(haversine);
+        return Double.parseDouble(haversine);
     }
 
     public boolean checkIfAvaiable(Package newPackage, City city) {
-        System.out.println("ulazi");
-        System.out.println("prosledjen grad: " + city.getName() + ", broj paketomata u gradu: " + city.getPaketomats().size());
         for (Paketomat paketomat : city.getPaketomats()) {
-            System.out.println("ulazi ovde!!///////////////////////////////////////////////////////////////////////////////////////////////////////");
-            if (paketomat.getPackages().size() < 5) {
+            if (paketomat.getPackages().size() < SIZE_OF_PAKETOMAT) {
                 paketomat.reserveSlot(newPackage);
-                System.out.println("rezervisano");
                 return true;
             }
         }
         return false;
+    }
+
+    public void sendMailToCourier() {
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient("courierpaketomat@gmail.com");
+        emailDetails.setMsgBody("Hello, new package should be delivered");
+        emailDetails.setSubject("Package delivering");
+        Map<String, Object> model = new HashMap<>();
+        model.put("msgBody", emailDetails.getMsgBody());
+        emailService.sendMailWithTemplate(emailDetails, model);
     }
 }

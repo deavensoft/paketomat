@@ -2,17 +2,14 @@ package com.deavensoft.paketomat.center.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.List;
-
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "paketomat")
+@Table(name = "paketomat", schema = "public")
 public class Paketomat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,5 +22,11 @@ public class Paketomat {
 
     @Transient
     private List<Package> packages;
+
+    public void reserveSlot(Package newPackage){
+        packages.add(newPackage);
+        newPackage.setPaketomat(this);
+        newPackage.setStatus(Status.TO_DISPATCH);
+    }
 
 }

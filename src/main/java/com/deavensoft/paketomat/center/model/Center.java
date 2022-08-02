@@ -4,11 +4,14 @@ import lombok.*;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Center {
     private ArrayList<Package> packages;
-    private ArrayList<City> cities;
+    public static List<City> cities;
+
+
 }
