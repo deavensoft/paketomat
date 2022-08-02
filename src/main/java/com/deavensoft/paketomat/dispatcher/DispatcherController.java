@@ -26,10 +26,9 @@ public class DispatcherController {
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
     @ApiResponse(responseCode = "200", description = "All dispatchers are returned")
-    public List<Dispatcher> findAllDispatchers(){
     public List<DispatcherDTO> findAllDispatchers(){
 
-        List<DispatcherModel> dispatchers = dispatcherService.findAllDispatchers();
+        List<Dispatcher> dispatchers = dispatcherService.findAllDispatchers();
         List<DispatcherDTO> dispatcherDTOS = dispatcherMapper.dispatchersToDispatcherDTO(dispatchers);
 
         dispatchers.addAll(dispatcherService.findAllDispatchers());
@@ -38,6 +37,7 @@ public class DispatcherController {
 
         return dispatcherDTOS;
     }
+
     @PostMapping
     @Operation(summary = "Add new dispatcher")
     @ApiResponse(responseCode = "200", description = "New dispatcher added")

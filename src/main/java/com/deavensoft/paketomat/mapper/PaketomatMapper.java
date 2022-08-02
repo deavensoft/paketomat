@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.mapper;
 
-import com.deavensoft.paketomat.center.dto.PaketomatDTO;
+import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

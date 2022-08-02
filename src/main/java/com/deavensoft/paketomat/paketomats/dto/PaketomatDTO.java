@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center.dto;
+package com.deavensoft.paketomat.paketomats.dto;
 
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Package;

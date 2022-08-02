@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.paketomats;
 
-import com.deavensoft.paketomat.center.dto.PaketomatDTO;
+import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.city.CityService;

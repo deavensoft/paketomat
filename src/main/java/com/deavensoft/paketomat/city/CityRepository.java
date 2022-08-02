@@ -1,7 +1,6 @@
 package com.deavensoft.paketomat.city;
 
 import com.deavensoft.paketomat.center.model.City;
-import com.deavensoft.paketomat.city.dto.CityDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

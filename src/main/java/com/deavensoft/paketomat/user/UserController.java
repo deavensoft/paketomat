@@ -1,8 +1,7 @@
 package com.deavensoft.paketomat.user;
 
-import com.deavensoft.paketomat.center.dto.UserDTO;
+import com.deavensoft.paketomat.user.dto.UserDTO;
 import com.deavensoft.paketomat.center.model.User;
-import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +44,6 @@ public class UserController {
         users.addAll(userServiceImpl.getAllUsers());
         userDTOS.addAll(userMapper.usersToUserDTO(users));
         log.info("All users are returned");
-        return userService.getAllUsers();
 
         return userDTOS;
 

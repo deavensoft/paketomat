@@ -1,4 +1,4 @@
-package com.deavensoft.paketomat.center.dto;
+package com.deavensoft.paketomat.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

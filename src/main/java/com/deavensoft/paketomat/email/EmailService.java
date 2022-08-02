@@ -1,7 +1,5 @@
 package com.deavensoft.paketomat.email;
 
-
-
 import java.util.Map;
 
 public interface EmailService {

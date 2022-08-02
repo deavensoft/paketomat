@@ -1,6 +1,8 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.courier.dto.CourierDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
+import com.deavensoft.paketomat.mapper.CourierMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -25,10 +27,9 @@ public class CourierController {
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
-    public List<Courier> getAllCouriers(){
     public List<CourierDTO> getAllCouriers(){
 
-        List<CourierModel> couriers = courierService.findAllCouriers();
+        List<Courier> couriers = courierService.findAllCouriers();
         List<CourierDTO> courierDTOS = courierMapper.couriersToCourierDTO(couriers);
 
         couriers.addAll(courierService.findAllCouriers());
@@ -37,6 +38,7 @@ public class CourierController {
 
         return courierDTOS;
     }
+
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")

@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.mapper;
 
-import com.deavensoft.paketomat.dispatcher.DispatcherModel;
+import com.deavensoft.paketomat.dispatcher.Dispatcher;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,9 +14,9 @@ public interface DispatcherMapper {
     DispatcherMapper INSTANCE = Mappers.getMapper(DispatcherMapper.class);
 
     @Mapping(target = "id", source = "id")
-    DispatcherDTO dispatcherToDispatcherDTO(DispatcherModel dispatcherModel);
+    DispatcherDTO dispatcherToDispatcherDTO(Dispatcher dispatcherModel);
 
-    List<DispatcherDTO> dispatchersToDispatcherDTO(List<DispatcherModel> dispatcherModels);
+    List<DispatcherDTO> dispatchersToDispatcherDTO(List<Dispatcher> dispatcherModels);
 
-    DispatcherModel dispatcherDTOToDispatcher(DispatcherDTO dispatcherDTO);
+    Dispatcher dispatcherDTOToDispatcher(DispatcherDTO dispatcherDTO);
 }
