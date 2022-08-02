@@ -4,21 +4,23 @@ import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
+import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.mapper.PackageMapper;
 import com.deavensoft.paketomat.user.UserService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +28,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/packages")
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CenterController {
 
     private final CenterService centerService;
     private final EmailService emailService;
     private final UserService userService;
+
+    private final DispatcherService dispatcherService;
 
     @Autowired
     private PackageMapper packageMapper;
@@ -61,17 +65,14 @@ public class CenterController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody Package newPackage)
-    {
+    public int savePackage(@RequestBody Package newPackage) throws IOException, PaketomatException {
         newPackage.setStatus(Status.NEW);
         centerService.save(newPackage);
         log.info("New package added to the database");
 
-
         Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if(user.isEmpty()){
-            String messages = "User not found";
-            log.info(messages);
+            throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
         } else{
             String messages = "User exist";
             log.info(messages);
@@ -83,10 +84,10 @@ public class CenterController {
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
             emailService.sendMailWithTemplate(emailDetails, model);
+            dispatcherService.delieverPackage(newPackage);
+            log.info("Package is ready to be dispatched");
             return 1;
         }
-        return -1;
-
     }
 
     @GetMapping(path = "/{id}")

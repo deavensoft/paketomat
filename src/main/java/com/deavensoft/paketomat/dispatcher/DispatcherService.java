@@ -1,14 +1,24 @@
 package com.deavensoft.paketomat.dispatcher;
+
+import com.deavensoft.paketomat.center.model.Package;
+
+import com.deavensoft.paketomat.exceptions.PaketomatException;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public interface DispatcherService {
+public interface DispatcherService{
 
-     List<DispatcherModel> findAllDispatchers();
+     List<Dispatcher> findAllDispatchers();
 
-     void saveDispatcher(DispatcherModel newDispatcher);
+     void saveDispatcher(Dispatcher newDispatcher);
 
-     Optional<DispatcherModel> findDispatcherById(Long id);
+     Optional<Dispatcher> findDispatcherById(Long id);
 
      void deleteDispatcherById(Long id);
+
+
+    void delieverPackage(Package newPackage) throws IOException, PaketomatException;
+
 }

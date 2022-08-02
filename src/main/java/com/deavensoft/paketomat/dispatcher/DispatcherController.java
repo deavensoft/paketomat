@@ -26,6 +26,7 @@ public class DispatcherController {
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
     @ApiResponse(responseCode = "200", description = "All dispatchers are returned")
+    public List<Dispatcher> findAllDispatchers(){
     public List<DispatcherDTO> findAllDispatchers(){
 
         List<DispatcherModel> dispatchers = dispatcherService.findAllDispatchers();
@@ -40,7 +41,7 @@ public class DispatcherController {
     @PostMapping
     @Operation(summary = "Add new dispatcher")
     @ApiResponse(responseCode = "200", description = "New dispatcher added")
-    public int saveDispatcher(@RequestBody DispatcherModel dispatcher){
+    public int saveDispatcher(@RequestBody Dispatcher dispatcher){
         log.info("New dispatcher is added");
         dispatcherService.saveDispatcher(dispatcher);
         return 1;
@@ -48,8 +49,8 @@ public class DispatcherController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher wwith specified id returned")
-    public Optional<DispatcherModel> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
-        Optional<DispatcherModel> d = dispatcherService.findDispatcherById(id);
+    public Optional<Dispatcher> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
+        Optional<Dispatcher> d = dispatcherService.findDispatcherById(id);
         if(d.isEmpty()){
             throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.OK, 200);
         } else{
@@ -72,6 +73,4 @@ public class DispatcherController {
         }
         return 1;
     }
-
-
 }

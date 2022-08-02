@@ -2,13 +2,15 @@ package com.deavensoft.paketomat.center.model;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
-@Table(name = "city", schema = "public")
+@Table(name = "city")
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +25,6 @@ public class City {
     @Column(name = "y")
     private double longitude;
     @Transient
-    private List<Paketomat> paketomats;
+    private List<Paketomat> paketomats = new ArrayList<>();
 
 }

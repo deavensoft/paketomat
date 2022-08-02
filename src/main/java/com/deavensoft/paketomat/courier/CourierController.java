@@ -1,9 +1,6 @@
 package com.deavensoft.paketomat.courier;
 
-import com.deavensoft.paketomat.courier.dto.CourierDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
-import com.deavensoft.paketomat.mapper.CourierMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -28,6 +25,7 @@ public class CourierController {
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
+    public List<Courier> getAllCouriers(){
     public List<CourierDTO> getAllCouriers(){
 
         List<CourierModel> couriers = courierService.findAllCouriers();
@@ -42,8 +40,7 @@ public class CourierController {
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")
-    public int saveCourier(@RequestBody CourierModel newCourier){
-
+    public int saveCourier(@RequestBody Courier newCourier){
         log.info("New dispatcher is added");
         courierService.saveCourier(newCourier);
 
@@ -53,9 +50,8 @@ public class CourierController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get courier", description = "Get courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
-    public Optional<CourierModel> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
-
-        Optional<CourierModel> c = courierService.getCourierById(id);
+    public Optional<Courier> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
+        Optional<Courier> c = courierService.getCourierById(id);
         if(c.isEmpty()){
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{

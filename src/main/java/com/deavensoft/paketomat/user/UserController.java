@@ -7,6 +7,7 @@ import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,8 +20,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/users")
+@AllArgsConstructor
 @Slf4j
 public class UserController {
+
+    private UserService userService;
 
     private UserServiceImpl userServiceImpl;
     @Autowired
@@ -42,6 +46,7 @@ public class UserController {
         users.addAll(userServiceImpl.getAllUsers());
         userDTOS.addAll(userMapper.usersToUserDTO(users));
         log.info("All users are returned");
+        return userService.getAllUsers();
 
         return userDTOS;
 
@@ -51,7 +56,7 @@ public class UserController {
     @Operation(summary = "Add new user", description = "Add new user to the database")
     @ApiResponse(responseCode = "200", description = "New user added")
     public void save(@RequestBody User u){
-        userServiceImpl.save(u);
+        userService.save(u);
         log.info("New user added to the database");
     }
 
@@ -59,7 +64,7 @@ public class UserController {
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
     public Optional<User> findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
-        Optional<User> u = userServiceImpl.findUserById(id);
+        Optional<User> u = userService.findUserById(id);
         if(u.isEmpty()){
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         } else{
@@ -77,7 +82,7 @@ public class UserController {
         try {
             String mess = "User with id " + id + " is deleted";
             log.info(mess);
-            userServiceImpl.deleteUser(u.get());
+            userService.deleteUser(u.get());
         } catch (NoSuchElementException e){
             throw new NoSuchUserException("User with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
