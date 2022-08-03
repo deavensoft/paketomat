@@ -6,9 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-import java.util.Optional;
-
 @Mapper(componentModel = "spring")
 public interface CourierMapper {
 
@@ -16,8 +13,6 @@ public interface CourierMapper {
 
     @Mapping(target = "id", source = "id")
     CourierDTO courierToCourierDTO(Courier courierModel);
-
-    List<CourierDTO> couriersToCourierDTO(List<Courier> courierModels);
 
     Courier courierDTOToCourier(CourierDTO courierDTO);
 

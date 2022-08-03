@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -15,8 +13,6 @@ public interface UserMapper {
 
     @Mapping(target = "id", source = "id")
     UserDTO userToUserDTO(User user);
-
-    List<UserDTO> usersToUserDTO(List<User> users);
 
     User userDTOToUser(UserDTO userDTO);
 }

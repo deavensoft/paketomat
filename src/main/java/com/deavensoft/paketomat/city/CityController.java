@@ -1,9 +1,10 @@
 package com.deavensoft.paketomat.city;
 
 import com.deavensoft.paketomat.center.model.City;
-import com.deavensoft.paketomat.city.dto.CitiesDto;
 import com.deavensoft.paketomat.city.dto.CityDto;
+import com.deavensoft.paketomat.city.dto.CitiesDto;
 import com.deavensoft.paketomat.exceptions.CityException;
+import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.mapper.CityMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,45 +51,52 @@ public class CityController {
     @Operation(summary = "Get cities", description = "Get all cities")
     @ApiResponse(responseCode = "200", description = "All cities are returned")
     public List<CityDto> getAllCities() {
-
        List<City> cities = cityServiceImpl.getAllCities();
-       List<CityDto> cityDtos = mapper.citiesToCityDto(cities);
+       List<CityDto> cityDtos = new ArrayList<>();
 
-       cities.addAll(cityServiceImpl.getAllCities());
-       cityDtos.addAll(mapper.citiesToCityDto(cities));
+       for (City city : cities) {
+           cityDtos.add(mapper.cityToCityDto(city));
+       }
        log.info("All cities are returned");
-
        return cityDtos;
-
     }
 
     @PostMapping
     @Operation(summary = "Add new city", description = "Add new city to the database")
     @ApiResponse(responseCode = "200", description = "New city added")
-    public void save(@RequestBody City c) {
-
-        cityServiceImpl.save(c);
-
-    }
+    public void save(@RequestBody City c) { cityServiceImpl.save(c); }
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get city", description = "Get city with specified id")
     @ApiResponse(responseCode = "200", description = "City with specified id returned")
-    public Optional<City> findCityById(@PathVariable(name = "id") long id) {
-        return cityServiceImpl.findCityById(id);
+    public CityDto findCityById(@PathVariable(name = "id") long id) throws NoSuchCityException {
+        Optional<City> city = cityServiceImpl.findCityById(id);
+
+        if (city.isEmpty()) {
+            throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
+        }else {
+            City city1 = city.get();
+            CityDto cityDto = mapper.cityToCityDto(city1);
+            String mss = "City with id " + id + "is retuned";
+            log.info(mss);
+            return cityDto;
+        }
+
     }
 
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete city", description = "Delete city with specified id")
     @ApiResponse(responseCode = "200", description = "City with specified id deleted")
-    public int deleteCity(@PathVariable(name = "id") Long id) {
-        Optional<City> c = findCityById(id);
-        if (c.isEmpty())
-           log.info("There is no city with id:" + id);
+    public int deleteCity(@PathVariable(name = "id") Long id) throws NoSuchCityException {
+        Optional<City> c = cityServiceImpl.findCityById(id);
+
+      /*  if (c.isEmpty())
+            throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
         if(!c.isEmpty()) {
-            cityServiceImpl.deleteCity(c.get());
+            City city = c.get();
+            cityServiceImpl.deleteCity(city);
             log.info("City deleted");
-        }
+        }*/
         return 1;
     }
 
@@ -109,7 +118,7 @@ public class CityController {
 
                     for (CityDto city : citiess) {
 
-                        save(mapper.cityDtoToCity(city));
+                        save(mapper.cityDtoToCity((city)));
                     }
 
                 }

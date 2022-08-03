@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +31,12 @@ public class DispatcherController {
     public List<DispatcherDTO> findAllDispatchers(){
 
         List<Dispatcher> dispatchers = dispatcherService.findAllDispatchers();
-        List<DispatcherDTO> dispatcherDTOS = dispatcherMapper.dispatchersToDispatcherDTO(dispatchers);
+        List<DispatcherDTO> dispatcherDTOS = new ArrayList<>();
 
-        dispatchers.addAll(dispatcherService.findAllDispatchers());
-        dispatcherDTOS.addAll(dispatcherMapper.dispatchersToDispatcherDTO(dispatchers));
-        log.info("All dispatchersare returned");
-
+        for (Dispatcher dispatcher : dispatchers) {
+            dispatcherDTOS.add(dispatcherMapper.dispatcherToDispatcherDTO(dispatcher));
+        }
+        log.info("All dispatchers are returned");
         return dispatcherDTOS;
     }
 
@@ -48,16 +50,21 @@ public class DispatcherController {
     }
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
-    @ApiResponse(responseCode = "200", description = "Dispatcher wwith specified id returned")
-    public Optional<Dispatcher> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
+    @ApiResponse(responseCode = "200", description = "Dispatcher with specified id returned")
+    public DispatcherDTO findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         Optional<Dispatcher> d = dispatcherService.findDispatcherById(id);
+
         if(d.isEmpty()){
             throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.OK, 200);
         } else{
+            Dispatcher dispatcher = d.get();
+            DispatcherDTO dispatcherDTO = dispatcherMapper.dispatcherToDispatcherDTO(dispatcher);
             String mess = "Dispatcher with id " + id + " is returned";
             log.info(mess);
+
+            return dispatcherDTO;
         }
-        return d;
+
     }
 
     @DeleteMapping(path = "/{id}")

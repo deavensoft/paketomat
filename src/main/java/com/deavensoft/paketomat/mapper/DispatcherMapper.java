@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface DispatcherMapper {
 
@@ -15,8 +13,6 @@ public interface DispatcherMapper {
 
     @Mapping(target = "id", source = "id")
     DispatcherDTO dispatcherToDispatcherDTO(Dispatcher dispatcherModel);
-
-    List<DispatcherDTO> dispatchersToDispatcherDTO(List<Dispatcher> dispatcherModels);
 
     Dispatcher dispatcherDTOToDispatcher(DispatcherDTO dispatcherDTO);
 }

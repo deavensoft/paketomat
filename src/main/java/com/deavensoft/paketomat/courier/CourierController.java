@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +31,12 @@ public class CourierController {
     public List<CourierDTO> getAllCouriers(){
 
         List<Courier> couriers = courierService.findAllCouriers();
-        List<CourierDTO> courierDTOS = courierMapper.couriersToCourierDTO(couriers);
+        List<CourierDTO> courierDTOS = new ArrayList<>();
 
-        couriers.addAll(courierService.findAllCouriers());
-        courierDTOS.addAll(courierMapper.couriersToCourierDTO(couriers));
+        for (Courier courier : couriers) {
+            courierDTOS.add(courierMapper.courierToCourierDTO(courier));
+        }
         log.info("All couriers are returned");
-
         return courierDTOS;
     }
 
@@ -52,15 +53,21 @@ public class CourierController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get courier", description = "Get courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
-    public Optional<Courier> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
+    public CourierDTO getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<Courier> c = courierService.getCourierById(id);
+
+
         if(c.isEmpty()){
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{
+            Courier courier = c.get();
+            CourierDTO courierDTO = courierMapper.courierToCourierDTO(courier);
             String mess = "Courier with id " + id + " is returned";
             log.info(mess);
+
+            return courierDTO;
         }
-        return c;
+
     }
 
     @DeleteMapping(path = "/{id}")

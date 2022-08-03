@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -39,12 +39,12 @@ public class UserController {
     public List<UserDTO> getAllUsers(){
 
         List<User> users = userServiceImpl.getAllUsers();
-        List<UserDTO> userDTOS = userMapper.usersToUserDTO(users);
+        List<UserDTO> userDTOS = new ArrayList<>();
 
-        users.addAll(userServiceImpl.getAllUsers());
-        userDTOS.addAll(userMapper.usersToUserDTO(users));
+        for (User user : users) {
+            userDTOS.add(userMapper.userToUserDTO(user));
+        }
         log.info("All users are returned");
-
         return userDTOS;
 
     }
@@ -60,29 +60,36 @@ public class UserController {
     @GetMapping(path="/{id}")
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
-    public Optional<User> findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
+    public UserDTO findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
         Optional<User> u = userService.findUserById(id);
+
+
         if(u.isEmpty()){
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         } else{
+            User user = u.get();
+            UserDTO userDTO = userMapper.userToUserDTO(user);
             String mess = "User with id " + id + " is returned";
             log.info(mess);
+
+            return userDTO;
         }
-       return u;
+
     }
 
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete user", description = "Delete user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id deleted")
     public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
-        Optional<User> u = findUserById(id);
-        try {
-            String mess = "User with id " + id + " is deleted";
-            log.info(mess);
-            userService.deleteUser(u.get());
-        } catch (NoSuchElementException e){
-            throw new NoSuchUserException("User with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
-        }
+        Optional<User> u = userService.findUserById(id);
+
+    /*    if (u.isEmpty())
+            throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
+        if(!u.isEmpty()) {
+            User user = u.get();
+            userService.deleteUser(user);
+            log.info("User deleted");
+        }*/
         return 1;
     }
 }

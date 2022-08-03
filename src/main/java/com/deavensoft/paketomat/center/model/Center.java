@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center.model;
 
 import lombok.*;
+
 import java.util.List;
 
 @Data

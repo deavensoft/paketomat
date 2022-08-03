@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CourierDTO {
-    @JsonProperty("id_courier_dto")
+    @JsonProperty("id")
     private Long id;
     @JsonProperty("email")
     private String email;

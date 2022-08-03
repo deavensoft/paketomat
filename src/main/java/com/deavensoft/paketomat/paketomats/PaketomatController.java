@@ -30,12 +30,12 @@ public class PaketomatController {
     public List<PaketomatDTO> getAllPaketomats(){
 
         List<Paketomat> paketomats = paketomatService.getAllPaketomats();
-        List<PaketomatDTO> paketomatDTOS = paketomatMapper.paketomatsToPaketomatDTO(paketomats);
+        List<PaketomatDTO> paketomatDTOS = new ArrayList<>();
 
-        paketomats.addAll(paketomatService.getAllPaketomats());
-        paketomatDTOS.addAll(paketomatMapper.paketomatsToPaketomatDTO(paketomats));
+        for (Paketomat paketomat : paketomats){
+            paketomatDTOS.add(paketomatMapper.paketomatToPaketomatDTO(paketomat));
+        }
         log.info("All paketomats are returned.");
-
         return paketomatDTOS;
 
     }

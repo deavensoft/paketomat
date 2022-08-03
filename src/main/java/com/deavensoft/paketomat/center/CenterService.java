@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface CenterService {
 
-
      List<Package> getAllPackages();
 
      void save(Package packagee);

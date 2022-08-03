@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface PaketomatMapper {
 
@@ -16,8 +14,6 @@ public interface PaketomatMapper {
 
     @Mapping(target = "id", source = "id")
     PaketomatDTO paketomatToPaketomatDTO(Paketomat paketomat);
-
-    List<PaketomatDTO> paketomatsToPaketomatDTO(List<Paketomat> paketomats);
 
     Paketomat paketomatDTOToPaketomat(PaketomatDTO paketomatDTO);
 

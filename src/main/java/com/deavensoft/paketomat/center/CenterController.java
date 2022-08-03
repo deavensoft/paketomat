@@ -34,32 +34,22 @@ public class CenterController {
     private final CenterService centerService;
     private final EmailService emailService;
     private final UserService userService;
-
     private final DispatcherService dispatcherService;
-
     @Autowired
-    private PackageMapper packageMapper;
-
-    private CenterRepository centerRepository;
-
-
-
+    private final PackageMapper packageMapper;
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
-    public List<PackageDTO> getAllPackages()
-    {
-
+    public List<PackageDTO> getAllPackages() {
         List<Package> packages = centerService.getAllPackages();
-        List<PackageDTO> packageDTOS = packageMapper.packagesToPackageDTO(packages);
+        List<PackageDTO> packageDTOS = new ArrayList<>();
 
-        packages.addAll(centerService.getAllPackages());
-        packageDTOS.addAll(packageMapper.packagesToPackageDTO(packages));
+        for (Package pa : packages) {
+            packageDTOS.add(packageMapper.packageToPackageDTO(pa));
+        }
         log.info("All packages are returned");
-
         return  packageDTOS;
-
     }
 
     @PostMapping
@@ -93,15 +83,19 @@ public class CenterController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
-    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
+    public PackageDTO getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerService.findPackageById(id);
+
         if(p.isEmpty()){
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         } else{
+            Package pa = p.get();
+            PackageDTO packageDTO = packageMapper.packageToPackageDTO(pa);
+
             String mess = "Package with id " + id + " is returned";
             log.info(mess);
+            return packageDTO;
         }
-        return p;
     }
 
     @DeleteMapping(path = "/{id}")
