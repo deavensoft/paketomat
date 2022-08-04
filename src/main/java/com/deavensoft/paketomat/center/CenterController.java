@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.control.MappingControl;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -58,16 +59,15 @@ public class CenterController {
         } else{
             String messages = "User exist";
             log.info(messages);
-
             EmailDetails emailDetails = new EmailDetails();
             Map<String, Object> model = new HashMap<>();
             emailDetails.setMsgBody("Package arrived at the distribution center");
             emailDetails.setRecipient(user.get().getEmail());
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
-            emailService.sendMailWithTemplate(emailDetails, model);
-            dispatcherService.delieverPackage(newPackage);
-            log.info("Package is ready to be dispatched");
+            //emailService.sendMailWithTemplate(emailDetails, model);
+            //dispatcherService.delieverPackage(newPackage);
+            //log.info("Package is ready to be dispatched");
             return 1;
         }
     }
@@ -104,5 +104,4 @@ public class CenterController {
         centerService.deleteAll();
         return 1;
     }
-
 }

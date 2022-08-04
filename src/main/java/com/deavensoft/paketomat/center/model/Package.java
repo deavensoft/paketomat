@@ -18,6 +18,8 @@ public class Package {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     @ManyToOne
-    @JoinColumn(name="paketomat_id")
+    @JoinColumn(name = "paketomat_id")
     private Paketomat paketomat;
+    @Column(name = "code", unique = true)
+    private Long code;
 }
