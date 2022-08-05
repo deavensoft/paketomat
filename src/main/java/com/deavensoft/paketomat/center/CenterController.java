@@ -30,11 +30,7 @@ import java.util.Optional;
 public class CenterController {
 
     private final CenterService centerService;
-    private final EmailService emailService;
     private final UserService userService;
-
-    private final DispatcherService dispatcherService;
-
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")

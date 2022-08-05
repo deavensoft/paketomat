@@ -2,10 +2,12 @@ package com.deavensoft.paketomat.center.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
+import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Generated;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -22,16 +24,15 @@ public class Paketomat {
     @JoinColumn(name = "city", nullable = false)
     private City city;
 
-    @Column(name = "serial_number", unique = true)
+    @Column(name = "addr", columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
     private Long addr;
-    private static Long serialNumber = 1L;
     @JsonIgnore
     @OneToMany(mappedBy = "paketomat")
     private List<Package> packages;
 
     public Paketomat(City c) {
         this.city = c;
-        this.addr = serialNumber++;
         this.packages = new ArrayList<>();
     }
 

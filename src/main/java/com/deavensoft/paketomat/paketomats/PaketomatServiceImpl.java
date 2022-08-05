@@ -21,7 +21,7 @@ public class PaketomatServiceImpl implements PaketomatService{
     }
 
     @Override
-    public void savePaketomat(Paketomat paketomat) { paketomatRepository.save(paketomat); }
+    public void savePaketomat(Paketomat paketomat) { paketomatRepository.saveAndFlush(paketomat); }
 
     @Override
     public void deleteAll() {

@@ -22,4 +22,7 @@ public class Package {
     private Paketomat paketomat;
     @Column(name = "code", unique = true)
     private Long code;
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    private Center center;
 }

@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "city")
 public class City {
@@ -28,5 +27,8 @@ public class City {
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "city")
     private List<Paketomat> paketomats = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    private Center center;
 
 }

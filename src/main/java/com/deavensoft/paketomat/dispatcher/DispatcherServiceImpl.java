@@ -130,7 +130,7 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     public double calculateDistance(String text) {
-        if(!text.contains("haversine"))
+        if(!text.contains(haversine))
             return 0.0;
         String part = text.substring(text.indexOf(haversine), text.indexOf("greatCircle") - 2);
         String[] parts = part.split(":", 2);
