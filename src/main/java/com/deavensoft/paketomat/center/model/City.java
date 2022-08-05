@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.center.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "city")
 public class City {
@@ -24,7 +24,11 @@ public class City {
     private double latitude;
     @Column(name = "y")
     private double longitude;
-    @Transient
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "city")
     private List<Paketomat> paketomats = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    private Center center;
 
 }

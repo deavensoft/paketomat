@@ -18,7 +18,8 @@ public interface DispatcherService{
 
      void deleteDispatcherById(Long id);
 
-
     void delieverPackage(Package newPackage) throws IOException, PaketomatException;
+
+     double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException;
 
 }
