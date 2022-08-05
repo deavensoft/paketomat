@@ -49,5 +49,7 @@ paketomat:
   min-population : 10000
   size-of-paketomat: 5
 
+dispatcher:
+  distance : "haversine"
 
 

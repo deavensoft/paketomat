@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Status;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ public interface CenterService {
      void deletePackageById(Long id);
 
      void deleteAll();
+     void updateStatus(Long id, Status status);
 
 
 }
