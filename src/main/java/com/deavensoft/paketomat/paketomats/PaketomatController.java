@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import static com.deavensoft.paketomat.center.model.Center.cities;
 
@@ -63,9 +65,9 @@ public class PaketomatController {
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
                     Paketomat p = new Paketomat(c);
-                    PaketomatDTO p = new PaketomatDTO(1L,c,new ArrayList<>());
-                    savePaketomat(p);
-                    Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(p);
+                    PaketomatDTO pa = new PaketomatDTO(1L,c,new ArrayList<>());
+                    savePaketomat(pa);
+                    Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(pa);
                     c.getPaketomats().add(paketomat);
                 }
             }
