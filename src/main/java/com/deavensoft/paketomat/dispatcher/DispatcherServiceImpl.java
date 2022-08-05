@@ -120,9 +120,10 @@ public class DispatcherServiceImpl implements DispatcherService {
                     .addHeader(hostName, hostValue)
                     .build();
 
-            Response response = client.newCall(request).execute();
-            log.info("API is called");
-            return calculateDistance(response.body().string());
+            try(Response response = client.newCall(request).execute()){
+                log.info("API is called");
+                return calculateDistance(response.body().string());
+            }
         } catch (IOException e) {
             throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR,500);
         }
