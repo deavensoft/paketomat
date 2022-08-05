@@ -4,7 +4,6 @@ import com.deavensoft.paketomat.center.model.Paketomat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 @Service
 public class PaketomatServiceImpl implements PaketomatService{
@@ -22,14 +21,11 @@ public class PaketomatServiceImpl implements PaketomatService{
     }
 
     @Override
-    public void savePaketomat(Paketomat paketomat) {
-         paketomatRepository.save(paketomat);
-    }
+    public void savePaketomat(Paketomat paketomat) { paketomatRepository.saveAndFlush(paketomat); }
 
     @Override
     public void deleteAll() {
         paketomatRepository.deleteAll();
     }
-
 
 }

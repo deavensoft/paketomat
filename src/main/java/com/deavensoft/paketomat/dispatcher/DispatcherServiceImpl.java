@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.dispatcher;
 
+import com.deavensoft.paketomat.center.CenterService;
 import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -8,23 +9,22 @@ import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.user.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class DispatcherServiceImpl implements DispatcherService {
+
     private DispatcherRepository dispatcherRepository;
     @Value("${external.api.distance.url}")
     private String url;
@@ -36,22 +36,18 @@ public class DispatcherServiceImpl implements DispatcherService {
     private String keyName;
     @Value("${external.api.distance.header.key.value}")
     private String keyValue;
-    private UserService userService;
-    private EmailService emailService;
+    private final UserService userService;
+    private final EmailService emailService;
+    private final CenterService centerService;
 
     @Value("${paketomat.min-population}")
     private int minPopulation;
 
+    @Value("${dispatcher.distance}")
+    private String haversine;
+
     @Value("${paketomat.size-of-paketomat}")
     private int sizeOfPaketomat;
-
-    @Autowired
-    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository,
-                                 UserService userService, EmailService emailService) {
-        this.dispatcherRepository = dispatcherRepository;
-        this.userService = userService;
-        this.emailService = emailService;
-    }
 
     public List<Dispatcher> findAllDispatchers() {
         return dispatcherRepository.findAll();
@@ -107,7 +103,11 @@ public class DispatcherServiceImpl implements DispatcherService {
 
     }
 
+    @Override
     public double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException {
+        if(cityReciever.contentEquals(cityPaketomat)){
+            return 0.0;
+        }
         try {
             OkHttpClient client = new OkHttpClient();
 
@@ -120,29 +120,35 @@ public class DispatcherServiceImpl implements DispatcherService {
                     .addHeader(hostName, hostValue)
                     .build();
 
-            Response response = client.newCall(request).execute();
-            return calculateDistance(response.body().string());
+            try(Response response = client.newCall(request).execute()){
+                log.info("API is called");
+                return calculateDistance(response.body().string());
+            }
         } catch (IOException e) {
             throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR,500);
         }
     }
 
     public double calculateDistance(String text) {
-        String part = text.substring(text.indexOf("haversine"), text.indexOf("greatCircle") - 2);
+        if(!text.contains(haversine))
+            return 0.0;
+        String part = text.substring(text.indexOf(haversine), text.indexOf("greatCircle") - 2);
         String[] parts = part.split(":", 2);
-        String haversine = parts[1];
+        String distance = parts[1];
         try {
-            return Double.parseDouble(haversine);
+            log.info("Distance is calculated");
+            return Double.parseDouble(distance);
         } catch (NumberFormatException e){
             throw new NumberFormatException();
         }
-
     }
 
     public boolean checkIfAvaiable(Package newPackage, City city) {
         for (Paketomat paketomat : city.getPaketomats()) {
             if (paketomat.getPackages().size() < sizeOfPaketomat) {
                 paketomat.reserveSlot(newPackage);
+                newPackage.setPaketomat(paketomat);
+                centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
                 log.info("Slot is reserved for package in paketomat in city " + city.getName());
                 return true;
             }
@@ -158,5 +164,6 @@ public class DispatcherServiceImpl implements DispatcherService {
         Map<String, Object> model = new HashMap<>();
         model.put("msgBody", emailDetails.getMsgBody());
         emailService.sendMailWithTemplate(emailDetails, model);
+        log.info("Mail is sent to courier");
     }
 }

@@ -19,6 +19,6 @@ public class User {
     private String name;
     @Column(name = "address")
     private String address;
-    @Transient
+    @OneToMany(mappedBy = "paketomat")
     private List<Package> packages;
 }

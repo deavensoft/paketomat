@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.control.MappingControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,8 @@ import java.util.Optional;
 public class CenterController {
 
     private final CenterService centerService;
-    private final EmailService emailService;
     private final UserService userService;
+
     private final DispatcherService dispatcherService;
     @Autowired
     private final PackageMapper packageMapper;
@@ -67,16 +68,12 @@ public class CenterController {
         } else{
             String messages = "User exist";
             log.info(messages);
-
             EmailDetails emailDetails = new EmailDetails();
             Map<String, Object> model = new HashMap<>();
             emailDetails.setMsgBody("Package arrived at the distribution center");
             emailDetails.setRecipient(user.get().getEmail());
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
-            emailService.sendMailWithTemplate(emailDetails, model);
-            dispatcherService.delieverPackage(p);
-            log.info("Package is ready to be dispatched");
             return 1;
         }
     }
@@ -117,5 +114,4 @@ public class CenterController {
         centerService.deleteAll();
         return 1;
     }
-
 }

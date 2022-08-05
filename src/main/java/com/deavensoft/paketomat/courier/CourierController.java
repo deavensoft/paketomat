@@ -1,7 +1,9 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.courier.dto.CourierDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.mapper.CourierMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -56,8 +58,6 @@ public class CourierController {
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
     public CourierDTO getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<Courier> c = courierService.getCourierById(id);
-
-
         if(c.isEmpty()){
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{
@@ -83,5 +83,13 @@ public class CourierController {
             throw new NoSuchCourierException("Courier with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
+    }
+
+    @GetMapping(path = "/getPackages/{city}")
+    @Operation(summary = "Get packages for courier", description = "Get packages that courier will deliver on his route")
+    @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
+    public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException {
+        log.info("List with packages that courier has to deliver are returned");
+        return courierService.getPackagesForCourier(city);
     }
 }

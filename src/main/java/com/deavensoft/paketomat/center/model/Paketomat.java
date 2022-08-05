@@ -2,8 +2,13 @@ package com.deavensoft.paketomat.center.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Generated;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,15 +20,23 @@ public class Paketomat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="city", nullable=false)
+    @JoinColumn(name = "city", nullable = false)
     private City city;
 
-    @Transient
+    @Column(name = "addr", columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
+    private Long addr;
+    @JsonIgnore
+    @OneToMany(mappedBy = "paketomat")
     private List<Package> packages;
 
-    public void reserveSlot(Package newPackage){
+    public Paketomat(City c) {
+        this.city = c;
+        this.packages = new ArrayList<>();
+    }
+
+    public void reserveSlot(Package newPackage) {
         packages.add(newPackage);
         newPackage.setPaketomat(this);
         newPackage.setStatus(Status.TO_DISPATCH);
