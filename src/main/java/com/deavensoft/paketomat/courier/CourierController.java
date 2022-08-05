@@ -43,9 +43,10 @@ public class CourierController {
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")
-    public int saveCourier(@RequestBody Courier newCourier){
+    public int saveCourier(@RequestBody CourierDTO newCourier){
         log.info("New dispatcher is added");
-        courierService.saveCourier(newCourier);
+        Courier c = courierMapper.courierDTOToCourier(newCourier);
+        courierService.saveCourier(c);
 
         return 1;
     }

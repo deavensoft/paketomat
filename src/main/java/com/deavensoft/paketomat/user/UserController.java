@@ -52,8 +52,9 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Add new user", description = "Add new user to the database")
     @ApiResponse(responseCode = "200", description = "New user added")
-    public void save(@RequestBody User u){
-        userService.save(u);
+    public void save(@RequestBody UserDTO u){
+        User user = userMapper.userDTOToUser(u);
+        userServiceImpl.save(user);
         log.info("New user added to the database");
     }
 
@@ -61,7 +62,7 @@ public class UserController {
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
     public UserDTO findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
-        Optional<User> u = userService.findUserById(id);
+        Optional<User> u = userServiceImpl.findUserById(id);
 
 
         if(u.isEmpty()){
@@ -81,15 +82,15 @@ public class UserController {
     @Operation(summary = "Delete user", description = "Delete user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id deleted")
     public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
-        Optional<User> u = userService.findUserById(id);
+        Optional<User> u = userServiceImpl.findUserById(id);
 
-    /*    if (u.isEmpty())
+        if (u.isEmpty())
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         if(!u.isEmpty()) {
             User user = u.get();
-            userService.deleteUser(user);
+            userServiceImpl.deleteUser(user);
             log.info("User deleted");
-        }*/
+        }
         return 1;
     }
 }

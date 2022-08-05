@@ -43,9 +43,10 @@ public class DispatcherController {
     @PostMapping
     @Operation(summary = "Add new dispatcher")
     @ApiResponse(responseCode = "200", description = "New dispatcher added")
-    public int saveDispatcher(@RequestBody Dispatcher dispatcher){
+    public int saveDispatcher(@RequestBody DispatcherDTO dispatcher){
         log.info("New dispatcher is added");
-        dispatcherService.saveDispatcher(dispatcher);
+        Dispatcher d = dispatcherMapper.dispatcherDTOToDispatcher(dispatcher);
+        dispatcherService.saveDispatcher(d);
         return 1;
     }
     @GetMapping(path = "/{id}")

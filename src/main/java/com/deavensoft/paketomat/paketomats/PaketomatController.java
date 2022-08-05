@@ -20,6 +20,9 @@ import static com.deavensoft.paketomat.center.model.Center.cities;
 @Slf4j
 public class PaketomatController {
     private PaketomatService paketomatService;
+
+    private  PaketomatServiceImpl paketomatServiceImpl;
+
     private CityService cityService;
 
     private PaketomatMapper paketomatMapper;
@@ -43,9 +46,10 @@ public class PaketomatController {
     @Operation(summary = "Add new paketomat")
     @ApiResponse(responseCode = "200", description = "New paketomat added")
     @PostMapping
-    public int savePaketomat(@RequestBody Paketomat paketomat){
+    public int savePaketomat(@RequestBody PaketomatDTO paketomat){
         log.info("New paketomat added.");
-        paketomatService.savePaketomat(paketomat);
+        Paketomat pa = paketomatMapper.paketomatDTOToPaketomat(paketomat);
+        paketomatServiceImpl.savePaketomat(pa);
         return 1;
     }
     @PostMapping("/saveAll")
@@ -58,9 +62,10 @@ public class PaketomatController {
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
-                    Paketomat p = new Paketomat(1L,c,new ArrayList<>());
+                    PaketomatDTO p = new PaketomatDTO(1L,c,new ArrayList<>());
                     savePaketomat(p);
-                    c.getPaketomats().add(p);
+                    Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(p);
+                    c.getPaketomats().add(paketomat);
                 }
             }
         }

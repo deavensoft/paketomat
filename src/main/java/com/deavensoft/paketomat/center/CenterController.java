@@ -55,12 +55,13 @@ public class CenterController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody Package newPackage) throws IOException, PaketomatException {
-        newPackage.setStatus(Status.NEW);
-        centerService.save(newPackage);
+    public int savePackage(@RequestBody PackageDTO newPackage) throws IOException, PaketomatException {
+        Package p = packageMapper.packageDTOToPackage(newPackage);
+        p.setStatus(Status.NEW);
+        centerService.save(p);
         log.info("New package added to the database");
 
-        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
+        Optional<User> user = userService.findUserById(p.getUser().getId());
         if(user.isEmpty()){
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
         } else{
@@ -74,7 +75,7 @@ public class CenterController {
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
             emailService.sendMailWithTemplate(emailDetails, model);
-            dispatcherService.delieverPackage(newPackage);
+            dispatcherService.delieverPackage(p);
             log.info("Package is ready to be dispatched");
             return 1;
         }

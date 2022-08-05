@@ -64,7 +64,10 @@ public class CityController {
     @PostMapping
     @Operation(summary = "Add new city", description = "Add new city to the database")
     @ApiResponse(responseCode = "200", description = "New city added")
-    public void save(@RequestBody City c) { cityServiceImpl.save(c); }
+    public void save(@RequestBody CityDto c) {
+        City city = mapper.cityDtoToCity(c);
+        cityServiceImpl.save(city);
+    }
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get city", description = "Get city with specified id")
@@ -90,13 +93,13 @@ public class CityController {
     public int deleteCity(@PathVariable(name = "id") Long id) throws NoSuchCityException {
         Optional<City> c = cityServiceImpl.findCityById(id);
 
-      /*  if (c.isEmpty())
+        if (c.isEmpty())
             throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
         if(!c.isEmpty()) {
             City city = c.get();
             cityServiceImpl.deleteCity(city);
             log.info("City deleted");
-        }*/
+        }
         return 1;
     }
 
@@ -118,7 +121,7 @@ public class CityController {
 
                     for (CityDto city : citiess) {
 
-                        save(mapper.cityDtoToCity((city)));
+                        //save(mapper.cityDtoToCity((city)));
                     }
 
                 }
