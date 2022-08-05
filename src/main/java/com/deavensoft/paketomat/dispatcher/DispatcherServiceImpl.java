@@ -9,23 +9,22 @@ import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.user.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class DispatcherServiceImpl implements DispatcherService {
+
     private DispatcherRepository dispatcherRepository;
     @Value("${external.api.distance.url}")
     private String url;
@@ -39,23 +38,16 @@ public class DispatcherServiceImpl implements DispatcherService {
     private String keyValue;
     private final UserService userService;
     private final EmailService emailService;
-
     private final CenterService centerService;
 
     @Value("${paketomat.min-population}")
     private int minPopulation;
 
+    @Value("${dispatcher.distance}")
+    private String haversine;
+
     @Value("${paketomat.size-of-paketomat}")
     private int sizeOfPaketomat;
-
-    @Autowired
-    public DispatcherServiceImpl(@Qualifier("dispatcher") DispatcherRepository dispatcherRepository,
-                                 UserService userService, EmailService emailService, CenterService centerService) {
-        this.dispatcherRepository = dispatcherRepository;
-        this.userService = userService;
-        this.emailService = emailService;
-        this.centerService = centerService;
-    }
 
     public List<Dispatcher> findAllDispatchers() {
         return dispatcherRepository.findAll();
@@ -139,12 +131,12 @@ public class DispatcherServiceImpl implements DispatcherService {
     public double calculateDistance(String text) {
         if(!text.contains("haversine"))
             return 0.0;
-        String part = text.substring(text.indexOf("haversine"), text.indexOf("greatCircle") - 2);
+        String part = text.substring(text.indexOf(haversine), text.indexOf("greatCircle") - 2);
         String[] parts = part.split(":", 2);
-        String haversine = parts[1];
+        String distance = parts[1];
         try {
             log.info("Distance is calculated");
-            return Double.parseDouble(haversine);
+            return Double.parseDouble(distance);
         } catch (NumberFormatException e){
             throw new NumberFormatException();
         }

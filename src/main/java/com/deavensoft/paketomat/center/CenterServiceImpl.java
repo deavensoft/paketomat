@@ -49,7 +49,6 @@ public class CenterServiceImpl implements CenterService {
             if(p.getCode().equals(code)){
                 p.setStatus(status);
                 centerRepository.save(p);
-                //System.out.println("Paket sa kodom: " + p.getCode() + " je updateovan: " + p.getStatus());
             }
         }
     }

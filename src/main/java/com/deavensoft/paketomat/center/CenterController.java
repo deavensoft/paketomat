@@ -65,9 +65,6 @@ public class CenterController {
             emailDetails.setRecipient(user.get().getEmail());
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
-            //emailService.sendMailWithTemplate(emailDetails, model);
-            //dispatcherService.delieverPackage(newPackage);
-            //log.info("Package is ready to be dispatched");
             return 1;
         }
     }

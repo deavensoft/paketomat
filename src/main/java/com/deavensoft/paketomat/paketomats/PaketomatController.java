@@ -46,7 +46,7 @@ public class PaketomatController {
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
-                    Paketomat p = new Paketomat(c, Paketomat.serialNumber++);
+                    Paketomat p = new Paketomat(c);
                     savePaketomat(p);
                     c.getPaketomats().add(p);
                 }

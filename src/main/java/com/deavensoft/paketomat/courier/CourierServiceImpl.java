@@ -7,33 +7,23 @@ import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class CourierServiceImpl implements CourierService {
     private final CourierRepository courierRepository;
     private final CenterService centerService;
     private final CityService cityService;
     private final DispatcherService dispatcherService;
-    private List<Package> packagesToDispatch;
-    private List<City> citiesToDispatch;
-    @Autowired
-    public CourierServiceImpl(@Qualifier("courier") CourierRepository courierRepository,
-                              CenterService centerService, CityService cityService, DispatcherService dispatcherService){
-        this.courierRepository = courierRepository;
-        this.centerService = centerService;
-        this.cityService = cityService;
-        this.dispatcherService = dispatcherService;
-        this.packagesToDispatch = new ArrayList<>();
-        this.citiesToDispatch = new ArrayList<>();
-    }
+    private List<Package> packagesToDispatch = new ArrayList<>();
+    private List<City> citiesToDispatch = new ArrayList<>();
 
     public List<Courier> findAllCouriers(){
         return courierRepository.findAll();
@@ -67,7 +57,7 @@ public class CourierServiceImpl implements CourierService {
                 packagesToDispatch.add(p);
             }
         }
-        log.info("List with packages TO_DISPATCH is maade");
+        log.info("List with packages TO_DISPATCH is made");
     }
 
     public void findCitiesInRadius(String city) throws PaketomatException {
