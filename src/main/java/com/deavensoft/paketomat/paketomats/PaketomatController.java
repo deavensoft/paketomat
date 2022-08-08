@@ -1,13 +1,17 @@
 package com.deavensoft.paketomat.paketomats;
 
+import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.city.CityService;
+import com.deavensoft.paketomat.mapper.PaketomatMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import static com.deavensoft.paketomat.center.model.Center.cities;
 
@@ -17,22 +21,36 @@ import static com.deavensoft.paketomat.center.model.Center.cities;
 @Slf4j
 public class PaketomatController {
     private PaketomatService paketomatService;
+
+    private  PaketomatServiceImpl paketomatServiceImpl;
+
     private CityService cityService;
+
+    private PaketomatMapper paketomatMapper;
 
     @Operation(summary = "Get paketomats", description = "Get all paketomats")
     @ApiResponse(responseCode = "200", description = "All paketomats are returned")
     @GetMapping
-    public List<Paketomat> getAllPaketomats(){
+    public List<PaketomatDTO> getAllPaketomats(){
+
+        List<Paketomat> paketomats = paketomatService.getAllPaketomats();
+        List<PaketomatDTO> paketomatDTOS = new ArrayList<>();
+
+        for (Paketomat paketomat : paketomats){
+            paketomatDTOS.add(paketomatMapper.paketomatToPaketomatDTO(paketomat));
+        }
         log.info("All paketomats are returned.");
-        return paketomatService.getAllPaketomats();
+        return paketomatDTOS;
+
     }
 
     @Operation(summary = "Add new paketomat")
     @ApiResponse(responseCode = "200", description = "New paketomat added")
     @PostMapping
-    public int savePaketomat(@RequestBody Paketomat paketomat){
+    public int savePaketomat(@RequestBody PaketomatDTO paketomat){
         log.info("New paketomat added.");
-        paketomatService.savePaketomat(paketomat);
+        Paketomat pa = paketomatMapper.paketomatDTOToPaketomat(paketomat);
+        paketomatServiceImpl.savePaketomat(pa);
         return 1;
     }
 
@@ -46,9 +64,12 @@ public class PaketomatController {
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
-                    Paketomat p = new Paketomat(c);
-                    savePaketomat(p);
-                    c.getPaketomats().add(p);
+                    PaketomatDTO pa = new PaketomatDTO();
+                    pa.setCity(c);
+                    pa.setPackages(new ArrayList<>());
+                    savePaketomat(pa);
+                    Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(pa);
+                    c.getPaketomats().add(paketomat);
                 }
             }
         }

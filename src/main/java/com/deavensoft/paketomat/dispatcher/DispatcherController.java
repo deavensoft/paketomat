@@ -1,10 +1,13 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.CenterService;
+
+import com.deavensoft.paketomat.center.CenterServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.mapper.DispatcherMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -13,6 +16,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,35 +29,51 @@ public class DispatcherController {
 
     private final DispatcherService dispatcherService;
 
-    private final CenterService centerService;
+    private final CenterServiceImpl centerService;
+
+    private DispatcherMapper dispatcherMapper;
 
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
     @ApiResponse(responseCode = "200", description = "All dispatchers are returned")
-    public List<Dispatcher> findAllDispatchers(){
-        log.info("All dispatchersare returned");
-        return dispatcherService.findAllDispatchers();
+    public List<DispatcherDTO> findAllDispatchers(){
+
+        List<Dispatcher> dispatchers = dispatcherService.findAllDispatchers();
+        List<DispatcherDTO> dispatcherDTOS = new ArrayList<>();
+
+        for (Dispatcher dispatcher : dispatchers) {
+            dispatcherDTOS.add(dispatcherMapper.dispatcherToDispatcherDTO(dispatcher));
+        }
+        log.info("All dispatchers are returned");
+        return dispatcherDTOS;
     }
+
     @PostMapping
     @Operation(summary = "Add new dispatcher")
     @ApiResponse(responseCode = "200", description = "New dispatcher added")
-    public int saveDispatcher(@RequestBody Dispatcher dispatcher){
+    public int saveDispatcher(@RequestBody DispatcherDTO dispatcher){
         log.info("New dispatcher is added");
-        dispatcherService.saveDispatcher(dispatcher);
+        Dispatcher d = dispatcherMapper.dispatcherDTOToDispatcher(dispatcher);
+        dispatcherService.saveDispatcher(d);
         return 1;
     }
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
-    @ApiResponse(responseCode = "200", description = "Dispatcher wwith specified id returned")
-    public Optional<Dispatcher> findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
+    @ApiResponse(responseCode = "200", description = "Dispatcher with specified id returned")
+    public DispatcherDTO findDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         Optional<Dispatcher> d = dispatcherService.findDispatcherById(id);
+
         if(d.isEmpty()){
             throw new NoSuchDispatcherException("There is no dispatcher with id " + id, HttpStatus.OK, 200);
         } else{
+            Dispatcher dispatcher = d.get();
+            DispatcherDTO dispatcherDTO = dispatcherMapper.dispatcherToDispatcherDTO(dispatcher);
             String mess = "Dispatcher with id " + id + " is returned";
             log.info(mess);
+
+            return dispatcherDTO;
         }
-        return d;
+
     }
 
     @PostMapping(path = "/dispatch/{id}")
