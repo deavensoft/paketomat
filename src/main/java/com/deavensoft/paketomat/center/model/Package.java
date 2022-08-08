@@ -1,11 +1,14 @@
 package com.deavensoft.paketomat.center.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "package")
 public class Package {
     @Id
@@ -17,7 +20,7 @@ public class Package {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "paketomat_id")
     private Paketomat paketomat;
     @Column(name = "code", unique = true)

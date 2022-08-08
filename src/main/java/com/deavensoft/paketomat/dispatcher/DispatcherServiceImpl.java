@@ -9,11 +9,13 @@ import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.user.UserService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ import java.util.*;
 @Slf4j
 public class DispatcherServiceImpl implements DispatcherService {
 
-    private DispatcherRepository dispatcherRepository;
+    private final DispatcherRepository dispatcherRepository;
     @Value("${external.api.distance.url}")
     private String url;
     @Value("${external.api.distance.header.host.name}")

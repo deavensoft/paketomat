@@ -1,20 +1,19 @@
 package com.deavensoft.paketomat.center;
 
+import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
-import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
-import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import com.deavensoft.paketomat.user.UserService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.control.MappingControl;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,25 +30,32 @@ public class CenterController {
 
     private final CenterService centerService;
     private final UserService userService;
+    private final PackageMapper packageMapper;
 
     @GetMapping
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
-    public List<Package> getAllPackages()
-    {
+    public List<PackageDTO> getAllPackages() {
+        List<Package> packages = centerService.getAllPackages();
+        List<PackageDTO> packageDTOS = new ArrayList<>();
+
+        for (Package pa : packages) {
+            packageDTOS.add(packageMapper.packageToPackageDTO(pa));
+        }
         log.info("All packages are returned");
-        return centerService.getAllPackages();
+        return  packageDTOS;
     }
 
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody Package newPackage) throws IOException, PaketomatException {
-        newPackage.setStatus(Status.NEW);
-        centerService.save(newPackage);
+    public int savePackage(@RequestBody PackageDTO newPackage) throws IOException, PaketomatException {
+        Package p = packageMapper.packageDTOToPackage(newPackage);
+        p.setStatus(Status.NEW);
+        centerService.save(p);
         log.info("New package added to the database");
 
-        Optional<User> user = userService.findUserById(newPackage.getUser().getId());
+        Optional<User> user = userService.findUserById(p.getUser().getId());
         if(user.isEmpty()){
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
         } else{
@@ -68,15 +74,19 @@ public class CenterController {
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
-    public Optional<Package> getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
+    public PackageDTO getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerService.findPackageById(id);
+
         if(p.isEmpty()){
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         } else{
+            Package pa = p.get();
+            PackageDTO packageDTO = packageMapper.packageToPackageDTO(pa);
+
             String mess = "Package with id " + id + " is returned";
             log.info(mess);
+            return packageDTO;
         }
-        return p;
     }
 
     @DeleteMapping(path = "/{id}")

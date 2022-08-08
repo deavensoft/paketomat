@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,7 +15,6 @@ import java.util.Optional;
 @Service
 public class CenterServiceImpl implements CenterService {
     private final CenterRepository centerRepository;
-
 
     @Autowired
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
@@ -33,6 +33,7 @@ public class CenterServiceImpl implements CenterService {
     public Optional<Package> findPackageById(Long id) {
         return centerRepository.findById(id);
     }
+
     public void deletePackageById(Long id) {
         centerRepository.deleteById(id);
     }
