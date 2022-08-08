@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface PackageMapper {
 
     PackageMapper INSTANCE = Mappers.getMapper(PackageMapper.class);
-    @Mapping(target="id_dto", source= "id")
+    @Mapping(target="idDto", source= "id")
     PackageDTO packageToPackageDTO(Package p);
 
     Package packageDTOToPackage(PackageDTO packageDTO);

@@ -93,15 +93,16 @@ public class CityController {
     public int deleteCity(@PathVariable(name = "id") Long id) throws NoSuchCityException {
         Optional<City> c = cityServiceImpl.findCityById(id);
 
-        if (c.isEmpty())
+        if (c.isEmpty()) {
             throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
-        if(!c.isEmpty()) {
+        } else {
             City city = c.get();
             cityServiceImpl.deleteCity(city);
             log.info("City deleted");
+            return 1;
         }
-        return 1;
     }
+
 
     @GetMapping(path = "/check")
     public void checkCities() throws IOException, CityException {
