@@ -6,14 +6,14 @@ import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
+import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +23,7 @@ public class CourierServiceImpl implements CourierService {
     private final CenterService centerService;
     private final CityService cityService;
     private final DispatcherService dispatcherService;
-    private final List<Package> packagesToDispatch = new ArrayList<>();
-    private final List<City> citiesToDispatch = new ArrayList<>();
+    private final EmailService emailService;
 
     public List<Courier> findAllCouriers() {
         return courierRepository.findAll();
@@ -47,12 +46,12 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
         getPackagesToDispatch();
         findCitiesInRadius(city);
-        return deliverPackageInPaketomat(filterPackagesToDispatch(packagesToDispatch,citiesToDispatch));
+        return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(),findCitiesInRadius(city)));
     }
 
     public List<Package> getPackagesToDispatch() {
         List<Package> packageList = centerService.getAllPackages();
-        packagesToDispatch.clear();
+        ArrayList<Package>packagesToDispatch=new ArrayList<>();
 
         for (Package p : packageList) {
             if (p.getStatus().equals(Status.TO_DISPATCH)) {
@@ -67,7 +66,7 @@ public class CourierServiceImpl implements CourierService {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
-        citiesToDispatch.clear();
+        ArrayList<City>citiesToDispatch=new ArrayList<>();
 
         for (City c : citiesList) {
             distance = dispatcherService.findDistance(city, c.getName());
@@ -91,7 +90,8 @@ public class CourierServiceImpl implements CourierService {
     }
 
     public boolean isCityInList(String city) {
-        for (City c : citiesToDispatch) {
+        List<City> citiesList = cityService.getAllCities();
+        for (City c : citiesList) {
             if (c.getName().equalsIgnoreCase(city.trim())) {
                 return true;
             }
@@ -102,8 +102,23 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
             p.setStatus(Status.IN_PAKETOMAT);
+            sendMailToUser(p.getUser().getEmail());
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
+    }
+
+    public void sendMailToUser(String email)
+    {
+        EmailDetails emailSender=new EmailDetails();
+        emailSender.setRecipient(email);
+        emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up");
+        emailSender.setAttachment("");
+        emailSender.setSubject("Package arrived in the paketomat");
+        Map<String, Object> model = new HashMap<>();
+        model.put("msgBody", emailSender.getMsgBody());
+        emailService.sendMailWithTemplate(emailSender, model);
+        log.info("E-Mail is sent to the end user");
+
     }
 }
