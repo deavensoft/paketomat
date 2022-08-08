@@ -25,7 +25,7 @@ public class UserController {
     private UserService userService;
 
     private UserServiceImpl userServiceImpl;
-    @Autowired
+
     private UserMapper userMapper;
     @Autowired
     public UserController(UserServiceImpl userServiceImpl){

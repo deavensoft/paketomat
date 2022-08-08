@@ -64,7 +64,6 @@ public class PaketomatController {
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;
                 for(int i = 0; i < numberOfPaketomats; i++){
-                    Paketomat p = new Paketomat(c);
                     PaketomatDTO pa = new PaketomatDTO();
                     pa.setCity(c);
                     pa.setPackages(new ArrayList<>());
