@@ -24,21 +24,14 @@ public class UserController {
 
     private UserService userService;
 
-    private UserServiceImpl userServiceImpl;
-
     private UserMapper userMapper;
-    @Autowired
-    public UserController(UserServiceImpl userServiceImpl){
-
-        this.userServiceImpl = userServiceImpl;
-    }
 
     @GetMapping
     @Operation(summary = "Get users", description = "Get all users")
     @ApiResponse(responseCode = "200", description = "All users are returned")
     public List<UserDTO> getAllUsers(){
 
-        List<User> users = userServiceImpl.getAllUsers();
+        List<User> users = userService.getAllUsers();
         List<UserDTO> userDTOS = new ArrayList<>();
 
         for (User user : users) {
@@ -54,7 +47,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "New user added")
     public void save(@RequestBody UserDTO u){
         User user = userMapper.userDTOToUser(u);
-        userServiceImpl.save(user);
+        userService.save(user);
         log.info("New user added to the database");
     }
 
@@ -62,7 +55,7 @@ public class UserController {
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
     public UserDTO findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
-        Optional<User> u = userServiceImpl.findUserById(id);
+        Optional<User> u = userService.findUserById(id);
 
 
         if(u.isEmpty()){
@@ -82,13 +75,13 @@ public class UserController {
     @Operation(summary = "Delete user", description = "Delete user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id deleted")
     public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
-        Optional<User> u = userServiceImpl.findUserById(id);
+        Optional<User> u = userService.findUserById(id);
 
         if (u.isEmpty()) {
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
         }else {
             User user = u.get();
-            userServiceImpl.deleteUser(user);
+            userService.deleteUser(user);
             log.info("User deleted");
             return 1;
         }
