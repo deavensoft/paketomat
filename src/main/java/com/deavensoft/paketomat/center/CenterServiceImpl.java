@@ -16,9 +16,6 @@ import java.util.Optional;
 public class CenterServiceImpl implements CenterService {
     private final CenterRepository centerRepository;
 
-    PackageMapper packageMapper;
-
-
     @Autowired
     public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository) {
         this.centerRepository = centerRepository;

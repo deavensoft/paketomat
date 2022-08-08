@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PackageDTO {
-    @JsonProperty("idDto")
+    @JsonProperty("id_dto")
     private Long idDto;
     @JsonProperty("status")
     private Status status;
