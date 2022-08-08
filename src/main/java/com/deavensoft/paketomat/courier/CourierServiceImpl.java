@@ -100,7 +100,7 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
-            p.setStatus(Status.IN_PAKETOMAT);
+            centerService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
             sendMailToUser(p.getUser().getEmail());
         }
         log.info("Packages are in paketomat and are ready for delivery");
