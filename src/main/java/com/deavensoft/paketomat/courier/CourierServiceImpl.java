@@ -10,6 +10,7 @@ import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +47,10 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
         getPackagesToDispatch();
         findCitiesInRadius(city);
-        return deliverPackageInPaketomat(filterPackagesToDispatch());
+        return deliverPackageInPaketomat(filterPackagesToDispatch(packagesToDispatch,citiesToDispatch));
     }
 
-    public void getPackagesToDispatch() {
+    public List<Package> getPackagesToDispatch() {
         List<Package> packageList = centerService.getAllPackages();
         packagesToDispatch.clear();
 
@@ -59,9 +60,10 @@ public class CourierServiceImpl implements CourierService {
             }
         }
         log.info("List with packages TO_DISPATCH is made");
+        return packageList;
     }
 
-    public void findCitiesInRadius(String city) throws PaketomatException {
+    public List<City> findCitiesInRadius(String city) throws PaketomatException {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
@@ -74,9 +76,10 @@ public class CourierServiceImpl implements CourierService {
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");
+        return citiesList;
     }
 
-    public List<Package> filterPackagesToDispatch() {
+    public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch ) {
         List<Package> packages = new ArrayList<>();
         for (Package p : packagesToDispatch) {
             String city = p.getPaketomat().getCity().getName();
