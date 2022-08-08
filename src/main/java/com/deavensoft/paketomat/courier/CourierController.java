@@ -1,8 +1,10 @@
 package com.deavensoft.paketomat.courier;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.courier.dto.CourierDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.mapper.CourierMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,34 +25,50 @@ public class CourierController {
 
     private CourierService courierService;
 
+    private CourierMapper courierMapper;
+
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
-    public List<Courier> getAllCouriers(){
+    public List<CourierDTO> getAllCouriers(){
+
+        List<Courier> couriers = courierService.findAllCouriers();
+        List<CourierDTO> courierDTOS = new ArrayList<>();
+
+        for (Courier courier : couriers) {
+            courierDTOS.add(courierMapper.courierToCourierDTO(courier));
+        }
         log.info("All couriers are returned");
-        return courierService.findAllCouriers();
+        return courierDTOS;
     }
+
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")
-    public int saveCourier(@RequestBody Courier newCourier){
+    public int saveCourier(@RequestBody CourierDTO newCourier){
         log.info("New dispatcher is added");
-        courierService.saveCourier(newCourier);
+        Courier c = courierMapper.courierDTOToCourier(newCourier);
+        courierService.saveCourier(c);
+
         return 1;
     }
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get courier", description = "Get courier with specified id")
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
-    public Optional<Courier> getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
+    public CourierDTO getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<Courier> c = courierService.getCourierById(id);
         if(c.isEmpty()){
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
         } else{
+            Courier courier = c.get();
+            CourierDTO courierDTO = courierMapper.courierToCourierDTO(courier);
             String mess = "Courier with id " + id + " is returned";
             log.info(mess);
+
+            return courierDTO;
         }
-        return c;
+
     }
 
     @DeleteMapping(path = "/{id}")
