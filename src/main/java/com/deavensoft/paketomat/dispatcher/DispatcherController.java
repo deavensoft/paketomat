@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.dispatcher;
 
 import com.deavensoft.paketomat.center.CenterService;
+import com.deavensoft.paketomat.center.CenterServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,7 @@ public class DispatcherController {
 
     private final DispatcherService dispatcherService;
 
-    private final CenterService centerService;
+    private final CenterServiceImpl centerService;
 
     private DispatcherMapper dispatcherMapper;
 

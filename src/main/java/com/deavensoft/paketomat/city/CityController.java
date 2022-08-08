@@ -121,7 +121,7 @@ public class CityController {
 
                     for (CityDto city : citiess) {
 
-                        //save(mapper.cityDtoToCity((city)));
+                        save(city);
                     }
 
                 }

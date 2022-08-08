@@ -1,12 +1,15 @@
 package com.deavensoft.paketomat.center;
 
+import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,8 @@ import java.util.Optional;
 @Service
 public class CenterServiceImpl implements CenterService {
     private final CenterRepository centerRepository;
+
+    private PackageMapper packageMapper;
 
 
     @Autowired

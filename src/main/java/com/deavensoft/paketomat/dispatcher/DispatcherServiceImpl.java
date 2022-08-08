@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.*;
 @Slf4j
 public class DispatcherServiceImpl implements DispatcherService {
 
+    @Autowired
     private DispatcherRepository dispatcherRepository;
     @Value("${external.api.distance.url}")
     private String url;

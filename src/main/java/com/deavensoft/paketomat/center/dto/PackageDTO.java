@@ -24,4 +24,6 @@ public class PackageDTO {
     private User user;
     @JsonProperty("paketomat")
     private Paketomat paketomat;
+    @JsonProperty("code")
+    private Long code;
 }

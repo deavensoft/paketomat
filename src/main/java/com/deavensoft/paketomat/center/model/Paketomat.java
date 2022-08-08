@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "paketomat", schema = "public")
+@Table(name = "paketomat")
 public class Paketomat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

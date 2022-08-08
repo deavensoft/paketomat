@@ -9,7 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,10 +20,15 @@ public class PaketomatDTO {
 
     @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("address")
+    private City address;
+
     @JsonProperty("city")
     private City city;
+
     @JsonProperty("packages")
-    private ArrayList<Package> packages;
+    private List<Package> packages;
 }
 
 

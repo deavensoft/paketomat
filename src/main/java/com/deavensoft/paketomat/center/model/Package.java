@@ -20,7 +20,7 @@ public class Package {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "paketomat_id")
     private Paketomat paketomat;
     @Column(name = "code", unique = true)
