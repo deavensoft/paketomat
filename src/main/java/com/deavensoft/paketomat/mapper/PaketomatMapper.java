@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface PaketomatMapper {
 
-
     PaketomatMapper INSTANCE = Mappers.getMapper(PaketomatMapper.class);
 
     @Mapping(target = "id", source = "id")

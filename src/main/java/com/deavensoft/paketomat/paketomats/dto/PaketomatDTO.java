@@ -21,8 +21,8 @@ public class PaketomatDTO {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("address")
-    private City address;
+    @JsonProperty("addr")
+    private Long addr;
 
     @JsonProperty("city")
     private City city;
