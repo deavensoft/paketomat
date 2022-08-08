@@ -44,14 +44,12 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
-        getPackagesToDispatch();
-        findCitiesInRadius(city);
-        return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(),findCitiesInRadius(city)));
+        return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
     }
 
     public List<Package> getPackagesToDispatch() {
         List<Package> packageList = centerService.getAllPackages();
-        ArrayList<Package>packagesToDispatch=new ArrayList<>();
+        ArrayList<Package> packagesToDispatch = new ArrayList<>();
 
         for (Package p : packageList) {
             if (p.getStatus().equals(Status.TO_DISPATCH)) {
@@ -66,32 +64,33 @@ public class CourierServiceImpl implements CourierService {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
-        ArrayList<City>citiesToDispatch=new ArrayList<>();
+        ArrayList<City> citiesToDispatch = new ArrayList<>();
 
         for (City c : citiesList) {
-            distance = dispatcherService.findDistance(city, c.getName());
-            if (distance <= maxDistance) {
-                citiesToDispatch.add(c);
+            if (c.getPopulation() >= 10000) {
+                distance = dispatcherService.findDistance(city, c.getName());
+                if (distance <= maxDistance) {
+                    citiesToDispatch.add(c);
+                }
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");
         return citiesList;
     }
 
-    public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch ) {
+    public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch) {
         List<Package> packages = new ArrayList<>();
         for (Package p : packagesToDispatch) {
             String city = p.getPaketomat().getCity().getName();
-            if (isCityInList(city))
+            if (isCityInList(city, citiesToDispatch))
                 packages.add(p);
         }
         log.info("Packages are filtered so courier can deliver them");
         return packages;
     }
 
-    public boolean isCityInList(String city) {
-        List<City> citiesList = cityService.getAllCities();
-        for (City c : citiesList) {
+    public boolean isCityInList(String city, List<City> citiesToDispatch) {
+        for (City c : citiesToDispatch) {
             if (c.getName().equalsIgnoreCase(city.trim())) {
                 return true;
             }
@@ -108,9 +107,8 @@ public class CourierServiceImpl implements CourierService {
         return packages;
     }
 
-    public void sendMailToUser(String email)
-    {
-        EmailDetails emailSender=new EmailDetails();
+    public void sendMailToUser(String email) {
+        EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up");
         emailSender.setAttachment("");
