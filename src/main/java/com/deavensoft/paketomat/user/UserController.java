@@ -84,13 +84,13 @@ public class UserController {
     public int deleteUser(@PathVariable(name = "id") Long id) throws NoSuchUserException {
         Optional<User> u = userServiceImpl.findUserById(id);
 
-        if (u.isEmpty())
+        if (u.isEmpty()) {
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
-        if(!u.isEmpty()) {
+        }else {
             User user = u.get();
             userServiceImpl.deleteUser(user);
             log.info("User deleted");
+            return 1;
         }
-        return 1;
     }
 }
