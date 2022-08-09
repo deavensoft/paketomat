@@ -6,13 +6,14 @@ import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
+import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,52 +23,51 @@ public class CourierServiceImpl implements CourierService {
     private final CenterService centerService;
     private final CityService cityService;
     private final DispatcherService dispatcherService;
-    private List<Package> packagesToDispatch = new ArrayList<>();
-    private List<City> citiesToDispatch = new ArrayList<>();
+    private final EmailService emailService;
 
-    public List<Courier> findAllCouriers(){
+    public List<Courier> findAllCouriers() {
         return courierRepository.findAll();
     }
 
-    public void saveCourier(Courier newCourier){
+    public void saveCourier(Courier newCourier) {
         courierRepository.save(newCourier);
     }
 
 
-    public Optional<Courier> getCourierById(Long id){
+    public Optional<Courier> getCourierById(Long id) {
         return courierRepository.findById(id);
     }
 
-    public void deleteCourierById(Long id){
+    public void deleteCourierById(Long id) {
         courierRepository.deleteById(id);
     }
+
     @Override
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
-        getPackagesToDispatch();
-        findCitiesInRadius(city);
-        return filterPackagesToDispatch();
+        return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
     }
 
-    public void getPackagesToDispatch() {
+    public List<Package> getPackagesToDispatch() {
         List<Package> packageList = centerService.getAllPackages();
-        packagesToDispatch.clear();
+        ArrayList<Package> packagesToDispatch = new ArrayList<>();
 
-        for(Package p : packageList){
-            if(p.getStatus().equals(Status.TO_DISPATCH)) {
+        for (Package p : packageList) {
+            if (p.getStatus().equals(Status.TO_DISPATCH)) {
                 packagesToDispatch.add(p);
             }
         }
         log.info("List with packages TO_DISPATCH is made");
+        return packageList;
     }
 
-    public void findCitiesInRadius(String city) throws PaketomatException {
+    public List<City> findCitiesInRadius(String city) throws PaketomatException {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
-        citiesToDispatch.clear();
+        ArrayList<City> citiesToDispatch = new ArrayList<>();
 
-        for(City c : citiesList){
-            if(c.getPopulation() >= 10000) {
+        for (City c : citiesList) {
+            if (c.getPopulation() >= 10000) {
                 distance = dispatcherService.findDistance(city, c.getName());
                 if (distance <= maxDistance) {
                     citiesToDispatch.add(c);
@@ -75,25 +75,48 @@ public class CourierServiceImpl implements CourierService {
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");
+        return citiesList;
     }
 
-    public List<Package> filterPackagesToDispatch(){
+    public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch) {
         List<Package> packages = new ArrayList<>();
-        for(Package p : packagesToDispatch){
-           String city = p.getPaketomat().getCity().getName();
-            if(isCityInList(city))
+        for (Package p : packagesToDispatch) {
+            String city = p.getPaketomat().getCity().getName();
+            if (isCityInList(city, citiesToDispatch))
                 packages.add(p);
         }
         log.info("Packages are filtered so courier can deliver them");
         return packages;
     }
 
-    public boolean isCityInList(String city){
-        for(City c: citiesToDispatch){
-            if(c.getName().equalsIgnoreCase(city.trim())) {
+    public boolean isCityInList(String city, List<City> citiesToDispatch) {
+        for (City c : citiesToDispatch) {
+            if (c.getName().equalsIgnoreCase(city.trim())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public List<Package> deliverPackageInPaketomat(List<Package> packages) {
+        for (Package p : packages) {
+            centerService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
+            sendMailToUser(p.getUser().getEmail());
+        }
+        log.info("Packages are in paketomat and are ready for delivery");
+        return packages;
+    }
+
+    public void sendMailToUser(String email) {
+        EmailDetails emailSender = new EmailDetails();
+        emailSender.setRecipient(email);
+        emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up");
+        emailSender.setAttachment("");
+        emailSender.setSubject("Package arrived in the paketomat");
+        Map<String, Object> model = new HashMap<>();
+        model.put("msgBody", emailSender.getMsgBody());
+        emailService.sendMailWithTemplate(emailSender, model);
+        log.info("E-Mail is sent to the end user");
+
     }
 }
