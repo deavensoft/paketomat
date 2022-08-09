@@ -67,9 +67,11 @@ public class CourierServiceImpl implements CourierService {
         citiesToDispatch.clear();
 
         for(City c : citiesList){
-            distance = dispatcherService.findDistance(city, c.getName());
-            if(distance <= maxDistance){
-                citiesToDispatch.add(c);
+            if(c.getPopulation() >= 10000) {
+                distance = dispatcherService.findDistance(city, c.getName());
+                if (distance <= maxDistance) {
+                    citiesToDispatch.add(c);
+                }
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");

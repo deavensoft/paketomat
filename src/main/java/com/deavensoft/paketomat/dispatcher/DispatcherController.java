@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.dispatcher;
 
-
 import com.deavensoft.paketomat.center.CenterServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
@@ -16,7 +15,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
