@@ -8,6 +8,7 @@ import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.paketomats.PaketomatService;
 import com.deavensoft.paketomat.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class DispatcherServiceImpl implements DispatcherService {
     private final UserService userService;
     private final EmailService emailService;
     private final CenterService centerService;
+    private final PaketomatService paketomatService;
 
     @Value("${paketomat.min-population}")
     private int minPopulation;
@@ -146,13 +148,15 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     public boolean checkIfAvaiable(Package newPackage, City city) {
-        for (Paketomat paketomat : city.getPaketomats()) {
-            if (paketomat.getPackages().size() < sizeOfPaketomat) {
-                paketomat.reserveSlot(newPackage);
-                newPackage.setPaketomat(paketomat);
-                centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
-                log.info("Slot is reserved for package in paketomat in city " + city.getName());
-                return true;
+        for(Paketomat paketomat : paketomatService.getAllPaketomats()){
+            if(city.getId().equals(paketomat.getCity().getId())){
+                if (paketomat.getPackages().size() < sizeOfPaketomat) {
+                    paketomat.reserveSlot(newPackage);
+                    newPackage.setPaketomat(paketomat);
+                    centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
+                    log.info("Slot is reserved for package in paketomat in city " + city.getName());
+                    return true;
+                }
             }
         }
         return false;
