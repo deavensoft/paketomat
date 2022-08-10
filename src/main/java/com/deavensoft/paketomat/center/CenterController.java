@@ -27,7 +27,7 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class CenterController {
-
+    static final String MESSAGE = "Package with id ";
     private final CenterService centerService;
     private final UserService userService;
     private final PackageMapper packageMapper;
@@ -43,7 +43,7 @@ public class CenterController {
             packageDTOS.add(packageMapper.packageToPackageDTO(pa));
         }
         log.info("All packages are returned");
-        return  packageDTOS;
+        return packageDTOS;
     }
 
     @PostMapping
@@ -56,9 +56,9 @@ public class CenterController {
         log.info("New package added to the database");
 
         Optional<User> user = userService.findUserById(p.getUser().getId());
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
-        } else{
+        } else {
             String messages = "User exist";
             log.info(messages);
             EmailDetails emailDetails = new EmailDetails();
@@ -77,13 +77,12 @@ public class CenterController {
     public PackageDTO getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         Optional<Package> p = centerService.findPackageById(id);
 
-        if(p.isEmpty()){
+        if (p.isEmpty()) {
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
-        } else{
+        } else {
             Package pa = p.get();
             PackageDTO packageDTO = packageMapper.packageToPackageDTO(pa);
-
-            String mess = "Package with id " + id + " is returned";
+            String mess = MESSAGE + id + " is returned";
             log.info(mess);
             return packageDTO;
         }
@@ -92,18 +91,19 @@ public class CenterController {
     @DeleteMapping(path = "/{id}")
     @Operation(summary = "Delete package", description = "Delete package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
-    public int deletePackageById(@PathVariable(name = "id")Long id) throws NoSuchPackageException {
+    public int deletePackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         try {
             centerService.deletePackageById(id);
-            String mess = "Package with id " + id + " is deleted";
+            String mess = MESSAGE + id + " is deleted";
             log.info(mess);
-        } catch (EmptyResultDataAccessException e){
-            throw new NoSuchPackageException("Package with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoSuchPackageException(MESSAGE + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }
+
     @DeleteMapping
-    public int deleteAllPackages(){
+    public int deleteAllPackages() {
         centerService.deleteAll();
         return 1;
     }

@@ -5,18 +5,14 @@ import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
-import com.deavensoft.paketomat.exceptions.NoSuchCityException;
-import com.deavensoft.paketomat.exceptions.NoSuchUserException;
-import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.exceptions.*;
 import com.deavensoft.paketomat.paketomats.PaketomatService;
 import com.deavensoft.paketomat.user.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -72,12 +68,15 @@ public class DispatcherServiceImpl implements DispatcherService {
     @Override
     public void delieverPackage(Package newPackage) throws PaketomatException {
         Optional<User> user = userService.findUserById(newPackage.getUser().getId());
-        if(user.isPresent()){
+        if (user.isPresent()) {
+            if(!user.get().getAddress().contains(",")){
+                throw new BadFormattingException("User address does not have right format", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+            }
             String[] parts = user.get().getAddress().split(",", 2);
             String cityUser = parts[1];
             findNearestCity(cityUser, newPackage);
             sendMailToCourier();
-        }else
+        } else
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
     }
 
@@ -87,8 +86,8 @@ public class DispatcherServiceImpl implements DispatcherService {
         double distance;
         List<City> cities = new ArrayList<>(Center.cities);
         while (true) {
-            if(cities.isEmpty()){
-                throw new NoSuchCityException("There is no city available", HttpStatus.OK, 200);
+            if (cities.isEmpty()) {
+                throw new NoSpaceAvailableException("There is no space available in paketomats", HttpStatus.OK, 200);
             }
             for (City c : cities) {
                 if (c.getPopulation() > minPopulation) {
@@ -99,17 +98,16 @@ public class DispatcherServiceImpl implements DispatcherService {
                     }
                 }
             }
-            if (city!= null && checkIfAvaiable(newPackage, city))
+            if (city != null && checkIfAvailable(newPackage, city))
                 break;
             cities.remove(city);
             minDistance = 1000.0;
         }
-
     }
 
     @Override
     public double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException {
-        if(cityReciever.contentEquals(cityPaketomat)){
+        if (cityReciever.contentEquals(cityPaketomat)) {
             return 0.0;
         }
         try {
@@ -118,45 +116,41 @@ public class DispatcherServiceImpl implements DispatcherService {
             String newUrl = url.replace("{cityReciever}", cityReciever);
             String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
             Request request = new Request.Builder()
-                   .url(newURL)
+                    .url(newURL)
                     .get()
                     .addHeader(keyName, keyValue)
                     .addHeader(hostName, hostValue)
                     .build();
 
-            try(Response response = client.newCall(request).execute()){
-                log.info("API is called");
+            try (Response response = client.newCall(request).execute()) {
                 return calculateDistance(response.body().string());
             }
         } catch (IOException e) {
-            throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR,500);
+            throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
     }
 
     public double calculateDistance(String text) {
-        if(!text.contains(haversine))
+        if (!text.contains(haversine))
             return 0.0;
         String part = text.substring(text.indexOf(haversine), text.indexOf("greatCircle") - 2);
         String[] parts = part.split(":", 2);
         String distance = parts[1];
         try {
-            log.info("Distance is calculated");
             return Double.parseDouble(distance);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new NumberFormatException();
         }
     }
 
-    public boolean checkIfAvaiable(Package newPackage, City city) {
-        for(Paketomat paketomat : paketomatService.getAllPaketomats()){
-            if(city.getId().equals(paketomat.getCity().getId())){
-                if (paketomat.getPackages().size() < sizeOfPaketomat) {
-                    paketomat.reserveSlot(newPackage);
-                    newPackage.setPaketomat(paketomat);
-                    centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
-                    log.info("Slot is reserved for package in paketomat in city " + city.getName());
-                    return true;
-                }
+    public boolean checkIfAvailable(Package newPackage, City city) {
+        for (Paketomat paketomat : paketomatService.getAllPaketomats()) {
+            if (city.getId().equals(paketomat.getCity().getId()) && paketomat.getPackages().size() < sizeOfPaketomat) {
+                paketomat.reserveSlot(newPackage);
+                newPackage.setPaketomat(paketomat);
+                centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
+                log.info("Slot is reserved for package in paketomat in city " + city.getName());
+                return true;
             }
         }
         return false;

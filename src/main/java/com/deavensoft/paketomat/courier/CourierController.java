@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @RequestMapping("api/couriers")
 @Slf4j
 public class CourierController {
-
+    static final String MESSAGE = "Courier with id ";
     private CourierService courierService;
 
     private CourierMapper courierMapper;
@@ -30,7 +29,7 @@ public class CourierController {
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
-    public List<CourierDTO> getAllCouriers(){
+    public List<CourierDTO> getAllCouriers() {
 
         List<Courier> couriers = courierService.findAllCouriers();
         List<CourierDTO> courierDTOS = new ArrayList<>();
@@ -45,7 +44,7 @@ public class CourierController {
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")
-    public int saveCourier(@RequestBody CourierDTO newCourier){
+    public int saveCourier(@RequestBody CourierDTO newCourier) {
         log.info("New dispatcher is added");
         Courier c = courierMapper.courierDTOToCourier(newCourier);
         courierService.saveCourier(c);
@@ -58,17 +57,16 @@ public class CourierController {
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
     public CourierDTO getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<Courier> c = courierService.getCourierById(id);
-        if(c.isEmpty()){
+        if (c.isEmpty()) {
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
-        } else{
+        } else {
             Courier courier = c.get();
             CourierDTO courierDTO = courierMapper.courierToCourierDTO(courier);
-            String mess = "Courier with id " + id + " is returned";
+            String mess = MESSAGE + id + " is returned";
             log.info(mess);
 
             return courierDTO;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")
@@ -77,10 +75,10 @@ public class CourierController {
     public int deleteCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         try {
             courierService.deleteCourierById(id);
-            String mess = "Courier with id " + id + " is deleted";
+            String mess = MESSAGE + id + " is deleted";
             log.info(mess);
-        } catch (EmptyResultDataAccessException e){
-            throw new NoSuchCourierException("Courier with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoSuchCourierException(MESSAGE + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

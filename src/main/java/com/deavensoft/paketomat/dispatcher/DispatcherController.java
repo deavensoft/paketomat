@@ -24,11 +24,9 @@ import java.util.Optional;
 @RequestMapping("api/dispatchers")
 @Slf4j
 public class DispatcherController {
-
+    static final String MESSAGE = "Dispatcher with id ";
     private final DispatcherService dispatcherService;
-
     private final CenterServiceImpl centerService;
-
     private DispatcherMapper dispatcherMapper;
 
     @GetMapping
@@ -55,6 +53,7 @@ public class DispatcherController {
         dispatcherService.saveDispatcher(d);
         return 1;
     }
+
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get dispatcher", description = "Get dispatcher with specified id")
     @ApiResponse(responseCode = "200", description = "Dispatcher with specified id returned")
@@ -66,12 +65,11 @@ public class DispatcherController {
         } else{
             Dispatcher dispatcher = d.get();
             DispatcherDTO dispatcherDTO = dispatcherMapper.dispatcherToDispatcherDTO(dispatcher);
-            String mess = "Dispatcher with id " + id + " is returned";
+            String mess = MESSAGE + id + " is returned";
             log.info(mess);
 
             return dispatcherDTO;
         }
-
     }
 
     @PostMapping(path = "/dispatch/{id}")
@@ -91,10 +89,10 @@ public class DispatcherController {
     public int deleteDispatcherById(@PathVariable(name = "id") Long id) throws NoSuchDispatcherException {
         try {
             dispatcherService.deleteDispatcherById(id);
-            String mess = "Dispatcher with id " + id + " is deleted";
+            String mess = MESSAGE + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e){
-            throw new NoSuchDispatcherException("Dispatcher with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+            throw new NoSuchDispatcherException(MESSAGE + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }

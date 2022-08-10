@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.courier;
 
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;

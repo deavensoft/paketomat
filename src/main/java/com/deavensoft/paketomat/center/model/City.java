@@ -24,9 +24,6 @@ public class City {
     private double latitude;
     @Column(name = "y")
     private double longitude;
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "city")
-    private List<Paketomat> paketomats = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;

@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.email;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 public class EmailController {
 
     @Autowired
@@ -21,10 +23,7 @@ public class EmailController {
     public String
     sendMail(@RequestBody EmailDetails details)
     {
-        String status
-                = emailService.sendSimpleMail(details);
-
-        return status;
+        return emailService.sendSimpleMail(details);
     }
 
     @PostMapping("/sendMailWithAttachment")
@@ -33,10 +32,7 @@ public class EmailController {
     public String sendMailWithAttachment(
             @RequestBody EmailDetails details)
     {
-        String status
-                = emailService.sendMailWithAttachment(details);
-
-        return status;
+        return emailService.sendMailWithAttachment(details);
     }
     @PostMapping("/sendMailWithTemplate")
     @Operation(summary = "Sending mail with template.")
@@ -46,9 +42,6 @@ public class EmailController {
     {
         Map<String, Object> model = new HashMap<>();
         model.put("msgBody",details.getMsgBody());
-        int status
-                = emailService.sendMailWithTemplate(details, model);
-
-        return status;
+        return emailService.sendMailWithTemplate(details, model);
     }
 }

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.Cacheable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,6 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequestMapping("api/cities")
-
 public class CityController {
     @Autowired
     private final CityService cityServiceImpl;
@@ -51,14 +52,14 @@ public class CityController {
     @Operation(summary = "Get cities", description = "Get all cities")
     @ApiResponse(responseCode = "200", description = "All cities are returned")
     public List<CityDto> getAllCities() {
-       List<City> cities = cityServiceImpl.getAllCities();
-       List<CityDto> cityDtos = new ArrayList<>();
+        List<City> cities = cityServiceImpl.getAllCities();
+        List<CityDto> cityDtos = new ArrayList<>();
 
-       for (City city : cities) {
-           cityDtos.add(mapper.cityToCityDto(city));
-       }
-       log.info("All cities are returned");
-       return cityDtos;
+        for (City city : cities) {
+            cityDtos.add(mapper.cityToCityDto(city));
+        }
+        log.info("All cities are returned");
+        return cityDtos;
     }
 
     @PostMapping
@@ -77,14 +78,13 @@ public class CityController {
 
         if (city.isEmpty()) {
             throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
-        }else {
+        } else {
             City city1 = city.get();
             CityDto cityDto = mapper.cityToCityDto(city1);
             String mss = "City with id " + id + "is retuned";
             log.info(mss);
             return cityDto;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")
@@ -98,11 +98,10 @@ public class CityController {
         } else {
             City city = c.get();
             cityServiceImpl.deleteCity(city);
-            log.info("City deleted");
+            log.info("City with id " + id + " is deleted");
             return 1;
         }
     }
-
 
     @GetMapping(path = "/check")
     public void checkCities() throws IOException, CityException {
@@ -124,19 +123,16 @@ public class CityController {
 
                         save(city);
                     }
-
                 }
             } catch (IOException e) {
-                throw new CityException("Data cannot be imported to database", HttpStatus.LOOP_DETECTED,508);
+                throw new CityException("Data cannot be imported to database", HttpStatus.LOOP_DETECTED, 508);
             }
-
         } else {
             log.info("Data is imported and it is consistent");
         }
-
     }
-    private Response doRequest(String url) throws IOException {
 
+    private Response doRequest(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)

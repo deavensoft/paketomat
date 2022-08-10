@@ -12,7 +12,6 @@ import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -32,7 +31,6 @@ public class CourierServiceImpl implements CourierService {
     public void saveCourier(Courier newCourier) {
         courierRepository.save(newCourier);
     }
-
 
     public Optional<Courier> getCourierById(Long id) {
         return courierRepository.findById(id);
@@ -117,6 +115,5 @@ public class CourierServiceImpl implements CourierService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
-
     }
 }
