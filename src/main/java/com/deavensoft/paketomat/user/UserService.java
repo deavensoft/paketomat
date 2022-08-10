@@ -11,5 +11,8 @@ public interface UserService {
      void save(User u);
      int deleteUser(User u);
      Optional<User> findUserById(Long id);
+     void payPackage(Long id);
+
+
 
 }

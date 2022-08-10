@@ -28,4 +28,6 @@ public class Package {
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;
+    @Column(name = "paid")
+    private Paid paid;
 }

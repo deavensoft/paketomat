@@ -3,16 +3,19 @@ package com.deavensoft.paketomat.courier;
 import com.deavensoft.paketomat.center.CenterService;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -24,6 +27,7 @@ public class CourierServiceImpl implements CourierService {
     private final CityService cityService;
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
+    private final UserService userService;
 
     public List<Courier> findAllCouriers() {
         return courierRepository.findAll();
@@ -101,22 +105,46 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
             centerService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
-            sendMailToUser(p.getUser().getEmail());
+            if (p.getPaid() == Paid.PAID)
+                sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+            else if (p.getPaid() == Paid.NOT_PAID) {
+                sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+            } else if (p.getPaid() == Paid.UN_SUCESSFULL) {
+                sendMailToUser(p.getUser().getEmail(), Paid.UN_SUCESSFULL);
+
+            }
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
     }
 
-    public void sendMailToUser(String email) {
+    public void sendMailToUser(String email, Paid p) {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
-        emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up");
+        if (Paid.PAID == p) {
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" +" "+
+                    generateCode());
+        } else if (Paid.NOT_PAID == p) {
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
+        } else if (Paid.UN_SUCESSFULL == p) {
+            emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
+        }
         emailSender.setAttachment("");
         emailSender.setSubject("Package arrived in the paketomat");
         Map<String, Object> model = new HashMap<>();
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
+
+    }
+
+    public String generateCode() {
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(10000);
+        String formatted = String.format("%04d", num);
+        log.info("Code is generated for picking up the package");
+        return formatted;
+
 
     }
 }

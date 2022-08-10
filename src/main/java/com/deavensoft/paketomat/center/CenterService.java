@@ -1,6 +1,7 @@
 package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public interface CenterService {
 
      void deleteAll();
      void updateStatus(Long id, Status status);
+     void payment(Long id, Paid paid);
 
 
 }

@@ -23,6 +23,7 @@ public class UserController {
 
     private UserService userService;
 
+
     private UserMapper userMapper;
 
     @GetMapping
@@ -84,5 +85,11 @@ public class UserController {
             log.info("User deleted");
             return 1;
         }
+    }
+    @GetMapping(path="/pay/{id}")
+    public void payForThePackage(@PathVariable(name = "id") Long id)
+    {
+        userService.payPackage(id);
+
     }
 }

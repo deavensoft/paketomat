@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -51,6 +52,7 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "New package added")
     public int savePackage(@RequestBody PackageDTO newPackage) throws IOException, PaketomatException {
         Package p = packageMapper.packageDTOToPackage(newPackage);
+        p.setPaid(Paid.NOT_PAID);
         p.setStatus(Status.NEW);
         centerService.save(p);
         log.info("New package added to the database");
