@@ -32,7 +32,7 @@ bucket4j:
   enabled: true
   filters:
     - cache-name: rate-limit-buckets
-      url: "https://countries-cities.p.rapidapi.com/location/country/RS/city/list?page=2&per_page=100&population=1501"
+      url: "https://countries-cities.p.rapidapi.com/location/country/RS/city/list?page=1&per_page=100&population=1501"
       strategy: first
       http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"You have exhausted your API Request Quota\" }"
       rate-limits:
