@@ -1,5 +1,10 @@
 package com.deavensoft.paketomat.paketomats;
 
+import com.deavensoft.paketomat.center.CenterService;
+import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
@@ -9,9 +14,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import static com.deavensoft.paketomat.center.model.Center.cities;
 
 @AllArgsConstructor
@@ -26,6 +34,8 @@ public class PaketomatController {
     private CityService cityService;
 
     private PaketomatMapper paketomatMapper;
+
+    private CenterService centerService;
 
     @Operation(summary = "Get paketomats", description = "Get all paketomats")
     @ApiResponse(responseCode = "200", description = "All paketomats are returned")
@@ -83,5 +93,27 @@ public class PaketomatController {
         log.info("All paketomats are deleted");
         paketomatService.deleteAll();
         return 1;
+    }
+
+
+    @PostMapping(path = "/userPackage/{code}")
+    @Operation(summary = "Move package to user")
+    @ApiResponse(responseCode = "200", description = "Package is delivered to user")
+    public void userPackage(@PathVariable(name = "code") Long code) throws NoSuchPackageException {
+        Optional<Package> userPackage = centerService.findPackageByCode(code);
+
+        if (userPackage.isEmpty()){
+            throw new NoSuchPackageException("There is no package with code " + code, HttpStatus.OK, 200);
+        }else {
+
+            List<PaketomatDTO> paketomats = getAllPaketomats();
+            for (PaketomatDTO paketomat : paketomats) {
+                Package pa = userPackage.get();
+                pa.setPaketomat(null);
+                centerService.updateStatus(code, Status.DELIVERED);
+
+            }
+
+        }
     }
 }

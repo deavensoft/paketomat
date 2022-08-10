@@ -19,5 +19,5 @@ public interface CenterService {
      void deleteAll();
      void updateStatus(Long id, Status status);
 
-
+     Optional<Package> findPackageByCode(Long code);
 }
