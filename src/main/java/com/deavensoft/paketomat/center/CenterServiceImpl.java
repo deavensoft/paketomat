@@ -2,7 +2,6 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
-import com.deavensoft.paketomat.mapper.PackageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,4 +52,9 @@ public class CenterServiceImpl implements CenterService {
             }
         }
     }
+
+    public Optional<Package> findPackageByCode(Long code) {
+        return centerRepository.findPackageByCode(code);
+    }
+
 }
