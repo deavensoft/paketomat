@@ -24,7 +24,7 @@ import java.util.Optional;
 @Slf4j
 public class CourierController {
 
-    private CourierService courierService;
+    private final CourierService courierService;
 
     private CourierMapper courierMapper;
 

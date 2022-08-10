@@ -21,5 +21,5 @@ public interface CenterService {
      void updateStatus(Long id, Status status);
      void payment(Long id, Paid paid);
 
-
+     Optional<Package> findPackageByCode(Long code);
 }
