@@ -107,5 +107,4 @@ public class CenterController {
         centerService.deleteAll();
         return 1;
     }
-
 }

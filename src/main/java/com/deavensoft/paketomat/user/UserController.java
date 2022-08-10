@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.user;
 
+import com.deavensoft.paketomat.center.CenterService;
 import com.deavensoft.paketomat.center.CenterServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.user.dto.UserDTO;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class UserController {
 
-    private final CenterServiceImpl centerService;
+    private final CenterService centerService;
 
     private UserService userService;
 
