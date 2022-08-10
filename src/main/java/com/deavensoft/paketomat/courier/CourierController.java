@@ -1,10 +1,12 @@
 package com.deavensoft.paketomat.courier;
 
+import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.courier.dto.CourierDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchCourierException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.mapper.CourierMapper;
+import com.deavensoft.paketomat.mapper.PackageMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -12,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,8 @@ public class CourierController {
     private final CourierService courierService;
 
     private CourierMapper courierMapper;
+
+    private PackageMapper packageMapper;
 
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
@@ -91,5 +94,19 @@ public class CourierController {
     public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException {
         log.info("List with packages that courier has to deliver are returned");
         return courierService.getPackagesForCourier(city);
+    }
+
+    @GetMapping(path = "/getNotPickedUpPackages/")
+    @Operation(summary = "Get not picked up packages", description = "Get packages that not picked up by user")
+    @ApiResponse(responseCode = "200", description = "All packages that not picked up by user will be returned.")
+    public List<PackageDTO> getNotPickedUpPackages() throws PaketomatException {
+        List<PackageDTO> notPickedUpPackages = new ArrayList<>();
+        List<Package> packages = courierService.getNotPickedUpPackages();
+        for(Package p : packages){
+            PackageDTO pDto = packageMapper.packageToPackageDTO(p);
+            notPickedUpPackages.add(pDto);
+        }
+        log.info("List of returned packages");
+        return notPickedUpPackages;
     }
 }

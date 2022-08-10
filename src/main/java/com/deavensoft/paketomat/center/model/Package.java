@@ -1,14 +1,13 @@
 package com.deavensoft.paketomat.center.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
+import java.time.LocalDateTime;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "package")
 public class Package {
     @Id
@@ -20,7 +19,7 @@ public class Package {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "paketomat_id")
     private Paketomat paketomat;
     @Column(name = "code", unique = true)
@@ -28,4 +27,7 @@ public class Package {
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;
+    @JsonIgnore
+    @Column(name = "date")
+    private LocalDateTime date;
 }
