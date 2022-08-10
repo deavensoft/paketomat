@@ -1,7 +1,7 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -68,4 +68,5 @@ paketomat:
 
 dispatcher:
   distance : "haversine"
+
 

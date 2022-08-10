@@ -11,7 +11,9 @@ import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -32,6 +34,7 @@ public class CourierServiceImpl implements CourierService {
         courierRepository.save(newCourier);
     }
 
+
     public Optional<Courier> getCourierById(Long id) {
         return courierRepository.findById(id);
     }
@@ -43,6 +46,25 @@ public class CourierServiceImpl implements CourierService {
     @Override
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
         return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
+    }
+
+    @Scheduled(cron = "${cron[0].schedule}")
+    @Override
+    public List<Package> getNotPickedUpPackages() {
+        List<Package> packagesInPaketomat = centerService.getAllPackages();
+        List<Package> packagesToReturn = new ArrayList<>();
+        LocalDateTime currentTime;
+        for(Package p : packagesInPaketomat){
+            if(p.getStatus().equals(Status.IN_PAKETOMAT)){
+                currentTime = LocalDateTime.now();
+                currentTime = currentTime.minusDays(5);
+                if(currentTime.isAfter(p.getDate())){
+                    packagesToReturn.add(p);
+                    centerService.updateStatus(p.getCode(),Status.RETURNED);
+                }
+            }
+        }
+        return packagesToReturn;
     }
 
     public List<Package> getPackagesToDispatch() {
@@ -115,5 +137,6 @@ public class CourierServiceImpl implements CourierService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
+
     }
 }

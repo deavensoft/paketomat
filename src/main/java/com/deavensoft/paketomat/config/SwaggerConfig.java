@@ -2,10 +2,10 @@ package com.deavensoft.paketomat.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -17,7 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 @EnableWebMvc
-@EnableCaching
+@EnableScheduling
 @OpenAPIDefinition(info = @Info(title = "Paketomat APIs", version = "2.0", description = "API Controllers for different APIs in application"))
 public class SwaggerConfig {
 
@@ -31,7 +31,6 @@ public class SwaggerConfig {
                 .version("1.0.0")
                 .build();
     }
-
     @Bean
     public Docket customImplementation() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -40,7 +39,6 @@ public class SwaggerConfig {
                 .build()
                 .apiInfo(apiInfo());
     }
-
     @Bean
     public SimpleMailMessage templateSimpleMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -48,5 +46,4 @@ public class SwaggerConfig {
                 "This is the test email template for your email:\n%s\n");
         return message;
     }
-
 }
