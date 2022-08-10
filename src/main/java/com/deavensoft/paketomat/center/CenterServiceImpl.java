@@ -2,12 +2,11 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
-import com.deavensoft.paketomat.mapper.PackageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +48,8 @@ public class CenterServiceImpl implements CenterService {
         for (Package p : packages) {
             if(p.getCode().equals(code)){
                 p.setStatus(status);
+                LocalDateTime date = LocalDateTime.now();
+                p.setDate(date);
                 centerRepository.save(p);
             }
         }

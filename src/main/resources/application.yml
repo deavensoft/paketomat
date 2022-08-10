@@ -52,4 +52,11 @@ paketomat:
 dispatcher:
   distance : "haversine"
 
+cron:
+  - description: "returning packages older than 5 days"
+    url: /api/couriers/getNotPickedUpPackages/
+    schedule: 0 0 0 * * ?
+    target: CourierService
+
+
 
