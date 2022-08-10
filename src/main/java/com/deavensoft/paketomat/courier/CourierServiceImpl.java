@@ -13,7 +13,9 @@ import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -49,6 +51,25 @@ public class CourierServiceImpl implements CourierService {
     @Override
     public List<Package> getPackagesForCourier(String city) throws PaketomatException {
         return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
+    }
+
+    @Scheduled(cron = "${cron[0].schedule}")
+    @Override
+    public List<Package> getNotPickedUpPackages() {
+        List<Package> packagesInPaketomat = centerService.getAllPackages();
+        List<Package> packagesToReturn = new ArrayList<>();
+        LocalDateTime currentTime;
+        for(Package p : packagesInPaketomat){
+            if(p.getStatus().equals(Status.IN_PAKETOMAT)){
+                currentTime = LocalDateTime.now();
+                currentTime = currentTime.minusDays(5);
+                if(currentTime.isAfter(p.getDate())){
+                    packagesToReturn.add(p);
+                    centerService.updateStatus(p.getCode(),Status.RETURNED);
+                }
+            }
+        }
+        return packagesToReturn;
     }
 
     public List<Package> getPackagesToDispatch() {

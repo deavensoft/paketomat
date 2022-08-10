@@ -3,14 +3,13 @@ package com.deavensoft.paketomat.center;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
-import com.deavensoft.paketomat.courier.CourierService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
-import com.deavensoft.paketomat.mapper.PackageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -57,6 +56,8 @@ public class CenterServiceImpl implements CenterService {
         for (Package p : packages) {
             if(p.getCode().equals(code)){
                 p.setStatus(status);
+                LocalDateTime date = LocalDateTime.now();
+                p.setDate(date);
                 centerRepository.save(p);
             }
         }
