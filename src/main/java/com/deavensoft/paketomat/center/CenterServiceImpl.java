@@ -53,4 +53,9 @@ public class CenterServiceImpl implements CenterService {
             }
         }
     }
+
+    public Optional<Package> findPackageByCode(Long code) {
+        return centerRepository.findPackageByCode(code);
+    }
+
 }

@@ -23,6 +23,8 @@ import java.util.Optional;
 @RequestMapping("api/couriers")
 @Slf4j
 public class CourierController {
+
+    private final CourierService courierService;
     static final String MESSAGE = "Courier with id ";
     private CourierService courierService;
 
@@ -71,6 +73,7 @@ public class CourierController {
 
             return courierDTO;
         }
+
     }
 
     @DeleteMapping(path = "/{id}")
