@@ -1,7 +1,6 @@
 package com.deavensoft.paketomat.city;
 
 import com.deavensoft.paketomat.center.model.City;
-
 import java.util.List;
 import java.util.Optional;
 

@@ -5,9 +5,10 @@ import com.deavensoft.paketomat.city.dto.CityDto;
 import com.deavensoft.paketomat.city.dto.CitiesDto;
 import com.deavensoft.paketomat.exceptions.CityException;
 import com.deavensoft.paketomat.exceptions.NoSuchCityException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.exceptions.TooManyRequestsException;
 import com.deavensoft.paketomat.mapper.CityMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.bucket4j.Refill;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.Cacheable;
-
 import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -106,8 +104,7 @@ public class CityController {
     }
 
     @GetMapping(path = "/check")
-    public void checkCities() throws IOException, CityException {
-
+    public void checkCities() throws IOException, PaketomatException {
         CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url).body().string(), CitiesDto.class);
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
@@ -121,6 +118,9 @@ public class CityController {
                     CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri).body().string(), CitiesDto.class);
                     List<CityDto> citiess = citiesDtoo.getCities();
 
+                    if(citiess == null){
+                        throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
+                    }
                     for (CityDto city : citiess) {
 
                         save(city);
@@ -134,7 +134,7 @@ public class CityController {
         }
     }
 
-    private Response doRequest(String url) throws IOException {
+    private Response doRequest(String url) throws IOException{
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
@@ -143,6 +143,11 @@ public class CityController {
                 .addHeader(hostName, hostValue)
                 .build();
 
+//        try{
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e){
+//            System.out.println("puklo");
+//        }
         return client.newCall(request).execute();
     }
 }
