@@ -1,11 +1,9 @@
 package com.deavensoft.paketomat.user;
 
 
-import com.deavensoft.paketomat.center.PackageService;
-import com.deavensoft.paketomat.center.model.Paid;
+
 import com.deavensoft.paketomat.center.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +13,8 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final PackageService packageService;
 
-    @Autowired
+
 
     public List<User> getAllUsers() {
 
@@ -36,7 +33,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
-
 
 
 }

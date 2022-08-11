@@ -131,7 +131,7 @@ public class CourierServiceImpl implements CourierService {
         return packages;
     }
 
-    public void sendMailToUser(String email, Paid p) {
+    public void sendEMailToUser(String email, Paid p) {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
@@ -163,11 +163,11 @@ public class CourierServiceImpl implements CourierService {
 
     public void checkIfThePackageIsPayed(Package p) {
         if (p.getPaid() == Paid.PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+            sendEMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+            sendEMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
         } else if (p.getPaid() == Paid.UNSUCESSFULL) {
-            sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+            sendEMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
         }
     }
 }
