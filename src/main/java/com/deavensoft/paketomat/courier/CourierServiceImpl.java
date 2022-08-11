@@ -1,10 +1,8 @@
 package com.deavensoft.paketomat.courier;
 
 import com.deavensoft.paketomat.center.PackageService;
-import com.deavensoft.paketomat.center.model.City;
+import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.center.model.Paid;
-import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -12,10 +10,18 @@ import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -163,11 +169,35 @@ public class CourierServiceImpl implements CourierService {
 
     public void checkIfThePackageIsPayed(Package p) {
         if (p.getPaid() == Paid.PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+            //sendMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+            //sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
         } else if (p.getPaid() == Paid.UNSUCESSFULL) {
-            sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+           // sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
         }
+    }
+
+    public void exportToCSV(HttpServletResponse response, String city) throws PaketomatException, IOException {
+        response.setContentType("text/csv");
+
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=NewPackagesToBeDeliveredInCity.csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<Package> listPackages = getPackagesForCourier(city);
+
+        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code","Center","Date","Paid"};
+        String[] nameMapping = {"id", "status", "user", "paketomat", "code","center","date","paid"};
+
+        csvWriter.writeHeader(csvHeader);
+
+        for (Package p : listPackages) {
+            csvWriter.write(p, nameMapping);
+        }
+
+        csvWriter.close();
+
     }
 }
