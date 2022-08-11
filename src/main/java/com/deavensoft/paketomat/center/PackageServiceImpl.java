@@ -48,16 +48,15 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public void updateStatus(Long code, Status status) {
-        List<Package> packages = packageRepository.findAll();
-        for (Package p : packages) {
-            if(p.getCode().equals(code)){
-                p.setStatus(status);
+        Optional<Package> p=packageRepository.findPackageByCode(code);
+            if(p.isPresent()){
+                p.get().setStatus(status);
                 LocalDateTime date = LocalDateTime.now();
-                p.setDate(date);
-                packageRepository.save(p);
+                p.get().setDate(date);
+                packageRepository.save(p.get());
             }
         }
-    }
+
     public void payment(Long id, Paid paid)
     {
         Optional<Package> p= packageRepository.findById(id);
