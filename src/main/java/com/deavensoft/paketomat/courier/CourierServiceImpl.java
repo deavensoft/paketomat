@@ -169,11 +169,11 @@ public class CourierServiceImpl implements CourierService {
 
     public void checkIfThePackageIsPayed(Package p) {
         if (p.getPaid() == Paid.PAID) {
-            //sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+            sendMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
-            //sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+            sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
         } else if (p.getPaid() == Paid.UNSUCESSFULL) {
-           // sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+            sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
         }
     }
 
