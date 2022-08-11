@@ -168,7 +168,6 @@ public class CourierServiceImpl implements CourierService {
             sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
         } else if (p.getPaid() == Paid.UNSUCESSFULL) {
             sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
-
         }
     }
 }
