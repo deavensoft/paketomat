@@ -41,5 +41,8 @@ public class Paketomat {
         newPackage.setPaketomat(this);
         newPackage.setStatus(Status.TO_DISPATCH);
     }
-
+    public void freeBox(Package oldPackage){
+        packages.remove(oldPackage);
+        oldPackage.setPaketomat(null);
+    }
 }

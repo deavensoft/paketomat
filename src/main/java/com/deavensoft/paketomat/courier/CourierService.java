@@ -18,4 +18,6 @@ public interface CourierService {
      List<Package> getPackagesForCourier(String city) throws PaketomatException;
 
      List<Package> getNotPickedUpPackages();
+
+     List<Package> returnNotPickedUpPackages();
 }
