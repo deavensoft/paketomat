@@ -114,7 +114,7 @@ public class CourierController {
     }
 
     @GetMapping(path = "/export/{city}")
-    @Operation(summary = "Get packages for courier", description = "Get packages that courier will deliver on his route")
+    @Operation(summary = "Export data packages for courier", description = "Get packages that courier will deliver on his route")
     @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
     public void exportData(@PathVariable(name = "city") String city, HttpServletResponse response) throws PaketomatException, IOException {
         courierService.exportToCSV(response, city);
