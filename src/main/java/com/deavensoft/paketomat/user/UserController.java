@@ -1,8 +1,6 @@
 package com.deavensoft.paketomat.user;
 
-import com.deavensoft.paketomat.center.CenterService;
-import com.deavensoft.paketomat.center.CenterServiceImpl;
-import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.user.dto.UserDTO;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
@@ -14,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 public class UserController {
 
-    private final CenterService centerService;
+    private final PackageService packageService;
 
     private UserService userService;
 
@@ -92,11 +89,6 @@ public class UserController {
             return 1;
         }
     }
-    @GetMapping(path="/pay/{id}")
-    public void payForThePackage(@PathVariable(name = "id") Long id)
-    {
-        userService.payPackage(id);
 
-    }
 
 }

@@ -5,9 +5,9 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -19,57 +19,53 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class CenterServiceImpl implements CenterService {
-    private final CenterRepository centerRepository;
+@AllArgsConstructor
+public class PackageServiceImpl implements PackageService {
+    private final PackageRepository packageRepository;
     private final EmailService emailService;
     @Autowired
-    public CenterServiceImpl(@Qualifier("center") CenterRepository centerRepository,EmailService emailService) {
-        this.centerRepository = centerRepository;
-        this.emailService=emailService;
-    }
-
 
     public List<Package> getAllPackages() {
-        return centerRepository.findAll();
+        return packageRepository.findAll();
     }
 
     public void save(Package p) {
-        centerRepository.save(p);
+        packageRepository.save(p);
     }
 
     public Optional<Package> findPackageById(Long id) {
-        return centerRepository.findById(id);
+        return packageRepository.findById(id);
     }
 
     public void deletePackageById(Long id) {
-        centerRepository.deleteById(id);
+        packageRepository.deleteById(id);
     }
 
     @Override
     public void deleteAll() {
-        centerRepository.deleteAll();
+        packageRepository.deleteAll();
     }
 
     @Override
     public void updateStatus(Long code, Status status) {
-        List<Package> packages = centerRepository.findAll();
+        List<Package> packages = packageRepository.findAll();
         for (Package p : packages) {
             if(p.getCode().equals(code)){
                 p.setStatus(status);
                 LocalDateTime date = LocalDateTime.now();
                 p.setDate(date);
-                centerRepository.save(p);
+                packageRepository.save(p);
             }
         }
     }
     public void payment(Long id, Paid paid)
     {
-        List<Package> packages = centerRepository.findAll();
+        List<Package> packages = packageRepository.findAll();
         for (Package p : packages) {
             if(p.getId().equals(id)){
                 p.setPaid(paid);
                 sendMailToUser(p.getUser().getEmail(),paid);
-                centerRepository.save(p);
+                packageRepository.save(p);
             }
         }
 
@@ -84,7 +80,7 @@ public class CenterServiceImpl implements CenterService {
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
-        } else if (Paid.UN_SUCESSFULL == p) {
+        } else if (Paid.UNSUCESSFULL == p) {
             emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccesfull, try again to pay for the package");
         }
         emailSender.setAttachment("");
@@ -98,8 +94,8 @@ public class CenterServiceImpl implements CenterService {
 
     public String generateCode() {
         SecureRandom random = new SecureRandom();
-        int num = random.nextInt(10000);
-        String formatted = String.format("%04d", num);
+        int codeForPaketomat = random.nextInt(10000);
+        String formatted = String.format("%04d", codeForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
 
@@ -107,7 +103,7 @@ public class CenterServiceImpl implements CenterService {
     }
 
     public Optional<Package> findPackageByCode(Long code) {
-        return centerRepository.findPackageByCode(code);
+        return packageRepository.findPackageByCode(code);
     }
 
 }

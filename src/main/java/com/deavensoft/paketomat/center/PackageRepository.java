@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository("center")
-public interface CenterRepository extends JpaRepository<Package,Long>{
+public interface PackageRepository extends JpaRepository<Package,Long>{
 
     Optional<Package> findPackageByCode(Long code);
 

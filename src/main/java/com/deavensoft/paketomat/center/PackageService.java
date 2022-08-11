@@ -7,7 +7,7 @@ import com.deavensoft.paketomat.center.model.Status;
 import java.util.List;
 import java.util.Optional;
 
-public interface CenterService {
+public interface PackageService {
 
      List<Package> getAllPackages();
 
@@ -22,4 +22,6 @@ public interface CenterService {
      void payment(Long id, Paid paid);
 
      Optional<Package> findPackageByCode(Long code);
+
+
 }

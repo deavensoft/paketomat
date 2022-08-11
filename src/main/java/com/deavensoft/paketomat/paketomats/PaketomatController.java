@@ -1,10 +1,9 @@
 package com.deavensoft.paketomat.paketomats;
 
-import com.deavensoft.paketomat.center.CenterService;
+import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
-import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;
@@ -35,7 +34,7 @@ public class PaketomatController {
 
     private PaketomatMapper paketomatMapper;
 
-    private CenterService centerService;
+    private PackageService packageService;
 
     @Operation(summary = "Get paketomats", description = "Get all paketomats")
     @ApiResponse(responseCode = "200", description = "All paketomats are returned")
@@ -100,7 +99,7 @@ public class PaketomatController {
     @Operation(summary = "Move package to user")
     @ApiResponse(responseCode = "200", description = "Package is delivered to user")
     public void userPackage(@PathVariable(name = "code") Long code) throws NoSuchPackageException {
-        Optional<Package> userPackage = centerService.findPackageByCode(code);
+        Optional<Package> userPackage = packageService.findPackageByCode(code);
 
         if (userPackage.isEmpty()){
             throw new NoSuchPackageException("There is no package with code " + code, HttpStatus.OK, 200);
@@ -110,7 +109,7 @@ public class PaketomatController {
             for (PaketomatDTO paketomat : paketomats) {
                 Package pa = userPackage.get();
                 pa.setPaketomat(null);
-                centerService.updateStatus(code, Status.DELIVERED);
+                packageService.updateStatus(code, Status.DELIVERED);
 
             }
 

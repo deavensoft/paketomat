@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.CenterService;
+import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -10,13 +10,11 @@ import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.paketomats.PaketomatService;
 import com.deavensoft.paketomat.user.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,7 @@ public class DispatcherServiceImpl implements DispatcherService {
     private String keyValue;
     private final UserService userService;
     private final EmailService emailService;
-    private final CenterService centerService;
+    private final PackageService packageService;
     private final PaketomatService paketomatService;
 
     @Value("${paketomat.min-population}")
@@ -153,7 +151,7 @@ public class DispatcherServiceImpl implements DispatcherService {
                 if (paketomat.getPackages().size() < sizeOfPaketomat) {
                     paketomat.reserveSlot(newPackage);
                     newPackage.setPaketomat(paketomat);
-                    centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
+                    packageService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
                     log.info("Slot is reserved for package in paketomat in city " + city.getName());
                     return true;
                 }

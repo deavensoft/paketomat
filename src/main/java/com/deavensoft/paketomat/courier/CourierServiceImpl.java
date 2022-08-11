@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.courier;
 
-import com.deavensoft.paketomat.center.CenterService;
+import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Paid;
@@ -10,14 +10,13 @@ import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
-import com.deavensoft.paketomat.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -25,11 +24,11 @@ import java.util.*;
 @Slf4j
 public class CourierServiceImpl implements CourierService {
     private final CourierRepository courierRepository;
-    private final CenterService centerService;
+    private final PackageService packageService;
     private final CityService cityService;
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
-    private final UserService userService;
+
 
     public List<Courier> findAllCouriers() {
         return courierRepository.findAll();
@@ -56,16 +55,16 @@ public class CourierServiceImpl implements CourierService {
     @Scheduled(cron = "${cron[0].schedule}")
     @Override
     public List<Package> getNotPickedUpPackages() {
-        List<Package> packagesInPaketomat = centerService.getAllPackages();
+        List<Package> packagesInPaketomat = packageService.getAllPackages();
         List<Package> packagesToReturn = new ArrayList<>();
         LocalDateTime currentTime;
-        for(Package p : packagesInPaketomat){
-            if(p.getStatus().equals(Status.IN_PAKETOMAT)){
+        for (Package p : packagesInPaketomat) {
+            if (p.getStatus().equals(Status.IN_PAKETOMAT)) {
                 currentTime = LocalDateTime.now();
                 currentTime = currentTime.minusDays(5);
-                if(currentTime.isAfter(p.getDate())){
+                if (currentTime.isAfter(p.getDate())) {
                     packagesToReturn.add(p);
-                    centerService.updateStatus(p.getCode(),Status.RETURNED);
+                    packageService.updateStatus(p.getCode(), Status.RETURNED);
                 }
             }
         }
@@ -73,7 +72,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     public List<Package> getPackagesToDispatch() {
-        List<Package> packageList = centerService.getAllPackages();
+        List<Package> packageList = packageService.getAllPackages();
         ArrayList<Package> packagesToDispatch = new ArrayList<>();
 
         for (Package p : packageList) {
@@ -125,15 +124,8 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
-            centerService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
-            if (p.getPaid() == Paid.PAID)
-                sendMailToUser(p.getUser().getEmail(), Paid.PAID);
-            else if (p.getPaid() == Paid.NOT_PAID) {
-                sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
-            } else if (p.getPaid() == Paid.UN_SUCESSFULL) {
-                sendMailToUser(p.getUser().getEmail(), Paid.UN_SUCESSFULL);
-
-            }
+            packageService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
+            checkIfThePackageIsPayed(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
@@ -143,11 +135,11 @@ public class CourierServiceImpl implements CourierService {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" +" "+
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" + " " +
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
-        } else if (Paid.UN_SUCESSFULL == p) {
+        } else if (Paid.UNSUCESSFULL == p) {
             emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
         }
         emailSender.setAttachment("");
@@ -161,11 +153,22 @@ public class CourierServiceImpl implements CourierService {
 
     public String generateCode() {
         SecureRandom random = new SecureRandom();
-        int num = random.nextInt(10000);
-        String formatted = String.format("%04d", num);
+        int generateNumberForPaketomat = random.nextInt(10000);
+        String formatted = String.format("%04d", generateNumberForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
 
 
+    }
+
+    public void checkIfThePackageIsPayed(Package p) {
+        if (p.getPaid() == Paid.PAID) {
+            sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+        } else if (p.getPaid() == Paid.NOT_PAID) {
+            sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+        } else if (p.getPaid() == Paid.UNSUCESSFULL) {
+            sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+
+        }
     }
 }
