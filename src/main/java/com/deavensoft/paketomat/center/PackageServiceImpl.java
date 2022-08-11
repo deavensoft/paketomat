@@ -5,7 +5,7 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
@@ -60,15 +60,13 @@ public class PackageServiceImpl implements PackageService {
     }
     public void payment(Long id, Paid paid)
     {
-        List<Package> packages = packageRepository.findAll();
-        for (Package p : packages) {
-            if(p.getId().equals(id)){
-                p.setPaid(paid);
-                sendMailToUser(p.getUser().getEmail(),paid);
-                packageRepository.save(p);
-            }
-        }
+        Optional<Package> p= packageRepository.findById(id);
+        if(p.isPresent()){
 
+            p.get().setPaid(paid);
+            sendMailToUser(p.get().getUser().getEmail(),paid);
+            packageRepository.save(p.get());
+        }
 
     }
 
@@ -93,8 +91,8 @@ public class PackageServiceImpl implements PackageService {
     }
 
     public String generateCode() {
-        SecureRandom random = new SecureRandom();
-        int codeForPaketomat = random.nextInt(10000);
+        SecureRandom pinCodeForPaketomat = new SecureRandom();
+        int codeForPaketomat = pinCodeForPaketomat.nextInt(10000);
         String formatted = String.format("%04d", codeForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
