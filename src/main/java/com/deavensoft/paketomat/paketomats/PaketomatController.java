@@ -4,7 +4,6 @@ import com.deavensoft.paketomat.center.CenterService;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
-import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Paketomat;

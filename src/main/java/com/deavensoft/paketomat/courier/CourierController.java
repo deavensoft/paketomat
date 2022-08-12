@@ -14,7 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,5 +114,32 @@ public class CourierController {
         }
         log.info("List of returned packages");
         return notPickedUpPackages;
+    }
+
+    @Operation(summary = "Get all not picked up packages", description = "Get packages that have not been picked up")
+    @ApiResponse(responseCode = "200", description = "Get all packages that have not been picked up from paketomats")
+    @GetMapping("/exportNotPickedPackages")
+    public void exportNotPickedUpPackages(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        String fileName = "notPickedUpPackages.csv";
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; fileName=" + fileName;
+
+        response.setHeader(headerKey, headerValue);
+
+        List<Package> packages = courierService.getNotPickedUpPackages();
+
+        ICsvBeanWriter csvBeanWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"Id", "Status", "User id", "Paketomat id", "Code", "Center", "Date"};
+        String[] nameMapping = {"id", "status", "user_id", "paketomat_id", "code", "center_id", "date"};
+
+        csvBeanWriter.writeHeader(csvHeader);
+
+        for(Package p: packages) {
+            csvBeanWriter.write(p, nameMapping);
+        }
+
+        csvBeanWriter.close();
     }
 }
