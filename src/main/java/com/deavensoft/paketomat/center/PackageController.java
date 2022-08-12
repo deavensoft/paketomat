@@ -109,7 +109,7 @@ public class PackageController {
         packageService.deleteAll();
         return 1;
     }
-    @GetMapping(path="/pay/{id}")
+    @GetMapping(path="/pay?id={id}")
     public void payForThePackage(@PathVariable(name = "id") Long id)
     {
         packageService.payment(id,Paid.PAID);

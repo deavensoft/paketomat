@@ -139,7 +139,7 @@ public class CourierServiceImpl implements CourierService {
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
-        } else if (Paid.UNSUCESSFULL == p) {
+        } else if (Paid.UNSUCCESSFUL == p) {
             emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
         }
         emailSender.setAttachment("");
@@ -152,8 +152,8 @@ public class CourierServiceImpl implements CourierService {
     }
 
     public String generateCode() {
-        SecureRandom random = new SecureRandom();
-        int generateNumberForPaketomat = random.nextInt(10000);
+        SecureRandom pinCodeForPaketomat = new SecureRandom();
+        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(10000);
         String formatted = String.format("%04d", generateNumberForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
@@ -166,8 +166,8 @@ public class CourierServiceImpl implements CourierService {
             sendEMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
             sendEMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
-        } else if (p.getPaid() == Paid.UNSUCESSFULL) {
-            sendEMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+        } else if (p.getPaid() == Paid.UNSUCCESSFUL) {
+            sendEMailToUser(p.getUser().getEmail(), Paid.UNSUCCESSFUL);
         }
     }
 }
