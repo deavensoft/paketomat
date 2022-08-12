@@ -1,8 +1,10 @@
 package com.deavensoft.paketomat.courier;
 
 import com.deavensoft.paketomat.center.PackageService;
-import com.deavensoft.paketomat.center.model.*;
+import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
+import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -10,9 +12,10 @@ import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
@@ -34,6 +37,8 @@ public class CourierServiceImpl implements CourierService {
     private final CityService cityService;
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
+
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
 
 
     public List<Courier> findAllCouriers() {
@@ -145,13 +150,13 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
             packageService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
-            checkIfThePackageIsPayed(p);
+            checkIfThePackageIsPaid(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
     }
 
-    public void sendMailToUser(String email, Paid p) {
+    public void sendEMailToUser(String email, Paid p) {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
@@ -159,7 +164,7 @@ public class CourierServiceImpl implements CourierService {
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
-        } else if (Paid.UNSUCESSFULL == p) {
+        } else if (Paid.UNSUCCESSFUL == p) {
             emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
         }
         emailSender.setAttachment("");
@@ -172,8 +177,8 @@ public class CourierServiceImpl implements CourierService {
     }
 
     public String generateCode() {
-        SecureRandom random = new SecureRandom();
-        int generateNumberForPaketomat = random.nextInt(10000);
+        SecureRandom pinCodeForPaketomat = new SecureRandom();
+        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
         String formatted = String.format("%04d", generateNumberForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
@@ -181,13 +186,13 @@ public class CourierServiceImpl implements CourierService {
 
     }
 
-    public void checkIfThePackageIsPayed(Package p) {
+    public void checkIfThePackageIsPaid(Package p) {
         if (p.getPaid() == Paid.PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.PAID);
+            sendEMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
-            sendMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
-        } else if (p.getPaid() == Paid.UNSUCESSFULL) {
-            sendMailToUser(p.getUser().getEmail(), Paid.UNSUCESSFULL);
+            sendEMailToUser(p.getUser().getEmail(), Paid.NOT_PAID);
+        } else if (p.getPaid() == Paid.UNSUCCESSFUL) {
+            sendEMailToUser(p.getUser().getEmail(), Paid.UNSUCCESSFUL);
         }
     }
 

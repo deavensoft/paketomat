@@ -1,10 +1,10 @@
 package com.deavensoft.paketomat.user;
 
 import com.deavensoft.paketomat.center.PackageService;
-import com.deavensoft.paketomat.user.dto.UserDTO;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.mapper.UserMapper;
+import com.deavensoft.paketomat.user.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -23,16 +23,13 @@ import java.util.Optional;
 public class UserController {
 
     private final PackageService packageService;
-
     private UserService userService;
-
-
     private UserMapper userMapper;
 
     @GetMapping
     @Operation(summary = "Get users", description = "Get all users")
     @ApiResponse(responseCode = "200", description = "All users are returned")
-    public List<UserDTO> getAllUsers(){
+    public List<UserDTO> getAllUsers() {
 
         List<User> users = userService.getAllUsers();
         List<UserDTO> userDTOS = new ArrayList<>();
@@ -48,22 +45,22 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Add new user", description = "Add new user to the database")
     @ApiResponse(responseCode = "200", description = "New user added")
-    public void save(@RequestBody UserDTO u){
+    public void save(@RequestBody UserDTO u) {
         User user = userMapper.userDTOToUser(u);
         userService.save(user);
         log.info("New user added to the database");
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path = "/{id}")
     @Operation(summary = "Get user", description = "Get user with specified id")
     @ApiResponse(responseCode = "200", description = "User with specified id returned")
     public UserDTO findUserById(@PathVariable(name = "id") long id) throws NoSuchUserException {
         Optional<User> u = userService.findUserById(id);
 
 
-        if(u.isEmpty()){
+        if (u.isEmpty()) {
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
-        } else{
+        } else {
             User user = u.get();
             UserDTO userDTO = userMapper.userToUserDTO(user);
             String mess = "User with id " + id + " is returned";
@@ -82,7 +79,7 @@ public class UserController {
 
         if (u.isEmpty()) {
             throw new NoSuchUserException("There is no user with id " + id, HttpStatus.OK, 200);
-        }else {
+        } else {
             User user = u.get();
             userService.deleteUser(user);
             log.info("User deleted");

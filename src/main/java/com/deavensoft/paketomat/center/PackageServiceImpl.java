@@ -5,13 +5,13 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +19,11 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
-    @Autowired
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
@@ -48,27 +48,23 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public void updateStatus(Long code, Status status) {
-        List<Package> packages = packageRepository.findAll();
-        for (Package p : packages) {
-            if(p.getCode().equals(code)){
-                p.setStatus(status);
-                LocalDateTime date = LocalDateTime.now();
-                p.setDate(date);
-                packageRepository.save(p);
-            }
+        Optional<Package> p = packageRepository.findPackageByCode(code);
+        if (p.isPresent()) {
+            p.get().setStatus(status);
+            LocalDateTime date = LocalDateTime.now();
+            p.get().setDate(date);
+            packageRepository.save(p.get());
         }
     }
-    public void payment(Long id, Paid paid)
-    {
-        List<Package> packages = packageRepository.findAll();
-        for (Package p : packages) {
-            if(p.getId().equals(id)){
-                p.setPaid(paid);
-                sendMailToUser(p.getUser().getEmail(),paid);
-                packageRepository.save(p);
-            }
-        }
 
+    public void payment(Long id, Paid paid) {
+        Optional<Package> p = packageRepository.findById(id);
+        if (p.isPresent()) {
+
+            p.get().setPaid(paid);
+            sendMailToUser(p.get().getUser().getEmail(), paid);
+            packageRepository.save(p.get());
+        }
 
     }
 
@@ -76,11 +72,11 @@ public class PackageServiceImpl implements PackageService {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" +" "+
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" + " " +
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
-        } else if (Paid.UNSUCESSFULL == p) {
+        } else if (Paid.UNSUCCESSFUL == p) {
             emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccesfull, try again to pay for the package");
         }
         emailSender.setAttachment("");
@@ -93,8 +89,9 @@ public class PackageServiceImpl implements PackageService {
     }
 
     public String generateCode() {
-        SecureRandom random = new SecureRandom();
-        int codeForPaketomat = random.nextInt(10000);
+
+        SecureRandom pinCodeForPaketomat = new SecureRandom();
+        int codeForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
         String formatted = String.format("%04d", codeForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
