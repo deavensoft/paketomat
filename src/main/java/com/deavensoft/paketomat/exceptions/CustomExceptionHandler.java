@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.UnsupportedEncodingException;
+
 @ControllerAdvice
 @Slf4j
 public class CustomExceptionHandler {
@@ -26,4 +28,21 @@ public class CustomExceptionHandler {
         log.error(e.getMessage());
         return new ResponseEntity<>(error, error.getStatus());
     }
+
+    @ExceptionHandler({UnsupportedEncodingException.class})
+    public ResponseEntity<Object> handleEncodeException(UnsupportedEncodingException e){
+        ErrorAttributes error;
+        error = new ErrorAttributes(500, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        log.error(e.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler({NullPointerException.class})
+    public ResponseEntity<Object> handleEncodeException(NullPointerException e){
+        ErrorAttributes error;
+        error = new ErrorAttributes(500, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        log.error(e.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+
 }

@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,6 @@ public class CourierController {
 
     private final CourierService courierService;
     static final String MESSAGE = "Courier with id ";
-    private CourierService courierService;
 
     private CourierMapper courierMapper;
 
@@ -73,7 +74,6 @@ public class CourierController {
 
             return courierDTO;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")
@@ -93,7 +93,7 @@ public class CourierController {
     @GetMapping(path = "/getPackages/{city}")
     @Operation(summary = "Get packages for courier", description = "Get packages that courier will deliver on his route")
     @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
-    public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException {
+    public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException, UnsupportedEncodingException {
         log.info("List with packages that courier has to deliver are returned");
         return courierService.getPackagesForCourier(city);
     }

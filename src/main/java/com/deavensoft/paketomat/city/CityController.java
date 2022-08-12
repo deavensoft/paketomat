@@ -8,21 +8,34 @@ import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.exceptions.TooManyRequestsException;
 import com.deavensoft.paketomat.mapper.CityMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriTemplateHandler;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -105,7 +118,7 @@ public class CityController {
 
     @GetMapping(path = "/check")
     public void checkCities() throws IOException, PaketomatException {
-        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url).body().string(), CitiesDto.class);
+        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
         Integer numFromTable = getAllCities().size();
@@ -115,12 +128,13 @@ public class CityController {
                     String ii = Integer.toString(i);
                     String newUri = url.replace("{1}", ii);
 
-                    CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri).body().string(), CitiesDto.class);
+                    CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri), CitiesDto.class);
                     List<CityDto> citiess = citiesDtoo.getCities();
 
                     if(citiess == null){
                         throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
                     }
+
                     for (CityDto city : citiess) {
 
                         save(city);
@@ -133,21 +147,86 @@ public class CityController {
             log.info("Data is imported and it is consistent");
         }
     }
+    @GetMapping(path = "/add")
+    public void addCitiesFromApi() throws IOException, TooManyRequestsException {
+        Bucket bucket = createBucket();
+        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
+        Integer totalNum = citiesDto.getTotalPages();
+        Integer numCities = citiesDto.getTotalCities();
+        Integer numFromTable = getAllCities().size();
+        int numOfRequests = 1;
+        if(Objects.equals(numFromTable, numCities)){
+            log.info("Cities are already in database");
+            return;
+        }
+        while(numOfRequests <= totalNum) {
+            if (bucket.tryConsume(1)) {
+                String ii = Integer.toString(numOfRequests);
+                String newUri = url.replace("{1}", ii);
 
-    private Response doRequest(String url) throws IOException{
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader(keyName, keyValue)
-                .addHeader(hostName, hostValue)
+                CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri), CitiesDto.class);
+                List<CityDto> citiess = citiesDtoo.getCities();
+
+                if(citiess == null){
+                    throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
+                }
+
+                for (CityDto city : citiess) {
+
+                    save(city);
+                }
+                numOfRequests++;
+            }
+        }
+        log.info("Cities are imported into the database");
+    }
+
+    private Bucket createBucket(){
+        Refill refill = Refill.intervally(1, Duration.ofSeconds(2));
+        Bandwidth limit = Bandwidth.classic(1, refill);
+        return Bucket4j.builder()
+                .addLimit(limit)
                 .build();
+    }
 
-//        try{
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e){
-//            System.out.println("puklo");
-//        }
-        return client.newCall(request).execute();
+    private String doRequest(String url) throws UnsupportedEncodingException {
+        RestTemplate restTemplate = new RestTemplate();
+        UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createTemplateHandler();
+
+        URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
+        restTemplate.setUriTemplateHandler(skipVariablePlaceHolderUriTemplateHandler);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.set(hostName, hostValue);
+        headers.set(keyName, keyValue);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        String templateResponse = restTemplate.exchange(
+                url, HttpMethod.GET, entity, String.class).getBody();
+        if(templateResponse == null){
+            throw new NullPointerException();
+        }
+
+        return templateResponse;
+    }
+
+    private UriTemplateHandler createTemplateHandler(){
+        return new UriTemplateHandler() {
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Object... uriVariables) {
+                return retrieveURI(uriTemplate);
+            }
+
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
+                return retrieveURI(uriTemplate);
+            }
+
+            private URI retrieveURI(String uriTemplate) {
+                return UriComponentsBuilder.fromUriString(uriTemplate).build().toUri();
+            }
+        };
     }
 }

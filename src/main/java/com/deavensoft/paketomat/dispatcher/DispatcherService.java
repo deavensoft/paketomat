@@ -5,6 +5,7 @@ import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,6 @@ public interface DispatcherService{
 
     void delieverPackage(Package newPackage) throws IOException, PaketomatException;
 
-     double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException;
+     double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException, UnsupportedEncodingException;
 
 }

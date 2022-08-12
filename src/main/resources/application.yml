@@ -1,7 +1,7 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
     properties:
@@ -23,23 +23,6 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
-  cache:
-    cache-names: rate-limit-buckets
-    caffeine:
-      spec: maximumSize=100000, expireAfterAccess=3600s
-
-bucket4j:
-  enabled: true
-  filters:
-    - cache-name: rate-limit-buckets
-      url: "https://countries-cities.p.rapidapi.com/location/country/RS/city/list?page=1&per_page=100&population=1501"
-      strategy: first
-      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"You have exhausted your API Request Quota\" }"
-      rate-limits:
-          bandwidths:
-            - capacity: 1
-              time: 2
-              unit: seconds
 
 external.api.city:
   start-page: 1

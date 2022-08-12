@@ -14,9 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -27,6 +30,8 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class CenterController {
+    @Autowired
+    private RestTemplate restTemplate;
     static final String MESSAGE = "Package with id ";
     private final CenterService centerService;
     private final UserService userService;
@@ -44,6 +49,16 @@ public class CenterController {
         }
         log.info("All packages are returned");
         return packageDTOS;
+    }
+
+    @RequestMapping(value = "/template/packages")
+    public String getPackagesList(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+        return restTemplate.exchange(
+                "http://localhost:8080/api/packages", HttpMethod.GET, entity, String.class).getBody();
     }
 
     @PostMapping

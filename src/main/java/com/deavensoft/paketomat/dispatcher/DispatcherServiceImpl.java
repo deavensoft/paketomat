@@ -10,13 +10,17 @@ import com.deavensoft.paketomat.paketomats.PaketomatService;
 import com.deavensoft.paketomat.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import java.io.IOException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriTemplateHandler;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -66,7 +70,7 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
-    public void delieverPackage(Package newPackage) throws PaketomatException {
+    public void delieverPackage(Package newPackage) throws PaketomatException, UnsupportedEncodingException {
         Optional<User> user = userService.findUserById(newPackage.getUser().getId());
         if (user.isPresent()) {
             if(!user.get().getAddress().contains(",")){
@@ -80,7 +84,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
     }
 
-    public void findNearestCity(String address, Package newPackage) throws PaketomatException {
+    public void findNearestCity(String address, Package newPackage) throws PaketomatException, UnsupportedEncodingException {
         City city = null;
         double minDistance = 1000.0;
         double distance;
@@ -106,31 +110,46 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
-    public double findDistance(String cityPaketomat, String cityReciever) throws PaketomatException {
+    public double findDistance(String cityPaketomat, String cityReciever) throws UnsupportedEncodingException {
         if (cityReciever.contentEquals(cityPaketomat)) {
             return 0.0;
         }
-        try {
-            OkHttpClient client = new OkHttpClient();
-
-            String newUrl = url.replace("{cityReciever}", cityReciever);
-            String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
-            Request request = new Request.Builder()
-                    .url(newURL)
-                    .get()
-                    .addHeader(keyName, keyValue)
-                    .addHeader(hostName, hostValue)
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                return calculateDistance(response.body().string());
+        String newUrl = url.replace("{cityReciever}", cityReciever);
+        String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
+        UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = new UriTemplateHandler() {
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Object... uriVariables) {
+                return retrieveURI(uriTemplate);
             }
-        } catch (IOException e) {
-            throw new PaketomatException("Distance cannot be calculated", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
+                return retrieveURI(uriTemplate);
+            }
+
+            private URI retrieveURI(String uriTemplate) {
+                return UriComponentsBuilder.fromUriString(uriTemplate).build().toUri();
+            }
+        };
+        URLEncoder.encode(newURL, StandardCharsets.UTF_8.toString());
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setUriTemplateHandler(skipVariablePlaceHolderUriTemplateHandler);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.set(hostName, hostValue);
+        headers.set(keyName, keyValue);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        String returnOfTemplate = restTemplate.exchange(
+                newURL, HttpMethod.GET, entity, String.class).getBody();
+        if(returnOfTemplate == null){
+            throw new NullPointerException();
         }
+        return calculateDistance(returnOfTemplate);
     }
 
-    public double calculateDistance(String text) {
+    public double calculateDistance(String text){
         if (!text.contains(haversine))
             return 0.0;
         String part = text.substring(text.indexOf(haversine), text.indexOf("greatCircle") - 2);

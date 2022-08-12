@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -44,7 +46,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public List<Package> getPackagesForCourier(String city) throws PaketomatException {
+    public List<Package> getPackagesForCourier(String city) throws PaketomatException, UnsupportedEncodingException {
         return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
     }
 
@@ -80,7 +82,7 @@ public class CourierServiceImpl implements CourierService {
         return packageList;
     }
 
-    public List<City> findCitiesInRadius(String city) throws PaketomatException {
+    public List<City> findCitiesInRadius(String city) throws PaketomatException, UnsupportedEncodingException {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
