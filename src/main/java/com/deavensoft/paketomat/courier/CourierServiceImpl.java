@@ -125,7 +125,7 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
             packageService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
-            checkIfThePackageIsPayed(p);
+            checkIfThePackageIsPaid(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
@@ -161,7 +161,7 @@ public class CourierServiceImpl implements CourierService {
 
     }
 
-    public void checkIfThePackageIsPayed(Package p) {
+    public void checkIfThePackageIsPaid(Package p) {
         if (p.getPaid() == Paid.PAID) {
             sendEMailToUser(p.getUser().getEmail(), Paid.PAID);
         } else if (p.getPaid() == Paid.NOT_PAID) {
