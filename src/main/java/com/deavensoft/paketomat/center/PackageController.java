@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -26,9 +27,9 @@ import java.util.Optional;
 @RequestMapping("api/packages")
 @Slf4j
 @AllArgsConstructor
-public class CenterController {
+public class PackageController {
 
-    private final CenterService centerService;
+    private final PackageService packageService;
     private final UserService userService;
     private final PackageMapper packageMapper;
 
@@ -36,7 +37,7 @@ public class CenterController {
     @Operation(summary = "Get packages", description = "Get all packages")
     @ApiResponse(responseCode = "200", description = "All packages are returned")
     public List<PackageDTO> getAllPackages() {
-        List<Package> packages = centerService.getAllPackages();
+        List<Package> packages = packageService.getAllPackages();
         List<PackageDTO> packageDTOS = new ArrayList<>();
 
         for (Package pa : packages) {
@@ -51,8 +52,9 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "New package added")
     public int savePackage(@RequestBody PackageDTO newPackage) throws IOException, PaketomatException {
         Package p = packageMapper.packageDTOToPackage(newPackage);
+        p.setPaid(Paid.NOT_PAID);
         p.setStatus(Status.NEW);
-        centerService.save(p);
+        packageService.save(p);
         log.info("New package added to the database");
 
         Optional<User> user = userService.findUserById(p.getUser().getId());
@@ -75,7 +77,7 @@ public class CenterController {
     @Operation(summary = "Get package", description = "Get package with specified id")
     @ApiResponse(responseCode = "200", description = "Package with specified id returned")
     public PackageDTO getPackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
-        Optional<Package> p = centerService.findPackageById(id);
+        Optional<Package> p = packageService.findPackageById(id);
 
         if(p.isEmpty()){
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
@@ -94,7 +96,7 @@ public class CenterController {
     @ApiResponse(responseCode = "200", description = "Package with specified id deleted")
     public int deletePackageById(@PathVariable(name = "id")Long id) throws NoSuchPackageException {
         try {
-            centerService.deletePackageById(id);
+            packageService.deletePackageById(id);
             String mess = "Package with id " + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e){
@@ -104,7 +106,13 @@ public class CenterController {
     }
     @DeleteMapping
     public int deleteAllPackages(){
-        centerService.deleteAll();
+        packageService.deleteAll();
         return 1;
+    }
+    @GetMapping(path="/pay")
+    public void payForThePackage(@RequestParam(name = "id") Long id)
+    {
+        packageService.payment(id,Paid.PAID);
+
     }
 }

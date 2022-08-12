@@ -30,4 +30,6 @@ public class Package {
     @JsonIgnore
     @Column(name = "date")
     private LocalDateTime date;
+    @Column(name = "paid")
+    private Paid paid;
 }

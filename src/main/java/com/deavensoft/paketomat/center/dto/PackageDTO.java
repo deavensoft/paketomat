@@ -1,5 +1,6 @@
 package com.deavensoft.paketomat.center.dto;
 
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
@@ -26,4 +27,6 @@ public class PackageDTO {
     private Paketomat paketomat;
     @JsonProperty("code")
     private Long code;
+    @JsonProperty("paid")
+    private Paid paid;
 }

@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.CenterServiceImpl;
+import com.deavensoft.paketomat.center.PackageServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
@@ -27,7 +27,7 @@ public class DispatcherController {
 
     private final DispatcherService dispatcherService;
 
-    private final CenterServiceImpl centerService;
+    private final PackageServiceImpl centerService;
 
     private DispatcherMapper dispatcherMapper;
 
