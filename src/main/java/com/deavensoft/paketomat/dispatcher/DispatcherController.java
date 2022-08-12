@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.CenterServiceImpl;
+import com.deavensoft.paketomat.center.PackageServiceImpl;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
@@ -26,8 +26,10 @@ import java.util.Optional;
 public class DispatcherController {
     static final String MESSAGE = "Dispatcher with id ";
     private final DispatcherService dispatcherService;
-    private final CenterServiceImpl centerService;
-    private final DispatcherMapper dispatcherMapper;
+
+    private final PackageServiceImpl centerService;
+
+    private DispatcherMapper dispatcherMapper;
 
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
@@ -70,6 +72,7 @@ public class DispatcherController {
 
             return dispatcherDTO;
         }
+
     }
 
     @PostMapping(path = "/dispatch/{id}")

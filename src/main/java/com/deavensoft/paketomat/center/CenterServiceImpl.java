@@ -20,6 +20,7 @@ public class CenterServiceImpl implements CenterService {
         this.centerRepository = centerRepository;
     }
 
+
     public List<Package> getAllPackages() {
         return centerRepository.findAll();
     }
@@ -45,7 +46,7 @@ public class CenterServiceImpl implements CenterService {
     public void updateStatus(Long code, Status status) {
         List<Package> packages = centerRepository.findAll();
         for (Package p : packages) {
-            if (p.getCode().equals(code)) {
+            if(p.getCode().equals(code)){
                 p.setStatus(status);
                 LocalDateTime date = LocalDateTime.now();
                 p.setDate(date);
