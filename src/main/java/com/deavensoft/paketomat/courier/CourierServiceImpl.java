@@ -29,7 +29,7 @@ public class CourierServiceImpl implements CourierService {
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
 
-    private static Integer fourDigitBoundForPinCode=10000;
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
 
 
     public List<Courier> findAllCouriers() {
@@ -155,7 +155,7 @@ public class CourierServiceImpl implements CourierService {
 
     public String generateCode() {
         SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(fourDigitBoundForPinCode);
+        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
         String formatted = String.format("%04d", generateNumberForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;

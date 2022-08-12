@@ -23,7 +23,7 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
-    private static Integer fourDigitBoundForPinCode=10000;
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
@@ -91,7 +91,7 @@ public class PackageServiceImpl implements PackageService {
     public String generateCode() {
 
         SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int codeForPaketomat = pinCodeForPaketomat.nextInt(fourDigitBoundForPinCode);
+        int codeForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
         String formatted = String.format("%04d", codeForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
