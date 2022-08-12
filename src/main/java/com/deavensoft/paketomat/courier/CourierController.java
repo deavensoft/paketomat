@@ -14,9 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,6 +81,7 @@ public class CourierController {
 
             return courierDTO;
         }
+
     }
 
     @DeleteMapping(path = "/{id}")
@@ -115,8 +120,16 @@ public class CourierController {
         return notPickedUpPackages;
     }
 
-    @Operation(summary = "Get packages that are not picked up", description = "Get packages that have not been picked up")
-    @ApiResponse(responseCode = "200", description = "All packages that have not been picked up from paketomats are exporeted into a file")
+    @GetMapping(path = "/export/{city}")
+    @Operation(summary = "Export data packages for courier", description = "Get packages that courier will deliver on his route")
+    @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
+    public void exportData(@PathVariable(name = "city") String city, HttpServletResponse response) throws PaketomatException, IOException {
+        courierService.exportToCSV(response, city);
+        log.info("Data is sucessfully exported");
+    }
+
+    @Operation(summary = "Get all not picked up packages", description = "Get packages that have not been picked up")
+    @ApiResponse(responseCode = "200", description = "Get all packages that have not been picked up from paketomats")
     @GetMapping("/exportNotPickedPackages")
     public void exportNotPickedUpPackages(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");

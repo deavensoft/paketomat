@@ -16,6 +16,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -185,5 +194,29 @@ public class CourierServiceImpl implements CourierService {
         } else if (p.getPaid() == Paid.UNSUCCESSFUL) {
             sendEMailToUser(p.getUser().getEmail(), Paid.UNSUCCESSFUL);
         }
+    }
+
+    public void exportToCSV(HttpServletResponse response, String city) throws PaketomatException, IOException {
+        response.setContentType("text/csv");
+
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=NewPackagesToBeDeliveredInCity.csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<Package> listPackages = getPackagesForCourier(city);
+
+        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code","Center","Date","Paid"};
+        String[] nameMapping = {"id", "status", "user", "paketomat", "code","center","date","paid"};
+
+        csvWriter.writeHeader(csvHeader);
+
+        for (Package p : listPackages) {
+            csvWriter.write(p, nameMapping);
+        }
+
+        csvWriter.close();
+
     }
 }
