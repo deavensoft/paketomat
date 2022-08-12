@@ -8,9 +8,7 @@ import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.exceptions.TooManyRequestsException;
 import com.deavensoft.paketomat.mapper.CityMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.bucket4j.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +26,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -52,10 +48,8 @@ public class CityController {
     private String keyName;
     @Value("${external.api.city.header.key.value}")
     private String keyValue;
-
     @Value("${external.api.city.start-page}")
     private Integer startPage;
-
     private final CityMapper mapper;
 
     @GetMapping
@@ -144,31 +138,6 @@ public class CityController {
             log.info("Data is imported and it is consistent");
         }
     }
-    @GetMapping(path = "/add")
-    public void addCitiesFromApi() throws IOException, TooManyRequestsException {
-        Bucket bucket = createBucket();
-        BlockingBucket blockingBucket = bucket.asScheduler();
-        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
-        Integer totalNum = citiesDto.getTotalPages();
-        Integer numCities = citiesDto.getTotalCities();
-        Integer numFromTable = getAllCities().size();
-        int numOfRequests = 1;
-        if(Objects.equals(numFromTable, numCities)) {
-            log.info("Cities are already in database");
-            return;
-        }
-        log.info("Cities are imported into the database");
-    }
-
-
-    private Bucket createBucket(){
-        Refill refill = Refill.intervally(1, Duration.ofSeconds(2));
-        Bandwidth limit = Bandwidth.classic(1, refill);
-        return Bucket4j.builder()
-                .addLimit(limit)
-                .build();
-    }
-
     private String doRequest(String url) throws UnsupportedEncodingException {
         RestTemplate restTemplate = new RestTemplate();
         UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createTemplateHandler();

@@ -15,7 +15,7 @@ import java.util.Map;
 public class EmailController {
 
     @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
     @PostMapping("/sendMail")
     @Operation(summary = "sending basic mail")
@@ -37,8 +37,7 @@ public class EmailController {
     @PostMapping("/sendMailWithTemplate")
     @Operation(summary = "Sending mail with template.")
     @ApiResponse(responseCode = "200", description = "Mail with template has been sent.")
-    public int sendMailWithTemplate(
-            @RequestBody EmailDetails details)
+    public int sendMailWithTemplate(@RequestBody EmailDetails details)
     {
         Map<String, Object> model = new HashMap<>();
         model.put("msgBody",details.getMsgBody());

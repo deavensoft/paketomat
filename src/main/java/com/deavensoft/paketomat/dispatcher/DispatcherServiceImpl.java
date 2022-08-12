@@ -116,23 +116,7 @@ public class DispatcherServiceImpl implements DispatcherService {
         }
         String newUrl = url.replace("{cityReciever}", cityReciever);
         String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
-        UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = new UriTemplateHandler() {
-            @NotNull
-            @Override
-            public URI expand(String uriTemplate, Object... uriVariables) {
-                return retrieveURI(uriTemplate);
-            }
-
-            @NotNull
-            @Override
-            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
-                return retrieveURI(uriTemplate);
-            }
-
-            private URI retrieveURI(String uriTemplate) {
-                return UriComponentsBuilder.fromUriString(uriTemplate).build().toUri();
-            }
-        };
+        UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createHandler();
         URLEncoder.encode(newURL, StandardCharsets.UTF_8.toString());
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(skipVariablePlaceHolderUriTemplateHandler);
@@ -184,5 +168,25 @@ public class DispatcherServiceImpl implements DispatcherService {
         model.put("msgBody", emailDetails.getMsgBody());
         emailService.sendMailWithTemplate(emailDetails, model);
         log.info("Mail is sent to courier");
+    }
+
+    private UriTemplateHandler createHandler(){
+        return  new UriTemplateHandler() {
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Object... uriVariables) {
+                return retrieveURI(uriTemplate);
+            }
+
+            @NotNull
+            @Override
+            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
+                return retrieveURI(uriTemplate);
+            }
+
+            private URI retrieveURI(String uriTemplate) {
+                return UriComponentsBuilder.fromUriString(uriTemplate).build().toUri();
+            }
+        };
     }
 }

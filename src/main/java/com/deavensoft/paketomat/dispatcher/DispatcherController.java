@@ -27,7 +27,7 @@ public class DispatcherController {
     static final String MESSAGE = "Dispatcher with id ";
     private final DispatcherService dispatcherService;
     private final CenterServiceImpl centerService;
-    private DispatcherMapper dispatcherMapper;
+    private final DispatcherMapper dispatcherMapper;
 
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
