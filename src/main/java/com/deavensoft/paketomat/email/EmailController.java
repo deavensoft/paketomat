@@ -26,7 +26,7 @@ public class EmailController {
         return emailService.sendSimpleMail(details);
     }
 
-    @PostMapping("/sendMailWithAttachment")
+    @PostMapping("/sendMail/attachment")
     @Operation(summary = "Sending basic mail with attachment.")
     @ApiResponse(responseCode = "200", description = "Mail with attachment has been sent.")
     public String sendMailWithAttachment(
@@ -34,7 +34,7 @@ public class EmailController {
     {
         return emailService.sendMailWithAttachment(details);
     }
-    @PostMapping("/sendMailWithTemplate")
+    @PostMapping("/sendMail/template")
     @Operation(summary = "Sending mail with template.")
     @ApiResponse(responseCode = "200", description = "Mail with template has been sent.")
     public int sendMailWithTemplate(@RequestBody EmailDetails details)

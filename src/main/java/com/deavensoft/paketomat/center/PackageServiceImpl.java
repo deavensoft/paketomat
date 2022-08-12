@@ -7,9 +7,7 @@ import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE = 10000;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
@@ -61,18 +59,28 @@ public class PackageServiceImpl implements PackageService {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setPaid(paid);
-            sendMailToUser(p.get().getUser().getEmail(), paid);
+            Long code = sendMailToUser(p.get().getUser().getEmail(), paid);
+            updateCode(id, code);
             packageRepository.save(p.get());
         }
-
     }
 
-    public void sendMailToUser(String email, Paid p) {
+    public void updateCode(Long id, Long code){
+        Optional<Package> p = packageRepository.findById(id);
+        if (p.isPresent()) {
+            p.get().setCode(code);
+            packageRepository.save(p.get());
+        }
+    }
+
+    public Long sendMailToUser(String email, Paid p) {
+        Long code = 0L;
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" + " " +
-                    generateCode());
+            code = Long.valueOf(generateCode());
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up, the code is" + " " +
+                    code);
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
         } else if (Paid.UNSUCCESSFUL == p) {
@@ -84,18 +92,15 @@ public class PackageServiceImpl implements PackageService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
-
+        return code;
     }
 
     public String generateCode() {
-
         SecureRandom pinCodeForPaketomat = new SecureRandom();
         int codeForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
         String formatted = String.format("%04d", codeForPaketomat);
         log.info("Code is generated for picking up the package");
         return formatted;
-
-
     }
 
     public Optional<Package> findPackageByCode(Long code) {

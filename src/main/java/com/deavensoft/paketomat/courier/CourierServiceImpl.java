@@ -14,17 +14,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,7 +37,7 @@ public class CourierServiceImpl implements CourierService {
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
 
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
+    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE = 10000;
 
 
     public List<Courier> findAllCouriers() {
@@ -84,13 +83,13 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public List<Package> returnNotPickedUpPackages() {
-        List<Package> packages= packageService.getAllPackages();
+        List<Package> packages = packageService.getAllPackages();
         List<Package> packagesToReturn = new ArrayList<>();
-        for(Package p : packages){
-            if(p.getStatus().equals(Status.RETURNED)){
+        for (Package p : packages) {
+            if (p.getStatus().equals(Status.RETURNED)) {
                 packagesToReturn.add(p);
                 p.getPaketomat().freeBox(p);
-                packageService.updateStatus(p.getCode(),Status.TO_DISPATCH);
+                packageService.updateStatus(p.getCode(), Status.TO_DISPATCH);
             }
         }
         return packagesToReturn;
@@ -199,7 +198,6 @@ public class CourierServiceImpl implements CourierService {
     public void exportToCSV(HttpServletResponse response, String city) throws PaketomatException, IOException {
         response.setContentType("text/csv");
 
-
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=NewPackagesToBeDeliveredInCity.csv";
         response.setHeader(headerKey, headerValue);
@@ -207,8 +205,8 @@ public class CourierServiceImpl implements CourierService {
         List<Package> listPackages = getPackagesForCourier(city);
 
         ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code","Center","Date","Paid"};
-        String[] nameMapping = {"id", "status", "user", "paketomat", "code","center","date","paid"};
+        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code", "Center", "Date", "Paid"};
+        String[] nameMapping = {"id", "status", "user", "paketomat", "code", "center", "date", "paid"};
 
         csvWriter.writeHeader(csvHeader);
 
@@ -218,5 +216,30 @@ public class CourierServiceImpl implements CourierService {
 
         csvWriter.close();
 
+    }
+
+    @Override
+    public void exportOutdatedPackagesToCSV(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        String fileName = "notPickedUpPackages.csv";
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; fileName=" + fileName;
+
+        response.setHeader(headerKey, headerValue);
+
+        List<Package> packages = getNotPickedUpPackages();
+
+        ICsvBeanWriter csvBeanWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"Id", "Status", "User id", "Paketomat id", "Code", "Center", "Date"};
+        String[] nameMapping = {"id", "status", "user_id", "paketomat_id", "code", "center_id", "date"};
+
+        csvBeanWriter.writeHeader(csvHeader);
+
+        for (Package p : packages) {
+            csvBeanWriter.write(p, nameMapping);
+        }
+
+        csvBeanWriter.close();
     }
 }

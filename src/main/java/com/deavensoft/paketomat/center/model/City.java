@@ -24,6 +24,7 @@ public class City {
     private double latitude;
     @Column(name = "y")
     private double longitude;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;

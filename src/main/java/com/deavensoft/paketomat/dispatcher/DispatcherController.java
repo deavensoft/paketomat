@@ -29,7 +29,7 @@ public class DispatcherController {
 
     private final PackageServiceImpl centerService;
 
-    private DispatcherMapper dispatcherMapper;
+    private final DispatcherMapper dispatcherMapper;
 
     @GetMapping
     @Operation(summary = "Get dispatchers", description = "Get all dispatchers")
@@ -72,7 +72,6 @@ public class DispatcherController {
 
             return dispatcherDTO;
         }
-
     }
 
     @PostMapping(path = "/dispatch/{id}")

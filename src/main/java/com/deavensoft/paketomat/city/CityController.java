@@ -108,6 +108,7 @@ public class CityController {
     }
 
     @GetMapping(path = "/check")
+    @Operation(summary = "Import cities", description = "Import cities in Serbia to database")
     public void checkCities() throws IOException, PaketomatException {
         CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
         Integer totalNum = citiesDto.getTotalPages();
@@ -122,7 +123,7 @@ public class CityController {
                     CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri), CitiesDto.class);
                     List<CityDto> citiess = citiesDtoo.getCities();
 
-                    if(citiess == null){
+                    if (citiess == null) {
                         throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
                     }
 
@@ -138,6 +139,7 @@ public class CityController {
             log.info("Data is imported and it is consistent");
         }
     }
+
     private String doRequest(String url) throws UnsupportedEncodingException {
         RestTemplate restTemplate = new RestTemplate();
         UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createTemplateHandler();
@@ -152,14 +154,14 @@ public class CityController {
 
         String templateResponse = restTemplate.exchange(
                 url, HttpMethod.GET, entity, String.class).getBody();
-        if(templateResponse == null){
+        if (templateResponse == null) {
             throw new NullPointerException();
         }
 
         return templateResponse;
     }
 
-    private UriTemplateHandler createTemplateHandler(){
+    private UriTemplateHandler createTemplateHandler() {
         return new UriTemplateHandler() {
             @NotNull
             @Override

@@ -30,7 +30,8 @@ import java.util.Optional;
 public class PackageController {
 
     private final PackageService packageService;
-    static final String MESSAGE = "Package with id ";
+    private static final String MESSAGE = "Package with id ";
+
     private final PackageService centerService;
     private final UserService userService;
     private final PackageMapper packageMapper;
@@ -105,15 +106,19 @@ public class PackageController {
         }
         return 1;
     }
+
     @DeleteMapping
-    public int deleteAllPackages(){
+    @Operation(summary = "Delete packages", description = "Delete all packages")
+    @ApiResponse(responseCode = "200", description = "All packages are deleted from database")
+    public int deleteAllPackages() {
         packageService.deleteAll();
         return 1;
     }
-    @GetMapping(path="/pay")
-    public void payForThePackage(@RequestParam(name = "id") Long id)
-    {
-        packageService.payment(id,Paid.PAID);
+
+    @GetMapping(path = "/pay")
+    @Operation(summary = "Pay for package", description = "Pay for package with specified id")
+    public void payForThePackage(@RequestParam(name = "id") Long id) {
+        packageService.payment(id, Paid.PAID);
 
     }
 }

@@ -23,8 +23,8 @@ import java.util.Optional;
 public class UserController {
 
     private final PackageService packageService;
-    private UserService userService;
-    private UserMapper userMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping
     @Operation(summary = "Get users", description = "Get all users")
@@ -68,7 +68,6 @@ public class UserController {
 
             return userDTO;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")

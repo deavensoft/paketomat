@@ -26,4 +26,6 @@ public interface CourierService {
 
      List<Package> returnNotPickedUpPackages();
      void exportToCSV(HttpServletResponse response,String city) throws PaketomatException, IOException;
+
+     void exportOutdatedPackagesToCSV(HttpServletResponse response) throws IOException;
 }
