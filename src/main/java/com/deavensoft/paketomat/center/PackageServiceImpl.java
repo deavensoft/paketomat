@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +23,7 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
+
     @Autowired
 
     public List<Package> getAllPackages() {
@@ -48,22 +49,21 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public void updateStatus(Long code, Status status) {
-        Optional<Package> p=packageRepository.findPackageByCode(code);
-            if(p.isPresent()){
-                p.get().setStatus(status);
-                LocalDateTime date = LocalDateTime.now();
-                p.get().setDate(date);
-                packageRepository.save(p.get());
-            }
+        Optional<Package> p = packageRepository.findPackageByCode(code);
+        if (p.isPresent()) {
+            p.get().setStatus(status);
+            LocalDateTime date = LocalDateTime.now();
+            p.get().setDate(date);
+            packageRepository.save(p.get());
         }
+    }
 
-    public void payment(Long id, Paid paid)
-    {
-        Optional<Package> p= packageRepository.findById(id);
-        if(p.isPresent()){
+    public void payment(Long id, Paid paid) {
+        Optional<Package> p = packageRepository.findById(id);
+        if (p.isPresent()) {
 
             p.get().setPaid(paid);
-            sendMailToUser(p.get().getUser().getEmail(),paid);
+            sendMailToUser(p.get().getUser().getEmail(), paid);
             packageRepository.save(p.get());
         }
 
@@ -73,7 +73,7 @@ public class PackageServiceImpl implements PackageService {
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" +" "+
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" + " " +
                     generateCode());
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
