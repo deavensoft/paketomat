@@ -79,13 +79,13 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public List<Package> returnNotPickedUpPackages() {
-        List<Package> packages= centerService.getAllPackages();
+        List<Package> packages= packageService.getAllPackages();
         List<Package> packagesToReturn = new ArrayList<>();
         for(Package p : packages){
             if(p.getStatus().equals(Status.RETURNED)){
                 packagesToReturn.add(p);
                 p.getPaketomat().freeBox(p);
-                centerService.updateStatus(p.getCode(),Status.TO_DISPATCH);
+                packageService.updateStatus(p.getCode(),Status.TO_DISPATCH);
             }
         }
         return packagesToReturn;
