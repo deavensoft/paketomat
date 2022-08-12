@@ -77,7 +77,6 @@ public class PaketomatController {
                     pa.setPackages(new ArrayList<>());
                     savePaketomat(pa);
                     Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(pa);
-                    c.getPaketomats().add(paketomat);
                 }
             }
         }
@@ -103,16 +102,13 @@ public class PaketomatController {
 
         if (userPackage.isEmpty()){
             throw new NoSuchPackageException("There is no package with code " + code, HttpStatus.OK, 200);
-        }else {
-
+        } else {
             List<PaketomatDTO> paketomats = getAllPaketomats();
             for (PaketomatDTO paketomat : paketomats) {
                 Package pa = userPackage.get();
                 pa.setPaketomat(null);
                 packageService.updateStatus(code, Status.DELIVERED);
-
             }
-
         }
     }
 }

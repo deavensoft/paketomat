@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.center;
 
 import com.deavensoft.paketomat.center.dto.PackageDTO;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
@@ -30,7 +31,7 @@ public class PackageController {
 
     private final PackageService packageService;
     static final String MESSAGE = "Package with id ";
-    private final CenterService centerService;
+    private final PackageService centerService;
     private final UserService userService;
     private final PackageMapper packageMapper;
 
@@ -97,8 +98,6 @@ public class PackageController {
     public int deletePackageById(@PathVariable(name = "id") Long id) throws NoSuchPackageException {
         try {
             packageService.deletePackageById(id);
-            String mess = "Package with id " + id + " is deleted";
-            centerService.deletePackageById(id);
             String mess = MESSAGE + id + " is deleted";
             log.info(mess);
         } catch (EmptyResultDataAccessException e) {

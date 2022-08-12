@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
 

@@ -60,7 +60,6 @@ public class PackageServiceImpl implements PackageService {
     public void payment(Long id, Paid paid) {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
-
             p.get().setPaid(paid);
             sendMailToUser(p.get().getUser().getEmail(), paid);
             packageRepository.save(p.get());

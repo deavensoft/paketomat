@@ -11,8 +11,6 @@ import com.deavensoft.paketomat.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -153,9 +151,11 @@ public class DispatcherServiceImpl implements DispatcherService {
             if (city.getId().equals(paketomat.getCity().getId()) && paketomat.getPackages().size() < sizeOfPaketomat) {
                 paketomat.reserveSlot(newPackage);
                 newPackage.setPaketomat(paketomat);
-                centerService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
+                packageService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
                 log.info("Slot is reserved for package in paketomat in city " + city.getName());
                 return true;
+            }
+        }
         return false;
     }
 
