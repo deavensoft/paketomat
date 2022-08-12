@@ -29,13 +29,12 @@ import java.util.Optional;
 @RequestMapping("api/couriers")
 @Slf4j
 public class CourierController {
-
     private final CourierService courierService;
     static final String MESSAGE = "Courier with id ";
 
-    private CourierMapper courierMapper;
+    private final CourierMapper courierMapper;
 
-    private PackageMapper packageMapper;
+    private final PackageMapper packageMapper;
 
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
@@ -116,8 +115,8 @@ public class CourierController {
         return notPickedUpPackages;
     }
 
-    @Operation(summary = "Get all not picked up packages", description = "Get packages that have not been picked up")
-    @ApiResponse(responseCode = "200", description = "Get all packages that have not been picked up from paketomats")
+    @Operation(summary = "Get packages that are not picked up", description = "Get packages that have not been picked up")
+    @ApiResponse(responseCode = "200", description = "All packages that have not been picked up from paketomats are exporeted into a file")
     @GetMapping("/exportNotPickedPackages")
     public void exportNotPickedUpPackages(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");

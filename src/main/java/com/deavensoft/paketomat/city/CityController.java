@@ -10,10 +10,7 @@ import com.deavensoft.paketomat.exceptions.TooManyRequestsException;
 import com.deavensoft.paketomat.mapper.CityMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
-import io.github.bucket4j.Refill;
+import io.github.bucket4j.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -150,36 +147,19 @@ public class CityController {
     @GetMapping(path = "/add")
     public void addCitiesFromApi() throws IOException, TooManyRequestsException {
         Bucket bucket = createBucket();
+        BlockingBucket blockingBucket = bucket.asScheduler();
         CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
         Integer totalNum = citiesDto.getTotalPages();
         Integer numCities = citiesDto.getTotalCities();
         Integer numFromTable = getAllCities().size();
         int numOfRequests = 1;
-        if(Objects.equals(numFromTable, numCities)){
+        if(Objects.equals(numFromTable, numCities)) {
             log.info("Cities are already in database");
             return;
         }
-        while(numOfRequests <= totalNum) {
-            if (bucket.tryConsume(1)) {
-                String ii = Integer.toString(numOfRequests);
-                String newUri = url.replace("{1}", ii);
-
-                CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri), CitiesDto.class);
-                List<CityDto> citiess = citiesDtoo.getCities();
-
-                if(citiess == null){
-                    throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
-                }
-
-                for (CityDto city : citiess) {
-
-                    save(city);
-                }
-                numOfRequests++;
-            }
-        }
         log.info("Cities are imported into the database");
     }
+
 
     private Bucket createBucket(){
         Refill refill = Refill.intervally(1, Duration.ofSeconds(2));
