@@ -77,6 +77,20 @@ public class CourierServiceImpl implements CourierService {
         return packagesToReturn;
     }
 
+    @Override
+    public List<Package> returnNotPickedUpPackages() {
+        List<Package> packages= centerService.getAllPackages();
+        List<Package> packagesToReturn = new ArrayList<>();
+        for(Package p : packages){
+            if(p.getStatus().equals(Status.RETURNED)){
+                packagesToReturn.add(p);
+                p.getPaketomat().freeBox(p);
+                centerService.updateStatus(p.getCode(),Status.TO_DISPATCH);
+            }
+        }
+        return packagesToReturn;
+    }
+
     public List<Package> getPackagesToDispatch() {
         List<Package> packageList = packageService.getAllPackages();
         ArrayList<Package> packagesToDispatch = new ArrayList<>();

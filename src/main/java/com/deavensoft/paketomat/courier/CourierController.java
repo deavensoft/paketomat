@@ -153,4 +153,17 @@ public class CourierController {
 
         csvBeanWriter.close();
     }
+    @GetMapping(path = "/returnNotPickedUpPackages/")
+    @Operation(summary = "Return not picked up packages", description = "Return not picked up packages to the distributive center.")
+    @ApiResponse(responseCode = "200", description = "All packages that not picked up by user will be returned to the distributive center.")
+    public List<PackageDTO> returnNotPickedUpPackages() {
+        List<PackageDTO> packagesToReturn = new ArrayList<>();
+        List<Package> packages = courierService.returnNotPickedUpPackages();
+        for(Package p : packages){
+            PackageDTO pDto = packageMapper.packageToPackageDTO(p);
+            packagesToReturn.add(pDto);
+        }
+        log.info("List of returned packages");
+        return packagesToReturn;
+    }
 }

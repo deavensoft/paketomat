@@ -21,5 +21,7 @@ public interface CourierService {
      List<Package> getPackagesForCourier(String city) throws PaketomatException;
 
      List<Package> getNotPickedUpPackages();
+
+     List<Package> returnNotPickedUpPackages();
      void exportToCSV(HttpServletResponse response,String city) throws PaketomatException, IOException;
 }
