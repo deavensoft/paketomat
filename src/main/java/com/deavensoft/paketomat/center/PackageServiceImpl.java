@@ -24,8 +24,6 @@ public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
 
-    @Autowired
-
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
     }
