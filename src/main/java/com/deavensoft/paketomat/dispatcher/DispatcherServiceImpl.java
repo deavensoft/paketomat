@@ -114,7 +114,7 @@ public class DispatcherServiceImpl implements DispatcherService {
         if (cityReciever.contentEquals(cityPaketomat)) {
             return 0.0;
         }
-        String newUrl0 = url.replace("{cityReceiver}", cityReciever);
+        String newUrl0 = url.replace("{cityReciever}", cityReciever);
         String newUrl1 = newUrl0.replace("{cityPaketomat}", cityPaketomat);
         UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createHandler();
         URLEncoder.encode(newUrl1, StandardCharsets.UTF_8.toString());
