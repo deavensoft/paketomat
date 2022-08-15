@@ -85,7 +85,7 @@ public class CityController {
         } else {
             City city1 = city.get();
             CityDto cityDto = mapper.cityToCityDto(city1);
-            String mss = "City with id " + id + "is retuned";
+            String mss = "City with id " + id + "is returned";
             log.info(mss);
             return cityDto;
         }
@@ -121,13 +121,13 @@ public class CityController {
                     String newUri = url.replace("{1}", ii);
 
                     CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri), CitiesDto.class);
-                    List<CityDto> citiess = citiesDtoo.getCities();
+                    List<CityDto> cities = citiesDtoo.getCities();
 
-                    if (citiess == null) {
+                    if (cities == null) {
                         throw new TooManyRequestsException("There was too many requests in allowed time", HttpStatus.TOO_MANY_REQUESTS, 429);
                     }
 
-                    for (CityDto city : citiess) {
+                    for (CityDto city : cities) {
 
                         save(city);
                     }

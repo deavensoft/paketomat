@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.user;
 
-import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.mapper.UserMapper;

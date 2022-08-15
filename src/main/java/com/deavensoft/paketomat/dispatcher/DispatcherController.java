@@ -1,6 +1,6 @@
 package com.deavensoft.paketomat.dispatcher;
 
-import com.deavensoft.paketomat.center.PackageServiceImpl;
+import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.dispatcher.dto.DispatcherDTO;
 import com.deavensoft.paketomat.exceptions.NoSuchDispatcherException;
@@ -27,7 +27,7 @@ public class DispatcherController {
     static final String MESSAGE = "Dispatcher with id ";
     private final DispatcherService dispatcherService;
 
-    private final PackageServiceImpl centerService;
+    private final PackageService packageService;
 
     private final DispatcherMapper dispatcherMapper;
 
@@ -78,7 +78,7 @@ public class DispatcherController {
     @Operation(summary = "Move package for dispatching")
     @ApiResponse(responseCode = "200", description = "Package is ready to be dispatched")
     public void dispatchPackage(@PathVariable(name = "id") Long id) throws PaketomatException, IOException {
-        Optional<Package> newPackage = centerService.findPackageById(id);
+        Optional<Package> newPackage = packageService.findPackageById(id);
         if(newPackage.isEmpty())
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         dispatcherService.delieverPackage(newPackage.get());

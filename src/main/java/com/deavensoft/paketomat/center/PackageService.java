@@ -10,7 +10,7 @@ public interface PackageService {
 
      List<Package> getAllPackages();
 
-     void save(Package packagee);
+     void save(Package pa);
 
      Optional<Package> findPackageById(Long id);
 

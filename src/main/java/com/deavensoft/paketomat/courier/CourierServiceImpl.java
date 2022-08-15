@@ -164,7 +164,7 @@ public class CourierServiceImpl implements CourierService {
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
         } else if (Paid.UNSUCCESSFUL == p) {
-            emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
+            emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccessful, try again to pay for the package");
         }
         emailSender.setAttachment("");
         emailSender.setSubject("Package arrived in the paketomat");
