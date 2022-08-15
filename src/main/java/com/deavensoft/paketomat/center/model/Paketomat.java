@@ -29,7 +29,7 @@ public class Paketomat {
     private Long addr;
     @JsonIgnore
     @OneToMany(mappedBy = "paketomat")
-    private List<Package> packages = new ArrayList<>();;
+    private List<Package> packages = new ArrayList<>();
 
     public Paketomat(City c) {
         this.city = c;

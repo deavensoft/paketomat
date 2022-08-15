@@ -21,8 +21,6 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 public class UserController {
-
-    private final PackageService packageService;
     private final UserService userService;
     private final UserMapper userMapper;
 
