@@ -45,8 +45,8 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public void updateStatus(Long code, Status status) {
-        Optional<Package> p = packageRepository.findPackageByCode(code);
+    public void updateStatus(Long id, Status status) {
+        Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setStatus(status);
             LocalDateTime date = LocalDateTime.now();

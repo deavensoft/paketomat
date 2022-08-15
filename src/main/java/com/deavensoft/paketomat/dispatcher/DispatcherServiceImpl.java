@@ -79,7 +79,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             String[] parts = user.get().getAddress().split(",", 2);
             String cityUser = parts[1];
             findNearestCity(cityUser, newPackage);
-            sendMailToCourier();
+            //sendMailToCourier();
         } else
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
     }
@@ -151,7 +151,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             if (city.getId().equals(paketomat.getCity().getId()) && paketomat.getPackages().size() < sizeOfPaketomat) {
                 paketomat.reserveSlot(newPackage);
                 newPackage.setPaketomat(paketomat);
-                packageService.updateStatus(newPackage.getCode(), Status.TO_DISPATCH);
+                packageService.updateStatus(newPackage.getId(), Status.TO_DISPATCH);
                 log.info("Slot is reserved for package in paketomat in city " + city.getName());
                 return true;
             }

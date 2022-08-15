@@ -47,7 +47,7 @@ external.api.distance:
 
 paketomat:
   min-population : 10000
-  size-of-paketomat: 5
+  size-of-paketomat: 1
 
 dispatcher:
   distance : "haversine"

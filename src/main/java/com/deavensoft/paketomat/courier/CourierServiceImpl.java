@@ -123,7 +123,7 @@ public class CourierServiceImpl implements CourierService {
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");
-        return citiesList;
+        return citiesToDispatch;
     }
 
     public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch) {
@@ -148,8 +148,8 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
-            packageService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
-            checkIfThePackageIsPaid(p);
+            packageService.updateStatus(p.getId(), Status.IN_PAKETOMAT);
+            //checkIfThePackageIsPaid(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;
