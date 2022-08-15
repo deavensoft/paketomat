@@ -31,8 +31,6 @@ public class PackageController {
 
     private final PackageService packageService;
     private static final String MESSAGE = "Package with id ";
-
-    private final PackageService centerService;
     private final UserService userService;
     private final PackageMapper packageMapper;
 
@@ -53,7 +51,7 @@ public class PackageController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody PackageDTO newPackage) throws IOException, PaketomatException {
+    public int savePackage(@RequestBody PackageDTO newPackage) throws PaketomatException {
         Package p = packageMapper.packageDTOToPackage(newPackage);
         p.setPaid(Paid.NOT_PAID);
         p.setStatus(Status.NEW);
