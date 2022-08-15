@@ -76,7 +76,6 @@ public class PaketomatController {
                     pa.setCity(c);
                     pa.setPackages(new ArrayList<>());
                     savePaketomat(pa);
-                    Paketomat paketomat = paketomatMapper.paketomatDTOToPaketomat(pa);
                 }
             }
         }
