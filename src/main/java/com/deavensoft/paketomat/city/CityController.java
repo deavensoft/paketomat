@@ -165,13 +165,13 @@ public class CityController {
         return new UriTemplateHandler() {
             @NotNull
             @Override
-            public URI expand(String uriTemplate, Object... uriVariables) {
+            public URI expand(@NotNull String uriTemplate, @NotNull Object... uriVariables) {
                 return retrieveURI(uriTemplate);
             }
 
             @NotNull
             @Override
-            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
+            public URI expand(@NotNull String uriTemplate, @NotNull Map<String, ?> uriVariables) {
                 return retrieveURI(uriTemplate);
             }
 
