@@ -114,10 +114,10 @@ public class DispatcherServiceImpl implements DispatcherService {
         if (cityReciever.contentEquals(cityPaketomat)) {
             return 0.0;
         }
-        String newUrl = url.replace("{cityReciever}", cityReciever);
-        String newURL = newUrl.replace("{cityPaketomat}", cityPaketomat);
+        String newUrl0 = url.replace("{cityReceiver}", cityReciever);
+        String newUrl1 = newUrl0.replace("{cityPaketomat}", cityPaketomat);
         UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createHandler();
-        URLEncoder.encode(newURL, StandardCharsets.UTF_8.toString());
+        URLEncoder.encode(newUrl1, StandardCharsets.UTF_8.toString());
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(skipVariablePlaceHolderUriTemplateHandler);
         HttpHeaders headers = new HttpHeaders();
@@ -126,7 +126,7 @@ public class DispatcherServiceImpl implements DispatcherService {
         headers.set(keyName, keyValue);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         String returnOfTemplate = restTemplate.exchange(
-                newURL, HttpMethod.GET, entity, String.class).getBody();
+                newUrl1, HttpMethod.GET, entity, String.class).getBody();
         if(returnOfTemplate == null){
             throw new NullPointerException();
         }

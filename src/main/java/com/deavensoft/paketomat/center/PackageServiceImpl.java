@@ -65,7 +65,7 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public void updateCode(Long id, Long code){
+    public void updateCode(Long id, Long code) {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setCode(code);
@@ -74,17 +74,17 @@ public class PackageServiceImpl implements PackageService {
     }
 
     public Long sendMailToUser(String email, Paid p) {
-        Long code = 0L;
+        long code = 0L;
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            code = Long.valueOf(generateCode());
+            code = Long.parseLong(generateCode());
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up, the code is" + " " +
                     code);
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
         } else if (Paid.UNSUCCESSFUL == p) {
-            emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccesfull, try again to pay for the package");
+            emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccessful, try again to pay for the package");
         }
         emailSender.setAttachment("");
         emailSender.setSubject("Package arrived in the paketomat");
@@ -106,5 +106,4 @@ public class PackageServiceImpl implements PackageService {
     public Optional<Package> findPackageByCode(Long code) {
         return packageRepository.findPackageByCode(code);
     }
-
 }

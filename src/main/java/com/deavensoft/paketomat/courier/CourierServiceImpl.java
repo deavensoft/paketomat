@@ -97,7 +97,7 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> getPackagesToDispatch() {
         List<Package> packageList = packageService.getAllPackages();
-        ArrayList<Package> packagesToDispatch = new ArrayList<>();
+        List<Package> packagesToDispatch = new ArrayList<>();
 
         for (Package p : packageList) {
             if (p.getStatus().equals(Status.TO_DISPATCH)) {
@@ -112,7 +112,7 @@ public class CourierServiceImpl implements CourierService {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
-        ArrayList<City> citiesToDispatch = new ArrayList<>();
+        List<City> citiesToDispatch = new ArrayList<>();
 
         for (City c : citiesList) {
             if (c.getPopulation() >= 10000) {
