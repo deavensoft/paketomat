@@ -101,12 +101,12 @@ public class CourierServiceImpl implements CourierService {
         List<Package> packagesToDispatch = new ArrayList<>();
 
         for (Package p : packageList) {
-            if (p.getStatus().equals(Status.TO_DISPATCH)) {
+            if (p.getStatus() == Status.TO_DISPATCH) {
                 packagesToDispatch.add(p);
             }
         }
         log.info("List with packages TO_DISPATCH is made");
-        return packageList;
+        return packagesToDispatch;
     }
 
     public List<City> findCitiesInRadius(String city) throws PaketomatException, UnsupportedEncodingException {

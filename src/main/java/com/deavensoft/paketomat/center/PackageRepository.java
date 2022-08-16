@@ -8,5 +8,5 @@ import java.util.Optional;
 @Repository("center")
 public interface PackageRepository extends JpaRepository<Package,Long>{
 
-    Optional<Package> findPackageByCode(Long code);
+    Optional<Package> findPackageByCode(String code);
 }

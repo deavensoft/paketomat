@@ -98,7 +98,8 @@ public class PackageServiceImpl implements PackageService {
 
 
 
-    public Optional<Package> findPackageByCode(Long code) {
+    public Optional<Package> findPackageByCode(String code) {
         return packageRepository.findPackageByCode(code);
     }
 }
+
