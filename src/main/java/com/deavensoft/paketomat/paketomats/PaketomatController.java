@@ -1,12 +1,12 @@
 package com.deavensoft.paketomat.paketomats;
 
 import com.deavensoft.paketomat.center.PackageService;
+import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
-import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.exceptions.PaymentException;
 import com.deavensoft.paketomat.paketomats.dto.PaketomatDTO;
-import com.deavensoft.paketomat.center.model.City;
-import com.deavensoft.paketomat.center.model.Paketomat;
 import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.mapper.PaketomatMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,17 +96,18 @@ public class PaketomatController {
     @PostMapping(path = "/userPackage/{code}")
     @Operation(summary = "Move package to user")
     @ApiResponse(responseCode = "200", description = "Package is delivered to user")
-    public void userPackage(@PathVariable(name = "code") Long code) throws NoSuchPackageException {
+    public void userPackage(@PathVariable(name = "code") Long code) throws PaketomatException {
         Optional<Package> userPackage = packageService.findPackageByCode(code);
 
         if (userPackage.isEmpty()){
             throw new NoSuchPackageException("There is no package with code " + code, HttpStatus.OK, 200);
         } else {
-            List<PaketomatDTO> paketomats = getAllPaketomats();
-            for (PaketomatDTO paketomat : paketomats) {
-                Package pa = userPackage.get();
+            Package pa = userPackage.get();
+            if(pa.getPaid() == Paid.PAID){
                 pa.setPaketomat(null);
-                packageService.updateStatus(code, Status.DELIVERED);
+                packageService.updateStatus(pa.getId(), Status.DELIVERED);
+            }else{
+                throw new PaymentException("Package is not paid", HttpStatus.OK, 200);
             }
         }
     }
