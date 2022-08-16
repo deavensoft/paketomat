@@ -5,8 +5,10 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -55,13 +57,16 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public void payment(Long id, Paid paid) {
+    public void payment(Long id, Paid paid) throws NoSuchPackageException {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setPaid(paid);
             Long code = sendMailToUser(p.get().getUser().getEmail(), paid);
             updateCode(id, code);
             packageRepository.save(p.get());
+        }
+        else {
+            throw new NoSuchPackageException("There is no package with specified id", HttpStatus.OK, 200);
         }
     }
 

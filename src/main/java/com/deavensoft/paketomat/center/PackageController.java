@@ -114,8 +114,7 @@ public class PackageController {
 
     @GetMapping(path = "/pay")
     @Operation(summary = "Pay for package", description = "Pay for package with specified id")
-    public void payForThePackage(@RequestParam(name = "id") Long id) {
+    public void payForThePackage(@RequestParam(name = "id") Long id) throws NoSuchPackageException {
         packageService.payment(id, Paid.PAID);
-
     }
 }

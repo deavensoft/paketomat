@@ -22,8 +22,8 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(error, error.getStatus());
     }
 
-    @ExceptionHandler({NumberFormatException.class})
-    public ResponseEntity<Object> handleException(NumberFormatException e){
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<Object> handleException(Exception e){
         ErrorAttributes error;
         error = new ErrorAttributes(500, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         log.error(e.getMessage());

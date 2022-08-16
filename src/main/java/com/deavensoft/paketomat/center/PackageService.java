@@ -3,6 +3,8 @@ package com.deavensoft.paketomat.center;
 import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +20,7 @@ public interface PackageService {
 
      void deleteAll();
      void updateStatus(Long id, Status status);
-     void payment(Long id, Paid paid);
+     void payment(Long id, Paid paid) throws NoSuchPackageException;
 
      Optional<Package> findPackageByCode(Long code);
 
