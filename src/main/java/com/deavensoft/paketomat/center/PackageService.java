@@ -22,7 +22,7 @@ public interface PackageService {
      void updateStatus(Long id, Status status);
      void payment(Long id, Paid paid) throws NoSuchPackageException;
 
-     Optional<Package> findPackageByCode(Long code);
+     Optional<Package> findPackageByCode(String code);
 
 
 }

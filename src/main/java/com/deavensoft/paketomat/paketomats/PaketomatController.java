@@ -96,7 +96,7 @@ public class PaketomatController {
     @PostMapping(path = "/userPackage/{code}")
     @Operation(summary = "Move package to user")
     @ApiResponse(responseCode = "200", description = "Package is delivered to user")
-    public void userPackage(@PathVariable(name = "code") Long code) throws PaketomatException {
+    public void userPackage(@PathVariable(name = "code") String code) throws PaketomatException {
         Optional<Package> userPackage = packageService.findPackageByCode(code);
 
         if (userPackage.isEmpty()){
