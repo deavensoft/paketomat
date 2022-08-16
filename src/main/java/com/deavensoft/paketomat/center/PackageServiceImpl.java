@@ -10,12 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.deavensoft.paketomat.generate.Generator.generateCode;
 
 @Slf4j
 @Service
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE = 10000;
+
 
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
@@ -61,7 +62,7 @@ public class PackageServiceImpl implements PackageService {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setPaid(paid);
-            Long code = sendMailToUser(p.get().getUser().getEmail(), paid);
+            String code = sendMailToUser(p.get().getUser().getEmail(), paid);
             updateCode(id, code);
             packageRepository.save(p.get());
         }
@@ -70,7 +71,7 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public void updateCode(Long id, Long code) {
+    public void updateCode(Long id, String code) {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setCode(code);
@@ -78,12 +79,12 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public Long sendMailToUser(String email, Paid p) {
-        long code = 0L;
+    public String sendMailToUser(String email, Paid p) {
+        String code="";
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            code = Long.parseLong(generateCode());
+            code = generateCode();
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up, the code is" + " " +
                     code);
         } else if (Paid.NOT_PAID == p) {
@@ -100,13 +101,7 @@ public class PackageServiceImpl implements PackageService {
         return code;
     }
 
-    public String generateCode() {
-        SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int codeForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
-        String formatted = String.format("%04d", codeForPaketomat);
-        log.info("Code is generated for picking up the package");
-        return formatted;
-    }
+
 
     public Optional<Package> findPackageByCode(Long code) {
         return packageRepository.findPackageByCode(code);

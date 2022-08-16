@@ -10,6 +10,7 @@ import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.generate.Generator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.deavensoft.paketomat.generate.Generator.generateCode;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -36,8 +39,6 @@ public class CourierServiceImpl implements CourierService {
     private final CityService cityService;
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
-
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE = 10000;
 
 
     public List<Courier> findAllCouriers() {
@@ -74,7 +75,7 @@ public class CourierServiceImpl implements CourierService {
                 currentTime = currentTime.minusDays(5);
                 if (currentTime.isAfter(p.getDate())) {
                     packagesToReturn.add(p);
-                    packageService.updateStatus(p.getCode(), Status.RETURNED);
+                    packageService.updateStatus(p.getId(), Status.RETURNED);
                 }
             }
         }
@@ -89,7 +90,7 @@ public class CourierServiceImpl implements CourierService {
             if (p.getStatus().equals(Status.RETURNED)) {
                 packagesToReturn.add(p);
                 p.getPaketomat().freeBox(p);
-                packageService.updateStatus(p.getCode(), Status.TO_DISPATCH);
+                packageService.updateStatus(p.getId(), Status.TO_DISPATCH);
             }
         }
         return packagesToReturn;
@@ -172,16 +173,6 @@ public class CourierServiceImpl implements CourierService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
-
-    }
-
-    public String generateCode() {
-        SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
-        String formatted = String.format("%04d", generateNumberForPaketomat);
-        log.info("Code is generated for picking up the package");
-        return formatted;
-
 
     }
 
