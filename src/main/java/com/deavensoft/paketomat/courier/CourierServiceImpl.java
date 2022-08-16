@@ -150,7 +150,7 @@ public class CourierServiceImpl implements CourierService {
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
             packageService.updateStatus(p.getId(), Status.IN_PAKETOMAT);
-            //checkIfThePackageIsPaid(p);
+            checkIfThePackageIsPaid(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
         return packages;

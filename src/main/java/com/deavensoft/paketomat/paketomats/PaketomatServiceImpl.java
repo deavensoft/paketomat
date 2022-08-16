@@ -10,7 +10,6 @@ public class PaketomatServiceImpl implements PaketomatService{
 
     private final PaketomatRepository paketomatRepository;
 
-
     @Override
     public List<Paketomat> getAllPaketomats() {
         return paketomatRepository.findAll();

@@ -67,7 +67,6 @@ public class PaketomatController {
     @ApiResponse(responseCode = "200", description = "New paketomats added")
     public int createAllPaketomatsInCountry(){
         int numberOfPaketomats;
-        cities =  cityService.getAllCities();
         for(City c: cities){
             if(c.getPopulation() > 10000){
                  numberOfPaketomats = c.getPopulation()/100000 + 1;

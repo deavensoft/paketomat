@@ -6,6 +6,7 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.email.EmailDetails;
+import com.deavensoft.paketomat.exceptions.NoSuchStatusException;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.mapper.PackageMapper;
@@ -27,7 +28,6 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class PackageController {
-
     private final PackageService packageService;
     private static final String MESSAGE = "Package with id ";
     private final UserService userService;
@@ -72,6 +72,15 @@ public class PackageController {
             return 1;
         }
     }
+
+    @GetMapping(path = "/status/{status}")
+    @Operation(summary = "Get package", description = "Get package with specified status")
+    @ApiResponse(responseCode = "200", description = "Package with specified status returned")
+    public List<Package> getPackageByStatus(@PathVariable(name = "status") int status) throws NoSuchStatusException {
+        return packageService.getPackageByStatus(status);
+    }
+
+
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get package", description = "Get package with specified id")

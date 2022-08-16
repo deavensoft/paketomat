@@ -79,7 +79,7 @@ public class DispatcherServiceImpl implements DispatcherService {
             String[] parts = user.get().getAddress().split(",", 2);
             String cityUser = parts[1];
             findNearestCity(cityUser, newPackage);
-            //sendMailToCourier();
+            sendMailToCourier();
         } else
             throw new NoSuchUserException("There is no user with id " + newPackage.getUser().getId(), HttpStatus.OK, 200);
     }

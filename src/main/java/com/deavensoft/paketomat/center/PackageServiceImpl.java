@@ -6,15 +6,13 @@ import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+import com.deavensoft.paketomat.exceptions.NoSuchStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.deavensoft.paketomat.generate.Generator.generateCode;
 
@@ -101,10 +99,33 @@ public class PackageServiceImpl implements PackageService {
         return code;
     }
 
-
-
     public Optional<Package> findPackageByCode(String code) {
         return packageRepository.findPackageByCode(code);
+    }
+
+    @Override
+    public List<Package> getPackageByStatus(int status) throws NoSuchStatusException {
+        List<Package> packages = packageRepository.findAll();
+        List<Package> packageList = new ArrayList<>();
+
+        for(Package p: packages){
+            if(p.getStatus() == getStatus(status)){
+                packageList.add(p);
+            }
+        }
+        return packageList;
+    }
+    private Status getStatus(int status) throws NoSuchStatusException {
+        switch (status){
+            case 1: return Status.NEW;
+            case 2: return Status.TO_DISPATCH;
+            case 3: return Status.IN_PAKETOMAT;
+            case 4: return Status.DELIVERED;
+            case 5: return Status.RETURNED;
+            default:
+                throw new NoSuchStatusException("There is no such status", HttpStatus.OK, 200);
+
+        }
     }
 }
 

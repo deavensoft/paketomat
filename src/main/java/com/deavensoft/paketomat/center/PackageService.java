@@ -4,6 +4,7 @@ import com.deavensoft.paketomat.center.model.Package;
 import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+import com.deavensoft.paketomat.exceptions.NoSuchStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +25,6 @@ public interface PackageService {
 
      Optional<Package> findPackageByCode(String code);
 
+     List<Package> getPackageByStatus(int status) throws NoSuchStatusException;
 
 }
