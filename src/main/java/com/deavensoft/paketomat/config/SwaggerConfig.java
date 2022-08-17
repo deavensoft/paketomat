@@ -1,5 +1,9 @@
 package com.deavensoft.paketomat.config;
 
+import com.deavensoft.paketomat.city.CityService;
+import com.deavensoft.paketomat.city.scheduler.CityIntegration;
+import com.deavensoft.paketomat.city.scheduler.CityIntegrationImpl;
+import com.deavensoft.paketomat.mapper.CityMapper;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +35,7 @@ public class SwaggerConfig {
                 .version("1.0.0")
                 .build();
     }
+
     @Bean
     public Docket customImplementation() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -39,11 +44,17 @@ public class SwaggerConfig {
                 .build()
                 .apiInfo(apiInfo());
     }
+
     @Bean
     public SimpleMailMessage templateSimpleMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setText(
                 "This is the test email template for your email:\n%s\n");
         return message;
+    }
+
+    @Bean
+    CityIntegration cityIntegration(CityMapper cityMapper, CityService cityService) {
+        return new CityIntegrationImpl(cityMapper, cityService);
     }
 }
