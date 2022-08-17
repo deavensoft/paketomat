@@ -88,6 +88,11 @@ public class CityController {
     @GetMapping(path = "/check")
     @Operation(summary = "Import cities", description = "Import cities in Serbia to database")
     public String checkCities() {
-        return cityIntegration.importCities();
+        Integer numFromTable = getAllCities().size();
+        if (numFromTable == 0) {
+            return cityIntegration.importCities();
+        }
+
+        return "Up-to-date!";
     }
 }
