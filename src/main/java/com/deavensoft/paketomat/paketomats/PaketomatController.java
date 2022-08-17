@@ -95,7 +95,7 @@ public class PaketomatController {
     @PostMapping(path = "/userPackage/{code}")
     @Operation(summary = "Move package to user")
     @ApiResponse(responseCode = "200", description = "Package is delivered to user")
-    public void userPackage(@PathVariable(name = "code") String code) throws PaketomatException {
+    public Package userPackage(@PathVariable(name = "code") String code) throws PaketomatException {
         Optional<Package> userPackage = packageService.findPackageByCode(code);
 
         if (userPackage.isEmpty()){
@@ -105,6 +105,7 @@ public class PaketomatController {
             if(pa.getPaid() == Paid.PAID){
                 pa.setPaketomat(null);
                 packageService.updateStatus(pa.getId(), Status.DELIVERED);
+                return pa;
             }else{
                 throw new PaymentException("Package is not paid", HttpStatus.OK, 200);
             }

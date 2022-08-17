@@ -50,7 +50,7 @@ public class PackageController {
     @PostMapping
     @Operation(summary = "Add new package", description = "Add new package to the distributive center")
     @ApiResponse(responseCode = "200", description = "New package added")
-    public int savePackage(@RequestBody PackageDTO newPackage) throws PaketomatException {
+    public String savePackage(@RequestBody PackageDTO newPackage) throws PaketomatException {
         Package p = packageMapper.packageDTOToPackage(newPackage);
         p.setPaid(Paid.NOT_PAID);
         p.setStatus(Status.NEW);
@@ -69,7 +69,7 @@ public class PackageController {
             emailDetails.setRecipient(user.get().getEmail());
             emailDetails.setSubject("test");
             model.put("msgBody", emailDetails.getMsgBody());
-            return 1;
+            return "New package is saved";
         }
     }
 
@@ -123,7 +123,8 @@ public class PackageController {
 
     @GetMapping(path = "/pay")
     @Operation(summary = "Pay for package", description = "Pay for package with specified id")
-    public void payForThePackage(@RequestParam(name = "id") Long id) throws NoSuchPackageException {
+    public String payForThePackage(@RequestParam(name = "id") Long id) throws NoSuchPackageException {
         packageService.payment(id, Paid.PAID);
+        return "Package is paid and ready to be picked up";
     }
 }

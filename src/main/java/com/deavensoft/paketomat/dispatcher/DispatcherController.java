@@ -77,12 +77,13 @@ public class DispatcherController {
     @PostMapping(path = "/dispatch/{id}")
     @Operation(summary = "Move package for dispatching")
     @ApiResponse(responseCode = "200", description = "Package is ready to be dispatched")
-    public void dispatchPackage(@PathVariable(name = "id") Long id) throws PaketomatException, IOException {
+    public String dispatchPackage(@PathVariable(name = "id") Long id) throws PaketomatException, IOException {
         Optional<Package> newPackage = packageService.findPackageById(id);
         if(newPackage.isEmpty())
             throw new NoSuchPackageException("There is no package with id " + id, HttpStatus.OK, 200);
         dispatcherService.delieverPackage(newPackage.get());
         log.info("Package is ready to be dispatched");
+        return "Package is ready to dispatch and slot is reserved in " + newPackage.get().getPaketomat().getCity().getName();
     }
 
     @DeleteMapping(path = "/{id}")
