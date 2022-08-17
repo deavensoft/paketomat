@@ -3,6 +3,7 @@ package com.deavensoft.paketomat.dispatcher;
 import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.*;
 import com.deavensoft.paketomat.center.model.Package;
+import com.deavensoft.paketomat.city.CityService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.*;
@@ -43,7 +44,7 @@ public class DispatcherServiceImpl implements DispatcherService {
     private final EmailService emailService;
     private final PackageService packageService;
     private final PaketomatService paketomatService;
-
+    private final CityService cityService;
     @Value("${paketomat.min-population}")
     private int minPopulation;
 
@@ -88,7 +89,7 @@ public class DispatcherServiceImpl implements DispatcherService {
         City city = null;
         double minDistance = 1000.0;
         double distance;
-        List<City> cities = new ArrayList<>(Center.cities);
+        List<City> cities = new ArrayList<>(cityService.getAllCities());
         while (true) {
             if (cities.isEmpty()) {
                 throw new NoSpaceAvailableException("There is no space available in paketomats", HttpStatus.OK, 200);
