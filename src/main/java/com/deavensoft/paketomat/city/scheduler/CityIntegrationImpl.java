@@ -93,7 +93,8 @@ public class CityIntegrationImpl implements CityIntegration {
 
     private Integer getTotalPages() {
         try {
-            CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url), CitiesDto.class);
+            final String validUrl = url.replace("{1}", Integer.toString(currentPage));
+            CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(validUrl), CitiesDto.class);
             return citiesDto.getTotalPages();
         } catch (IOException e) {
             return -1;
@@ -102,10 +103,6 @@ public class CityIntegrationImpl implements CityIntegration {
 
     private String doRequest(String url) throws UnsupportedEncodingException {
         RestTemplate restTemplate = new RestTemplate();
-        UriTemplateHandler skipVariablePlaceHolderUriTemplateHandler = createTemplateHandler();
-
-        URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
-        restTemplate.setUriTemplateHandler(skipVariablePlaceHolderUriTemplateHandler);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.set(hostName, hostValue);
@@ -123,27 +120,6 @@ public class CityIntegrationImpl implements CityIntegration {
 
         return templateResponse;
     }
-
-    private UriTemplateHandler createTemplateHandler() {
-        return new UriTemplateHandler() {
-            @NotNull
-            @Override
-            public URI expand(String uriTemplate, Object... uriVariables) {
-                return retrieveURI(uriTemplate);
-            }
-
-            @NotNull
-            @Override
-            public URI expand(String uriTemplate, Map<String, ?> uriVariables) {
-                return retrieveURI(uriTemplate);
-            }
-
-            private URI retrieveURI(String uriTemplate) {
-                return UriComponentsBuilder.fromUriString(uriTemplate).build().toUri();
-            }
-        };
-    }
-
 
     @Override
     public String importCities() {
