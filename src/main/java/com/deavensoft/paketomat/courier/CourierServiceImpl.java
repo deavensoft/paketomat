@@ -13,6 +13,8 @@ import com.deavensoft.paketomat.exceptions.PaketomatException;
 import com.deavensoft.paketomat.generate.Generator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -195,17 +197,14 @@ public class CourierServiceImpl implements CourierService {
 
         List<Package> listPackages = getPackagesForCourier(city);
 
-        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code", "Center", "Date", "Paid"};
-        String[] nameMapping = {"id", "status", "user", "paketomat", "code", "center", "date", "paid"};
-
-        csvWriter.writeHeader(csvHeader);
-
-        for (Package p : listPackages) {
-            csvWriter.write(p, nameMapping);
+        try (CSVPrinter csvPrinter = new CSVPrinter(response.getWriter(), CSVFormat.EXCEL)) {
+            for (Package p : listPackages) {
+                csvPrinter.printRecord("ID of the package","Serial Code from Paketomat","Status","E-Mail","Name of the User","Paid","PIN Code for the paketomat");
+                csvPrinter.printRecord(p.getId(),p.getPaketomat().getAddr(), p.getStatus(), p.getUser().getEmail(),p.getUser().getName(),p.getPaid(),p.getCode());
+            }
+        } catch (IOException e) {
+            log.error("Error While writing CSV ", e);
         }
-
-        csvWriter.close();
 
     }
 
