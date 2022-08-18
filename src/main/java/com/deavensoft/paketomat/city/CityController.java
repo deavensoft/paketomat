@@ -2,63 +2,46 @@ package com.deavensoft.paketomat.city;
 
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.city.dto.CityDto;
-import com.deavensoft.paketomat.city.dto.CitiesDto;
-import com.deavensoft.paketomat.exceptions.CityException;
+import com.deavensoft.paketomat.city.scheduler.CityIntegration;
 import com.deavensoft.paketomat.exceptions.NoSuchCityException;
 import com.deavensoft.paketomat.mapper.CityMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @Slf4j
 @RequestMapping("api/cities")
-
 public class CityController {
-    @Autowired
     private final CityService cityServiceImpl;
-    @Value("${external.api.city.url}")
-    private String url;
-    @Value("${external.api.city.header.host.name}")
-    private String hostName;
-    @Value("${external.api.city.header.host.value}")
-    private String hostValue;
-    @Value("${external.api.city.header.key.name}")
-    private String keyName;
-    @Value("${external.api.city.header.key.value}")
-    private String keyValue;
-
-    @Value("${external.api.city.start-page}")
-    private Integer startPage;
-
     private final CityMapper mapper;
+    private final CityIntegration cityIntegration;
 
     @GetMapping
     @Operation(summary = "Get cities", description = "Get all cities")
     @ApiResponse(responseCode = "200", description = "All cities are returned")
     public List<CityDto> getAllCities() {
-       List<City> cities = cityServiceImpl.getAllCities();
-       List<CityDto> cityDtos = new ArrayList<>();
+        List<City> cities = cityServiceImpl.getAllCities();
+        List<CityDto> cityDtos = new ArrayList<>();
 
-       for (City city : cities) {
-           cityDtos.add(mapper.cityToCityDto(city));
-       }
-       log.info("All cities are returned");
-       return cityDtos;
+        for (City city : cities) {
+            cityDtos.add(mapper.cityToCityDto(city));
+        }
+        log.info("All cities are returned");
+        return cityDtos;
     }
 
     @PostMapping
@@ -77,14 +60,13 @@ public class CityController {
 
         if (city.isEmpty()) {
             throw new NoSuchCityException("There is no city with id " + id, HttpStatus.OK, 200);
-        }else {
+        } else {
             City city1 = city.get();
             CityDto cityDto = mapper.cityToCityDto(city1);
-            String mss = "City with id " + id + "is retuned";
+            String mss = "City with id " + id + "is returned";
             log.info(mss);
             return cityDto;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")
@@ -98,53 +80,19 @@ public class CityController {
         } else {
             City city = c.get();
             cityServiceImpl.deleteCity(city);
-            log.info("City deleted");
+            log.info("City with id " + id + " is deleted");
             return 1;
         }
     }
 
-
     @GetMapping(path = "/check")
-    public void checkCities() throws IOException, CityException {
-
-        CitiesDto citiesDto = new ObjectMapper().readValue(doRequest(url).body().string(), CitiesDto.class);
-        Integer totalNum = citiesDto.getTotalPages();
-        Integer numCities = citiesDto.getTotalCities();
+    @Operation(summary = "Import cities", description = "Import cities in Serbia to database")
+    public String checkCities() {
         Integer numFromTable = getAllCities().size();
-        if (numFromTable < numCities) {
-            try {
-                for (int i = startPage; i <= totalNum; i++) {
-                    String ii = Integer.toString(i);
-                    String newUri = url.replace("{1}", ii);
-
-                    CitiesDto citiesDtoo = new ObjectMapper().readValue(doRequest(newUri).body().string(), CitiesDto.class);
-                    List<CityDto> citiess = citiesDtoo.getCities();
-
-                    for (CityDto city : citiess) {
-
-                        save(city);
-                    }
-
-                }
-            } catch (IOException e) {
-                throw new CityException("Data cannot be imported to database", HttpStatus.LOOP_DETECTED,508);
-            }
-
-        } else {
-            log.info("Data is imported and it is consistent");
+        if (numFromTable == 0) {
+            return cityIntegration.importCities();
         }
 
-    }
-    private Response doRequest(String url) throws IOException {
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader(keyName, keyValue)
-                .addHeader(hostName, hostValue)
-                .build();
-
-        return client.newCall(request).execute();
+        return "Up-to-date!";
     }
 }

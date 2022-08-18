@@ -2,6 +2,7 @@ package com.deavensoft.paketomat.paketomats.dto;
 
 import com.deavensoft.paketomat.center.model.City;
 import com.deavensoft.paketomat.center.model.Package;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class PaketomatDTO {
 
     @JsonProperty("city")
     private City city;
-
+    @JsonIgnore
     @JsonProperty("packages")
     private List<Package> packages;
 }

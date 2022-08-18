@@ -1,6 +1,5 @@
 package com.deavensoft.paketomat.user;
 
-import com.deavensoft.paketomat.center.PackageService;
 import com.deavensoft.paketomat.center.model.User;
 import com.deavensoft.paketomat.exceptions.NoSuchUserException;
 import com.deavensoft.paketomat.mapper.UserMapper;
@@ -21,10 +20,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 public class UserController {
-
-    private final PackageService packageService;
-    private UserService userService;
-    private UserMapper userMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping
     @Operation(summary = "Get users", description = "Get all users")
@@ -68,7 +65,6 @@ public class UserController {
 
             return userDTO;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")

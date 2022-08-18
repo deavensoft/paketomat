@@ -10,23 +10,27 @@ import com.deavensoft.paketomat.dispatcher.DispatcherService;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
 import com.deavensoft.paketomat.exceptions.PaketomatException;
+import com.deavensoft.paketomat.generate.Generator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.deavensoft.paketomat.generate.Generator.generateCode;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +41,6 @@ public class CourierServiceImpl implements CourierService {
     private final CityService cityService;
     private final DispatcherService dispatcherService;
     private final EmailService emailService;
-
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
 
 
     public List<Courier> findAllCouriers() {
@@ -59,7 +61,7 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public List<Package> getPackagesForCourier(String city) throws PaketomatException {
+    public List<Package> getPackagesForCourier(String city) throws PaketomatException, UnsupportedEncodingException {
         return deliverPackageInPaketomat(filterPackagesToDispatch(getPackagesToDispatch(), findCitiesInRadius(city)));
     }
 
@@ -75,7 +77,7 @@ public class CourierServiceImpl implements CourierService {
                 currentTime = currentTime.minusDays(5);
                 if (currentTime.isAfter(p.getDate())) {
                     packagesToReturn.add(p);
-                    packageService.updateStatus(p.getCode(), Status.RETURNED);
+                    packageService.updateStatus(p.getId(), Status.RETURNED);
                 }
             }
         }
@@ -84,13 +86,13 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public List<Package> returnNotPickedUpPackages() {
-        List<Package> packages= packageService.getAllPackages();
+        List<Package> packages = packageService.getAllPackages();
         List<Package> packagesToReturn = new ArrayList<>();
-        for(Package p : packages){
-            if(p.getStatus().equals(Status.RETURNED)){
+        for (Package p : packages) {
+            if (p.getStatus().equals(Status.RETURNED)) {
                 packagesToReturn.add(p);
                 p.getPaketomat().freeBox(p);
-                packageService.updateStatus(p.getCode(),Status.TO_DISPATCH);
+                packageService.updateStatus(p.getId(), Status.TO_DISPATCH);
             }
         }
         return packagesToReturn;
@@ -98,22 +100,22 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> getPackagesToDispatch() {
         List<Package> packageList = packageService.getAllPackages();
-        ArrayList<Package> packagesToDispatch = new ArrayList<>();
+        List<Package> packagesToDispatch = new ArrayList<>();
 
         for (Package p : packageList) {
-            if (p.getStatus().equals(Status.TO_DISPATCH)) {
+            if (p.getStatus() == Status.TO_DISPATCH) {
                 packagesToDispatch.add(p);
             }
         }
         log.info("List with packages TO_DISPATCH is made");
-        return packageList;
+        return packagesToDispatch;
     }
 
-    public List<City> findCitiesInRadius(String city) throws PaketomatException {
+    public List<City> findCitiesInRadius(String city) throws PaketomatException, UnsupportedEncodingException {
         double maxDistance = 100.0;
         double distance;
         List<City> citiesList = cityService.getAllCities();
-        ArrayList<City> citiesToDispatch = new ArrayList<>();
+        List<City> citiesToDispatch = new ArrayList<>();
 
         for (City c : citiesList) {
             if (c.getPopulation() >= 10000) {
@@ -124,7 +126,7 @@ public class CourierServiceImpl implements CourierService {
             }
         }
         log.info("List with cities in 100km radius from city " + city + " is made");
-        return citiesList;
+        return citiesToDispatch;
     }
 
     public List<Package> filterPackagesToDispatch(List<Package> packagesToDispatch, List<City> citiesToDispatch) {
@@ -149,7 +151,7 @@ public class CourierServiceImpl implements CourierService {
 
     public List<Package> deliverPackageInPaketomat(List<Package> packages) {
         for (Package p : packages) {
-            packageService.updateStatus(p.getCode(), Status.IN_PAKETOMAT);
+            packageService.updateStatus(p.getId(), Status.IN_PAKETOMAT);
             checkIfThePackageIsPaid(p);
         }
         log.info("Packages are in paketomat and are ready for delivery");
@@ -165,7 +167,7 @@ public class CourierServiceImpl implements CourierService {
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
         } else if (Paid.UNSUCCESSFUL == p) {
-            emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccesfull, try again to pay for the package");
+            emailSender.setMsgBody("Your package is in the paketomat, the payment were unsuccessful, try again to pay for the package");
         }
         emailSender.setAttachment("");
         emailSender.setSubject("Package arrived in the paketomat");
@@ -173,16 +175,6 @@ public class CourierServiceImpl implements CourierService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
-
-    }
-
-    public String generateCode() {
-        SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int generateNumberForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
-        String formatted = String.format("%04d", generateNumberForPaketomat);
-        log.info("Code is generated for picking up the package");
-        return formatted;
-
 
     }
 
@@ -199,24 +191,45 @@ public class CourierServiceImpl implements CourierService {
     public void exportToCSV(HttpServletResponse response, String city) throws PaketomatException, IOException {
         response.setContentType("text/csv");
 
-
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=NewPackagesToBeDeliveredInCity.csv";
         response.setHeader(headerKey, headerValue);
 
         List<Package> listPackages = getPackagesForCourier(city);
 
-        ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"User ID", "Status", "User", "Paketomat", "Code","Center","Date","Paid"};
-        String[] nameMapping = {"id", "status", "user", "paketomat", "code","center","date","paid"};
-
-        csvWriter.writeHeader(csvHeader);
-
-        for (Package p : listPackages) {
-            csvWriter.write(p, nameMapping);
+        try (CSVPrinter csvPrinter = new CSVPrinter(response.getWriter(), CSVFormat.EXCEL)) {
+            for (Package p : listPackages) {
+                csvPrinter.printRecord("ID of the package","Serial Code from Paketomat","Status","E-Mail","Name of the User","Paid","PIN Code for the paketomat");
+                csvPrinter.printRecord(p.getId(),p.getPaketomat().getAddr(), p.getStatus(), p.getUser().getEmail(),p.getUser().getName(),p.getPaid(),p.getCode());
+            }
+        } catch (IOException e) {
+            log.error("Error While writing CSV ", e);
         }
 
-        csvWriter.close();
+    }
 
+    @Override
+    public void exportOutdatedPackagesToCSV(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        String fileName = "notPickedUpPackages.csv";
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; fileName=" + fileName;
+
+        response.setHeader(headerKey, headerValue);
+
+        List<Package> packages = getNotPickedUpPackages();
+
+        ICsvBeanWriter csvBeanWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+        String[] csvHeader = {"Id", "Status", "User id", "Paketomat id", "Code", "Center", "Date"};
+        String[] nameMapping = {"id", "status", "user_id", "paketomat_id", "code", "center_id", "date"};
+
+        csvBeanWriter.writeHeader(csvHeader);
+
+        for (Package p : packages) {
+            csvBeanWriter.write(p, nameMapping);
+        }
+
+        csvBeanWriter.close();
     }
 }

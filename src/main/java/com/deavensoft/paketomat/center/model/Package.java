@@ -23,7 +23,8 @@ public class Package {
     @JoinColumn(name = "paketomat_id")
     private Paketomat paketomat;
     @Column(name = "code", unique = true)
-    private Long code;
+    private String code;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;

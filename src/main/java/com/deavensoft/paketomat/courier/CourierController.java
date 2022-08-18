@@ -14,15 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
-import org.supercsv.prefs.CsvPreference;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,17 +26,15 @@ import java.util.Optional;
 @RequestMapping("api/couriers")
 @Slf4j
 public class CourierController {
-
     private final CourierService courierService;
-
-    private CourierMapper courierMapper;
-
-    private PackageMapper packageMapper;
+    static final String MESSAGE = "Courier with id ";
+    private final CourierMapper courierMapper;
+    private final PackageMapper packageMapper;
 
     @GetMapping
     @Operation(summary = "Get couriers", description = "Get all couriers")
     @ApiResponse(responseCode = "200", description = "All couriers are returned")
-    public List<CourierDTO> getAllCouriers(){
+    public List<CourierDTO> getAllCouriers() {
 
         List<Courier> couriers = courierService.findAllCouriers();
         List<CourierDTO> courierDTOS = new ArrayList<>();
@@ -57,7 +49,7 @@ public class CourierController {
     @PostMapping
     @Operation(summary = "Add new courier")
     @ApiResponse(responseCode = "200", description = "New courier added")
-    public int saveCourier(@RequestBody CourierDTO newCourier){
+    public int saveCourier(@RequestBody CourierDTO newCourier) {
         log.info("New dispatcher is added");
         Courier c = courierMapper.courierDTOToCourier(newCourier);
         courierService.saveCourier(c);
@@ -70,17 +62,16 @@ public class CourierController {
     @ApiResponse(responseCode = "200", description = "Courier with specified id returned")
     public CourierDTO getCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         Optional<Courier> c = courierService.getCourierById(id);
-        if(c.isEmpty()){
+        if (c.isEmpty()) {
             throw new NoSuchCourierException("There is no courier with id " + id, HttpStatus.OK, 200);
-        } else{
+        } else {
             Courier courier = c.get();
             CourierDTO courierDTO = courierMapper.courierToCourierDTO(courier);
-            String mess = "Courier with id " + id + " is returned";
+            String mess = MESSAGE + id + " is returned";
             log.info(mess);
 
             return courierDTO;
         }
-
     }
 
     @DeleteMapping(path = "/{id}")
@@ -89,10 +80,10 @@ public class CourierController {
     public int deleteCourierById(@PathVariable(name = "id") Long id) throws NoSuchCourierException {
         try {
             courierService.deleteCourierById(id);
-            String mess = "Courier with id " + id + " is deleted";
+            String mess = MESSAGE + id + " is deleted";
             log.info(mess);
-        } catch (EmptyResultDataAccessException e){
-            throw new NoSuchCourierException("Courier with id " + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoSuchCourierException(MESSAGE + id + " can't be deleted", HttpStatus.INTERNAL_SERVER_ERROR, 500);
         }
         return 1;
     }
@@ -100,18 +91,18 @@ public class CourierController {
     @GetMapping(path = "/getPackages/{city}")
     @Operation(summary = "Get packages for courier", description = "Get packages that courier will deliver on his route")
     @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
-    public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException {
+    public List<Package> getPackagesForCourier(@PathVariable(name = "city") String city) throws PaketomatException, UnsupportedEncodingException {
         log.info("List with packages that courier has to deliver are returned");
         return courierService.getPackagesForCourier(city);
     }
 
-    @GetMapping(path = "/getNotPickedUpPackages/")
+    @GetMapping(path = "/getOutdatedPackages")
     @Operation(summary = "Get not picked up packages", description = "Get packages that not picked up by user")
     @ApiResponse(responseCode = "200", description = "All packages that not picked up by user will be returned.")
-    public List<PackageDTO> getNotPickedUpPackages() throws PaketomatException {
+    public List<PackageDTO> getOutdatedPackages(){
         List<PackageDTO> notPickedUpPackages = new ArrayList<>();
         List<Package> packages = courierService.getNotPickedUpPackages();
-        for(Package p : packages){
+        for (Package p : packages) {
             PackageDTO pDto = packageMapper.packageToPackageDTO(p);
             notPickedUpPackages.add(pDto);
         }
@@ -122,44 +113,26 @@ public class CourierController {
     @GetMapping(path = "/export/{city}")
     @Operation(summary = "Export data packages for courier", description = "Get packages that courier will deliver on his route")
     @ApiResponse(responseCode = "200", description = "All packages that need to be delivered by courier are returned")
-    public void exportData(@PathVariable(name = "city") String city, HttpServletResponse response) throws PaketomatException, IOException {
+    public void exportDispatchedPackages(@PathVariable(name = "city") String city, HttpServletResponse response) throws PaketomatException, IOException {
         courierService.exportToCSV(response, city);
-        log.info("Data is sucessfully exported");
+        log.info("Data is successfully exported");
     }
 
     @Operation(summary = "Get all not picked up packages", description = "Get packages that have not been picked up")
     @ApiResponse(responseCode = "200", description = "Get all packages that have not been picked up from paketomats")
-    @GetMapping("/exportNotPickedPackages")
-    public void exportNotPickedUpPackages(HttpServletResponse response) throws IOException {
-        response.setContentType("text/csv");
-        String fileName = "notPickedUpPackages.csv";
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; fileName=" + fileName;
-
-        response.setHeader(headerKey, headerValue);
-
-        List<Package> packages = courierService.getNotPickedUpPackages();
-
-        ICsvBeanWriter csvBeanWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
-        String[] csvHeader = {"Id", "Status", "User id", "Paketomat id", "Code", "Center", "Date"};
-        String[] nameMapping = {"id", "status", "user_id", "paketomat_id", "code", "center_id", "date"};
-
-        csvBeanWriter.writeHeader(csvHeader);
-
-        for(Package p: packages) {
-            csvBeanWriter.write(p, nameMapping);
-        }
-
-        csvBeanWriter.close();
+    @GetMapping("/export")
+    public void exportOutdatedPackages(HttpServletResponse response) throws IOException {
+        courierService.exportOutdatedPackagesToCSV(response);
+        log.info("Outdated packages are exported to CSV file");
     }
-    @GetMapping(path = "/returnNotPickedUpPackages/")
+
+    @GetMapping(path = "/returnOutdatedPackages")
     @Operation(summary = "Return not picked up packages", description = "Return not picked up packages to the distributive center.")
     @ApiResponse(responseCode = "200", description = "All packages that not picked up by user will be returned to the distributive center.")
-    public List<PackageDTO> returnNotPickedUpPackages() {
+    public List<PackageDTO> removeOutDatedPackages() {
         List<PackageDTO> packagesToReturn = new ArrayList<>();
         List<Package> packages = courierService.returnNotPickedUpPackages();
-        for(Package p : packages){
+        for (Package p : packages) {
             PackageDTO pDto = packageMapper.packageToPackageDTO(p);
             packagesToReturn.add(pDto);
         }

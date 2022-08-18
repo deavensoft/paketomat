@@ -5,17 +5,16 @@ import com.deavensoft.paketomat.center.model.Paid;
 import com.deavensoft.paketomat.center.model.Status;
 import com.deavensoft.paketomat.email.EmailDetails;
 import com.deavensoft.paketomat.email.EmailService;
+import com.deavensoft.paketomat.exceptions.NoSuchPackageException;
+import com.deavensoft.paketomat.exceptions.NoSuchStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
+import static com.deavensoft.paketomat.generate.Generator.generateCode;
 
 @Slf4j
 @Service
@@ -23,7 +22,7 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final EmailService emailService;
-    private static final Integer FOUR_DIGIT_BOUND_FOR_PIN_CODE=10000;
+
 
     public List<Package> getAllPackages() {
         return packageRepository.findAll();
@@ -47,8 +46,8 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public void updateStatus(Long code, Status status) {
-        Optional<Package> p = packageRepository.findPackageByCode(code);
+    public void updateStatus(Long id, Status status) {
+        Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
             p.get().setStatus(status);
             LocalDateTime date = LocalDateTime.now();
@@ -57,27 +56,39 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public void payment(Long id, Paid paid) {
+    public void payment(Long id, Paid paid) throws NoSuchPackageException {
         Optional<Package> p = packageRepository.findById(id);
         if (p.isPresent()) {
-
             p.get().setPaid(paid);
-            sendMailToUser(p.get().getUser().getEmail(), paid);
+            String code = sendMailToUser(p.get().getUser().getEmail(), paid);
+            updateCode(id, code);
             packageRepository.save(p.get());
         }
-
+        else {
+            throw new NoSuchPackageException("There is no package with specified id", HttpStatus.OK, 200);
+        }
     }
 
-    public void sendMailToUser(String email, Paid p) {
+    public void updateCode(Long id, String code) {
+        Optional<Package> p = packageRepository.findById(id);
+        if (p.isPresent()) {
+            p.get().setCode(code);
+            packageRepository.save(p.get());
+        }
+    }
+
+    public String sendMailToUser(String email, Paid p) {
+        String code="";
         EmailDetails emailSender = new EmailDetails();
         emailSender.setRecipient(email);
         if (Paid.PAID == p) {
-            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up and the code is" + " " +
-                    generateCode());
+            code = generateCode();
+            emailSender.setMsgBody("Your package is in the paketomat and is ready to be picked up, the code is" + " " +
+                    code);
         } else if (Paid.NOT_PAID == p) {
             emailSender.setMsgBody("Your package is in the paketomat and is ready to be paid");
         } else if (Paid.UNSUCCESSFUL == p) {
-            emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccesfull, try again to pay for the package");
+            emailSender.setMsgBody("Your package is in the paketomat, the payment was unsuccessful, try again to pay for the package");
         }
         emailSender.setAttachment("");
         emailSender.setSubject("Package arrived in the paketomat");
@@ -85,22 +96,36 @@ public class PackageServiceImpl implements PackageService {
         model.put("msgBody", emailSender.getMsgBody());
         emailService.sendMailWithTemplate(emailSender, model);
         log.info("E-Mail is sent to the end user");
-
+        return code;
     }
 
-    public String generateCode() {
-
-        SecureRandom pinCodeForPaketomat = new SecureRandom();
-        int codeForPaketomat = pinCodeForPaketomat.nextInt(FOUR_DIGIT_BOUND_FOR_PIN_CODE);
-        String formatted = String.format("%04d", codeForPaketomat);
-        log.info("Code is generated for picking up the package");
-        return formatted;
-
-
-    }
-
-    public Optional<Package> findPackageByCode(Long code) {
+    public Optional<Package> findPackageByCode(String code) {
         return packageRepository.findPackageByCode(code);
     }
 
+    @Override
+    public List<Package> getPackageByStatus(int status) throws NoSuchStatusException {
+        List<Package> packages = packageRepository.findAll();
+        List<Package> packageList = new ArrayList<>();
+
+        for(Package p: packages){
+            if(p.getStatus() == getStatus(status)){
+                packageList.add(p);
+            }
+        }
+        return packageList;
+    }
+    private Status getStatus(int status) throws NoSuchStatusException {
+        switch (status){
+            case 1: return Status.NEW;
+            case 2: return Status.TO_DISPATCH;
+            case 3: return Status.IN_PAKETOMAT;
+            case 4: return Status.DELIVERED;
+            case 5: return Status.RETURNED;
+            default:
+                throw new NoSuchStatusException("There is no such status", HttpStatus.OK, 200);
+
+        }
+    }
 }
+

@@ -3,8 +3,6 @@ package com.deavensoft.paketomat.center.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,8 +23,6 @@ public class City {
     @Column(name = "y")
     private double longitude;
     @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "city")
-    private List<Paketomat> paketomats = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "center_id")
     private Center center;
